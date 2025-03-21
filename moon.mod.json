@@ -1,10 +1,18 @@
 {
-  "name": "illusory0x0/moonbit-wasm-vite-ts-template",
+  "name": "illusory0x0/canvas",
   "version": "0.1.0",
+  "deps": {
+    "illusory0x0/color": "0.2.0",
+    "illusory0x0/lazy": "0.1.1"
+  },
   "readme": "README.md",
   "repository": "https://github.com/moonbit-community/moonbit-wasm-vite-ts-template",
   "license": "Apache-2.0",
-  "keywords": ["vite","typescript","template"],
+  "keywords": [
+    "vite",
+    "typescript",
+    "template"
+  ],
   "description": "moonbit vite template",
   "source": "src"
 }

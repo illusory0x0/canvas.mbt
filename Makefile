@@ -1,4 +1,4 @@
 dev:
 	npx vite 
-dev-mbt:
-	moon build --watch
+mbt:
+	moon build --watch --target js

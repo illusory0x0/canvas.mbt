@@ -1,0 +1,167 @@
+package illusory0x0/canvas/dom
+
+// Values
+fn coerce[A, B](A) -> B
+
+let console : Console
+
+let document : Document
+
+let window : Window
+
+// Types and methods
+pub extern type Any
+
+pub extern type CSSStyleDeclaration
+impl CSSStyleDeclaration {
+  getPropertyValue(Self, String) -> String
+  setProperty(Self, String, String) -> Unit
+}
+
+pub extern type CanvasRenderingContext2D
+impl CanvasRenderingContext2D {
+  arc(Self, Int, Int, Int, Double, Double, Bool) -> Unit
+  arcTo(Self, Int, Int, Int, Int, Int) -> Unit
+  beginPath(Self) -> Unit
+  clearRect(Self, Int, Int, Int, Int) -> Unit
+  clearRectF(Self, Double, Double, Double, Double) -> Unit
+  closePath(Self) -> Unit
+  ellipse(Self, Int, Int, Int, Int, Double, Double, Double, Bool) -> Unit
+  fill(Self) -> Unit
+  fillRect(Self, Int, Int, Int, Int) -> Unit
+  fillRectF(Self, Double, Double, Double, Double) -> Unit
+  fillText(Self, String, Int, Int) -> Unit
+  lineTo(Self, Int, Int) -> Unit
+  measureText(Self, String) -> TextMetrics
+  moveTo(Self, Int, Int) -> Unit
+  restore(Self) -> Unit
+  roundRect(Self, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit
+  save(Self) -> Unit
+  scale(Self, Int, Int) -> Unit
+  set_fillStyle(Self, String) -> Unit
+  set_font(Self, String) -> Unit
+  set_lineWidth(Self, Int) -> Unit
+  set_strokeStyle(Self, String) -> Unit
+  set_textBaseline(Self, String) -> Unit
+  stroke(Self) -> Unit
+  strokeRect(Self, Int, Int, Int, Int) -> Unit
+}
+
+pub extern type Console
+impl Console {
+  log[T : Js](Self, T) -> Unit
+}
+
+pub extern type Document
+impl Document {
+  createElement(Self, String) -> Element
+  getElementById(Self, String) -> Element
+  querySelector[T : DOM_Element](Self, String) -> T
+}
+impl DOM_EventTarget for Document
+
+pub extern type Element
+impl DOM_Element for Element
+impl DOM_EventTarget for Element
+impl DOM_HTMLElement for Element
+
+pub extern type Event
+impl Event {
+  downcast[T : DOM_Event](Self) -> T
+}
+impl DOM_Event for Event
+
+pub extern type EventTarget
+impl DOM_EventTarget for EventTarget
+
+pub extern type HTMLAnchorElement
+impl DOM_Element for HTMLAnchorElement
+impl DOM_EventTarget for HTMLAnchorElement
+
+pub extern type HTMLCanvasElement
+impl HTMLCanvasElement {
+  getContext(Self, String) -> CanvasRenderingContext2D
+  set_height(Self, Int) -> Unit
+  set_width(Self, Int) -> Unit
+}
+impl DOM_Element for HTMLCanvasElement
+impl DOM_EventTarget for HTMLCanvasElement
+impl DOM_HTMLElement for HTMLCanvasElement
+
+pub extern type HTMLDivElement
+impl DOM_Element for HTMLDivElement
+impl DOM_EventTarget for HTMLDivElement
+impl DOM_HTMLElement for HTMLDivElement
+
+pub extern type HTMLElement
+impl DOM_Element for HTMLElement
+impl DOM_EventTarget for HTMLElement
+impl DOM_HTMLElement for HTMLElement
+
+pub extern type HTMLImageElement
+impl DOM_Element for HTMLImageElement
+impl DOM_EventTarget for HTMLImageElement
+impl DOM_HTMLElement for HTMLImageElement
+
+pub extern type KeyboardEvent
+impl DOM_Event for KeyboardEvent
+
+pub extern type MouseEvent
+impl MouseEvent {
+  clientX(Self) -> Int
+  clientY(Self) -> Int
+}
+impl DOM_Event for MouseEvent
+
+pub extern type Node
+impl DOM_EventTarget for Node
+
+pub extern type TextMetrics
+impl TextMetrics {
+  fontBoundingBoxAscent(Self) -> Int
+  fontBoundingBoxAscentF(Self) -> Double
+  fontBoundingBoxDescent(Self) -> Int
+  fontBoundingBoxDescentF(Self) -> Double
+  width(Self) -> Int
+  widthF(Self) -> Double
+}
+
+pub extern type Window
+impl Window {
+  devicePixelRatio(Self) -> Double
+  innerHeight(Self) -> Int
+  innerWidth(Self) -> Int
+}
+impl DOM_EventTarget for Window
+
+// Type aliases
+pub typealias Canvas2D = CanvasRenderingContext2D
+
+// Traits
+pub(open) trait DOM_Element {
+  to_element(Self) -> Element
+  querySelector(Self, String) -> Element?
+}
+impl DOM_Element::querySelector
+
+pub(open) trait DOM_Event {
+  to_event(Self) -> Event
+}
+
+pub(open) trait DOM_EventTarget {
+  to_eventTarget(Self) -> EventTarget
+  addEventListener(Self, String, (Event) -> Unit) -> Unit
+}
+impl DOM_EventTarget::addEventListener
+
+pub(open) trait DOM_HTMLElement {
+  to_htmlElement(Self) -> HTMLElement
+  style(Self) -> CSSStyleDeclaration
+}
+impl DOM_HTMLElement::style
+
+pub(open) trait Js {
+  to_any(Self) -> Any
+}
+impl Js::to_any
+

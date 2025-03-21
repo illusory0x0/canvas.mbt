@@ -1,0 +1,52 @@
+package illusory0x0/canvas/cache
+
+// Values
+
+// Types and methods
+pub struct Cache[A] {
+  cache : A
+  refresh : () -> Unit
+  // private fields
+}
+impl Cache {
+  cache[A, B](Self[A], (A) -> B) -> Self[B]
+  depend_on[A, B : RequiredBy](Self[A], B) -> Unit
+  new[A](() -> A) -> Self[A]
+  refresh[A](Self[A]) -> Unit
+}
+impl[A] DependOn for Cache[A]
+impl[A] RequiredBy for Cache[A]
+impl[A : Show] Show for Cache[A]
+
+pub struct State[A] {
+  value : A
+  // private fields
+}
+impl State {
+  cache[A, B](Self[A], (A) -> B) -> Cache[B]
+  get[A](Self[A]) -> A
+  modify[A](Self[A], (A) -> A) -> Unit
+  new[A](A) -> Self[A]
+  set[A](Self[A], A) -> Unit
+}
+impl[A] RequiredBy for State[A]
+impl[A : Show] Show for State[A]
+
+pub(all) type Trigger () -> Unit
+impl Trigger {
+  depend_on[A : RequiredBy](Self, A) -> Unit
+  run(Self) -> Unit
+}
+impl DependOn for Trigger
+
+// Type aliases
+
+// Traits
+pub(open) trait DependOn {
+  depend_on(Self, &RequiredBy) -> Unit
+}
+
+pub(open) trait RequiredBy {
+  require_by(Self, () -> Unit) -> Unit
+}
+

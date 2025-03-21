@@ -1,0 +1,127 @@
+package illusory0x0/canvas/basic
+
+// Values
+fn hsl(UInt, UInt, UInt) -> Color
+
+// Types and methods
+type Color
+impl Compare for Color
+impl Default for Color
+impl Eq for Color
+impl Hash for Color
+impl Show for Color
+
+pub(all) struct Font {
+  family : Array[String]
+  genericFamily : Array[GenericFontFamily]
+  size : Int
+  style : FontStyle
+  weight : Int
+}
+impl Font {
+  bounding_box_ascent(Self, String) -> Int
+  bounding_box_descent(Self, String) -> Int
+  height(Self, String) -> Int
+  new(family~ : Array[String] = .., genericFamily~ : Array[GenericFontFamily] = .., size~ : Int = .., style~ : FontStyle = .., weight~ : Int = ..) -> Self
+  width(Self, String) -> Int
+}
+impl Compare for Font
+impl Default for Font
+impl Eq for Font
+impl Show for Font
+
+pub(all) enum FontStyle {
+  Normal
+  Italic
+}
+impl Compare for FontStyle
+impl Eq for FontStyle
+impl Hash for FontStyle
+impl Show for FontStyle
+
+pub(all) enum GenericFontFamily {
+  Serif
+  SansSerif
+  Monospace
+  Cursive
+  Fantasy
+  SystemUI
+  UISerif
+  UISansSerif
+  UIMonospace
+  UIRounded
+  Math
+  Emoji
+  FangSong
+}
+impl Compare for GenericFontFamily
+impl Eq for GenericFontFamily
+impl Hash for GenericFontFamily
+impl Show for GenericFontFamily
+
+pub(all) struct Rect {
+  offset : Vector
+  size : Size
+}
+impl Rect {
+  bottom(Self) -> Int
+  left(Self) -> Int
+  new(Vector, Size) -> Self
+  right(Self) -> Int
+  top(Self) -> Int
+}
+impl Compare for Rect
+impl Default for Rect
+impl Eq for Rect
+impl Hash for Rect
+impl Show for Rect
+
+pub(all) struct Size {
+  width : Int
+  height : Int
+}
+impl Size {
+  new(Int, Int) -> Self
+}
+impl Compare for Size
+impl Default for Size
+impl Eq for Size
+impl Hash for Size
+impl Show for Size
+
+pub(all) struct Thinkness {
+  left : Int
+  top : Int
+  right : Int
+  bottom : Int
+}
+impl Thinkness {
+  new(Int, Int, Int, Int) -> Self
+  same(Int) -> Self
+}
+impl Compare for Thinkness
+impl Default for Thinkness
+impl Eq for Thinkness
+impl Hash for Thinkness
+impl Show for Thinkness
+
+pub(all) struct Vector {
+  x : Int
+  y : Int
+}
+impl Vector {
+  inside(Self, Rect) -> Bool
+  inside_window(Self) -> Bool
+  new(Int, Int) -> Self
+}
+impl Add for Vector
+impl Compare for Vector
+impl Default for Vector
+impl Eq for Vector
+impl Hash for Vector
+impl Show for Vector
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,105 @@
+package illusory0x0/canvas/canvas
+
+alias @illusory0x0/canvas/basic as @basic
+alias @illusory0x0/canvas/cache as @cache
+alias @illusory0x0/canvas/dom as @dom
+
+// Values
+fn entry() -> Unit
+
+// Types and methods
+pub enum Element {
+  Layout(@cache.Cache[(@basic.Size, Array[(@basic.Vector, Element)])])
+  Render(&Renderable)
+  Handle(Element, Handler)
+}
+impl Element {
+  handle(Self, Handler) -> Self
+  hstack(Array[Self], spacing~ : Int) -> Self
+  layer(Array[(@basic.Vector, Self)]) -> Self
+  round_border(Self, thickness~ : @cache.Cache[Int], color~ : @cache.Cache[@basic.Color], radius~ : @cache.Cache[Int]) -> Self
+  round_padding(Self, thickness~ : @cache.Cache[Int], color~ : @cache.Cache[@basic.Color], radius~ : @cache.Cache[Int]) -> Self
+  size(Self) -> @basic.Size
+  spacer(@basic.Size) -> Self
+  to_layout_sequence(Self, @basic.Vector) -> Array[(@basic.Vector, Self)]
+  to_render_sequence(Self, @basic.Vector) -> Iter[(@basic.Vector, &Renderable)]
+  vstack(Array[Self], spacing~ : Int) -> Self
+}
+impl @cache.RequiredBy for Element
+impl Show for Element
+
+pub struct Handler {
+  id : Int
+  on_click : (() -> Unit)?
+  on_double_click : (() -> Unit)?
+  on_mouse_enter : (() -> Unit)?
+  on_mouse_leave : (() -> Unit)?
+}
+impl Handler {
+  new(on_click? : () -> Unit, on_double_click? : () -> Unit, on_mouse_enter? : () -> Unit, on_mouse_leave? : () -> Unit) -> Self
+}
+impl Show for Handler
+
+pub(all) struct Rectangle {
+  color : @cache.Cache[@basic.Color]
+  size : @cache.Cache[@basic.Size]
+}
+impl Rectangle {
+  new(color~ : () -> @basic.Color, size~ : () -> @basic.Size) -> Self
+}
+impl @cache.RequiredBy for Rectangle
+impl Renderable for Rectangle
+
+pub(all) struct RoundedBorder {
+  color : @cache.Cache[@basic.Color]
+  size : @cache.Cache[@basic.Size]
+  radius : @cache.Cache[Int]
+  thickness : @cache.Cache[Int]
+}
+impl RoundedBorder {
+  new(@cache.Cache[@basic.Color], @cache.Cache[@basic.Size], @cache.Cache[Int], @cache.Cache[Int]) -> Self
+}
+impl @cache.RequiredBy for RoundedBorder
+impl Renderable for RoundedBorder
+
+pub(all) struct RoundedRectangle {
+  color : @cache.Cache[@basic.Color]
+  size : @cache.Cache[@basic.Size]
+  radius : @cache.Cache[Int]
+}
+impl RoundedRectangle {
+  new(@cache.Cache[@basic.Color], @cache.Cache[@basic.Size], @cache.Cache[Int]) -> Self
+}
+impl @cache.RequiredBy for RoundedRectangle
+impl Renderable for RoundedRectangle
+
+pub(all) struct Text {
+  color : @cache.Cache[@basic.Color]
+  size : @cache.Cache[@basic.Size]
+  text : @cache.Cache[String]
+  font : @cache.Cache[@basic.Font]
+}
+impl Text {
+  new(text~ : @cache.Cache[String], font~ : @cache.Cache[@basic.Font], color~ : @cache.Cache[@basic.Color]) -> Self
+}
+impl @cache.RequiredBy for Text
+impl Renderable for Text
+
+impl Renderable {
+  render_iter(@dom.CanvasRenderingContext2D, Iter[(@basic.Vector, &Self)]) -> Unit
+}
+impl Show for &Renderable
+
+// Type aliases
+pub typealias OnClick = () -> Unit
+
+pub typealias OnMouseEnter = () -> Unit
+
+pub typealias OnMouseLeave = () -> Unit
+
+// Traits
+pub(open) trait Renderable : @cache.RequiredBy {
+  size(Self) -> @basic.Size
+  render(Self, @basic.Vector, @dom.CanvasRenderingContext2D) -> Unit
+}
+
