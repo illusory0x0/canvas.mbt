@@ -2,7 +2,7 @@
 pub fn Renderable::color(self : Renderable) -> Color {
   match self {
     Rectangle(color~, ..) => color
-    Text(color~, _) => color
+    Text(color~, ..) => color
     Border(color~, ..) => color
   }
 }
@@ -11,7 +11,7 @@ pub fn Renderable::color(self : Renderable) -> Color {
 pub fn Renderable::size(self : Renderable) -> Size {
   match self {
     Rectangle(size~, ..) => size
-    Text(text, ..) => text.force().2.force()
+    Text(size~,..) => size
     Border(size~, ..) => size
   }
 }
@@ -26,15 +26,14 @@ pub fn Renderable::render(
   let { x, y } = offset
   match self {
     Rectangle(size={ width, height }, ..) => ctx.fillRect(x, y, width, height)
-    Text(text, ..) => {
-      let (text, font, _) = text.force()
+    Text(text~, font~,..) => {
       ctx.set_font(font.to_string())
       ctx.set_textBaseline("top")
       ctx.fillText(text, x, y)
     }
     Border(size={ width, height }, thickness={ left, top, right, bottom }, ..) => {
       ctx.fillRect(x, y, width, height)
-      let times = 4.0
+      let times = 10.
       let cx = x.to_double() + left.to_double() / times
       let cy = y.to_double() + top.to_double() / times
       let cw = width.to_double() -
@@ -55,7 +54,7 @@ pub fn Renderable::rectangle(size~ : Size, color~ : Color) -> Renderable {
 pub fn Renderable::border(
   size~ : Size,
   color~ : Color,
-  thickness : Thinkness
+  thickness~ : Thinkness
 ) -> Renderable {
   Border(size~, color~, thickness~)
 }
@@ -67,21 +66,17 @@ pub fn Renderable::text(
   color~ : Color
 ) -> Renderable {
   Text(
+    text~,
     color~,
-    LazyRec::new(fn(self) {
-      let size = Lazy::new(fn() {
-        Size::new(font.width(text), font.height(text)) 
-      })
-      (text, font, size)
-    }),
-  )
+    font~,
+    size=Size::new(font.width(text),font.height(text)))
 }
 
-pub fn Renderable::render_sequence(ctx : Canvas2D, xs : Array[Positioned[Renderable]]) -> Unit! {
+pub fn Renderable::render_sequence(ctx : Canvas2D, xs : Array[Positioned[Renderable]]) -> Unit {
   for x in xs {
-    let { offset,box} = x 
-    assert_true!(offset.x >= 0 && offset.y >= 0)
-    if offset.x < window.innerWidth() && offset.y < window.innerHeight() {
+    let { offset,view: box} = x 
+    guard (offset.x >= 0 && offset.y >= 0)
+    if offset.inside_window() {
       box.render(offset,ctx)
     }
   }
