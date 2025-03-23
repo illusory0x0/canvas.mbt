@@ -39,35 +39,36 @@ let yellow : Color = hsl(60, 100, 50)
 let font : Font = { ..Font::default(), weight: 320 }
 
 ///|
-fn render() -> Unit {
-  let e1 = Element::ellipse(
-    center={ x: 0, y: 0 },
-    strokeColor=yellow,
-    fillColor=white,
-    radiusX=100,
-    radiusY=50,
-    rotation=@math.PI / 2,
-    startAngle=0,
-    endAngle=@math.PI * 2,
-    counterclockwise=false,
-    lineWidth=10,
-  )
-  let e2 = Element::ellipse(
-    center={ x: 0, y: 0 },
-    strokeColor=yellow,
-    fillColor=white,
-    radiusX=50,
-    radiusY=100,
-    rotation=0,
-    startAngle=0,
-    endAngle=@math.PI * 2,
-    counterclockwise=false,
-    lineWidth=10,
-  )
-  let view = Element::coordinate([e1, e2])
-  println(e1.size())
-  println(e2.size())
-  let rs = view.to_render_sequence({ x: 100 + 20, y: 100 + 20 })
+struct App {
+  element : Element
+  origin : Vector
+}
+
+///|
+let app : App = {
+  element: Element::Control(
+    element=Element::text(text="click me", font~, color=white).padding(
+      thickness=Thinkness::same(10),
+      color=black,
+    ),
+    on_click=Some(fn() { println("clicked") }),
+  ),
+  origin: { x: 20, y: 20 },
+}
+
+///|
+pub fn App::render_sequence(self : App) -> Array[Positioned[Renderable]] {
+  self.element.to_render_sequence(self.origin)
+}
+
+///|
+pub fn App::event_sequence(self : App) -> Array[Positioned[Element]] {
+  self.element.to_handler_sequence(self.origin)
+}
+
+///|
+pub fn App::render(self : App) -> Unit {
+  let rs = self.render_sequence()
   Renderable::render_sequence(ctx, rs)
 }
 
@@ -75,8 +76,24 @@ fn render() -> Unit {
 pub fn entry() -> Unit {
   window.addEventListener("resize", fn(_) {
     resize()
-    render()
+    app.render()
+  })
+  window.addEventListener("click", fn(e) {
+    let e : @dom.MouseEvent = e.downcast()
+    let es = app.event_sequence()
+    for x in es {
+      let { offset, view} = x 
+      let rect = { offset, size : view.size() }
+      let p = { x: e.clientX(), y: e.clientY() }
+      if p.inside(rect) {
+        match view {
+          Control(on_click~,..) => on_click.unwrap()()
+          _ => panic()
+        }
+      }
+
+    }
   })
   resize()
-  render()
+  app.render()
 }

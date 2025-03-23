@@ -91,6 +91,32 @@ pub fn Element::to_render_sequence(
   buf
 }
 
+pub fn Element::to_handler_sequence(
+  self : Element,
+  origin : Vector
+) -> Array[Positioned[Element]] {
+  guard origin.x >= 0 && origin.y >= 0
+  let buf = []
+  fn dfs(root : Element, origin : Vector) {
+    if origin.inside_window() {
+      match root {
+        Layout(children~, ..) =>
+          for x in children {
+            let { offset, view } = x
+            dfs(view, origin + offset)
+          }
+        Render(x) => ()
+        Control(element~, ..) =>  { 
+          buf.push({ offset: origin, view: self })
+          dfs(element, origin) 
+        }
+      }
+    }
+  }
+  dfs(self, origin)
+  buf
+}
+
 ///|
 pub fn Element::layer(xs : Array[Positioned[Element]]) -> Element {
   let mut w = 0
