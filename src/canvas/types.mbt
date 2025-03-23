@@ -87,17 +87,11 @@ pub enum Renderable {
 typealias @dom.Canvas2D
 
 ///|
-pub(all) struct Positioned[T] {
-  offset : Vector
-  view : T
-} derive(Show)
-
-///|
 pub typealias OnClick = () -> Unit
 
 ///|
 pub enum Element {
-  Layout(sort~ : String, size~ : Size, children~ : Array[Positioned[Element]])
+  Layout(sort~ : String, size~ : Size, children~ : Array[(Vector, Element)])
   Render(Renderable)
   Control(element~ : Element, on_click~ : OnClick?)
 }

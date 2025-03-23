@@ -57,12 +57,12 @@ let app : App = {
 }
 
 ///|
-pub fn App::render_sequence(self : App) -> Array[Positioned[Renderable]] {
+pub fn App::render_sequence(self : App) -> Array[(Vector,Renderable)] {
   self.element.to_render_sequence(self.origin)
 }
 
 ///|
-pub fn App::event_sequence(self : App) -> Array[Positioned[Element]] {
+pub fn App::event_sequence(self : App) -> Array[(Vector,Element)] {
   self.element.to_handler_sequence(self.origin)
 }
 
@@ -82,7 +82,7 @@ pub fn entry() -> Unit {
     let e : @dom.MouseEvent = e.downcast()
     let es = app.event_sequence()
     for x in es {
-      let { offset, view} = x 
+      let (offset, view) = x 
       let rect = { offset, size : view.size() }
       let p = { x: e.clientX(), y: e.clientY() }
       if p.inside(rect) {

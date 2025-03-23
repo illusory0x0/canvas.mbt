@@ -22,7 +22,7 @@ pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
     let { width, height } = x.size()
     w += width
     h = @math.maximum(h, height)
-    children.push(Positioned::new({ x: w, y: 0 }, x))
+    children.push(({ x: w, y: 0 }, x))
   }
   let size = Size::new(w + (len - 1) * spacing, h)
   Element::Layout(sort="hstack", size~, children~)
@@ -38,7 +38,7 @@ pub fn Element::vstack(xs : Array[Element], spacing~ : Int) -> Element {
     let { width, height } = x.size()
     w = @math.maximum(w, width)
     h += height
-    children.push(Positioned::new({ x: 0, y: h }, x))
+    children.push(({ x: 0, y: h }, x))
   }
   let size = Size::new(w, h + (len - 1) * spacing)
   Element::Layout(sort="vstack", size~, children~)
@@ -70,7 +70,7 @@ test "hstack" {
 pub fn Element::to_render_sequence(
   self : Element,
   origin : Vector
-) -> Array[Positioned[Renderable]] {
+) -> Array[(Vector,Renderable)] {
   guard origin.x >= 0 && origin.y >= 0
   let buf = []
   fn dfs(root : Element, origin : Vector) {
@@ -78,15 +78,14 @@ pub fn Element::to_render_sequence(
       match root {
         Layout(children~, ..) =>
           for x in children {
-            let { offset, view } = x
+            let (offset,view) = x
             dfs(view, origin + offset)
           }
-        Render(x) => buf.push(Positioned::new(origin, x))
+        Render(x) => buf.push((origin, x))
         Control(element~, ..) => dfs(element, origin)
       }
     }
   }
-
   dfs(self, origin)
   buf
 }
@@ -94,7 +93,7 @@ pub fn Element::to_render_sequence(
 pub fn Element::to_handler_sequence(
   self : Element,
   origin : Vector
-) -> Array[Positioned[Element]] {
+) -> Array[(Vector,Element)] {
   guard origin.x >= 0 && origin.y >= 0
   let buf = []
   fn dfs(root : Element, origin : Vector) {
@@ -102,12 +101,12 @@ pub fn Element::to_handler_sequence(
       match root {
         Layout(children~, ..) =>
           for x in children {
-            let { offset, view } = x
+            let (offset,view) = x
             dfs(view, origin + offset)
           }
         Render(x) => ()
         Control(element~, ..) =>  { 
-          buf.push({ offset: origin, view: self })
+          buf.push((origin,self))
           dfs(element, origin) 
         }
       }
@@ -118,11 +117,11 @@ pub fn Element::to_handler_sequence(
 }
 
 ///|
-pub fn Element::layer(xs : Array[Positioned[Element]]) -> Element {
+pub fn Element::layer(xs : Array[(Vector,Element)]) -> Element {
   let mut w = 0
   let mut h = 0
   for x in xs {
-    let { view, offset } = x
+    let (offset,view) = x
     let sz = view.size()
     w = @math.maximum(w, offset.x + sz.width)
     h = @math.maximum(h, offset.y + sz.height)
@@ -140,7 +139,7 @@ pub fn Element::coordinate(xs : Array[Element]) -> Element {
     let sz = x.size()
     w = @math.maximum(w, sz.width)
     h = @math.maximum(h, sz.height)
-    children.push({ offset: { x: 0, y: 0 }, view: x })
+    children.push(({x : 0, y :0},x))
   }
   let size = Size::new(w, h)
   Element::Layout(sort="coordinate", size~, children~)
@@ -171,8 +170,8 @@ fn Element::margin(
   let size = self.margin_size(thickness)
   let offset = Element::margin_offset(thickness)
   let children = [
-    Positioned::new(Vector::default(), Render(background)),
-    Positioned::new(offset, self),
+    (Vector::default(), Render(background)),
+    (offset, self),
   ]
   Layout(sort~, size~, children~)
 }
@@ -186,11 +185,11 @@ pub fn Element::border(
   let size = self.margin_size(thickness)
   let offset = Element::margin_offset(thickness)
   let children = [
-    Positioned::new(
+    (
       Vector::default(),
       Render(Renderable::border(color~, thickness~, size~)),
     ),
-    Positioned::new(offset, self),
+    (offset, self),
   ]
   Layout(sort="border", size~, children~)
 }
@@ -204,11 +203,11 @@ pub fn Element::padding(
   let size = self.margin_size(thickness)
   let offset = Element::margin_offset(thickness)
   let children = [
-    Positioned::new(
+    (
       Vector::default(),
       Render(Renderable::rectangle(color~, size~)),
     ),
-    Positioned::new(offset, self),
+    (offset, self),
   ]
   Layout(sort="padding", size~, children~)
 }

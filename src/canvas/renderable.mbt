@@ -109,13 +109,13 @@ pub fn Renderable::text(
 ///|
 pub fn Renderable::render_sequence(
   ctx : Canvas2D,
-  xs : Array[Positioned[Renderable]]
+  xs : Array[(Vector,Renderable)]
 ) -> Unit {
   for x in xs {
-    let { offset, view: box } = x
+    let (offset, renderable) = x
     guard offset.x >= 0 && offset.y >= 0
     if offset.inside_window() {
-      box.render(offset, ctx)
+      renderable.render(offset, ctx)
     }
   }
 }
