@@ -118,4 +118,5 @@ export let importObject = {
   Element: prototype_to_ffi(Element),
   HTMLElement: prototype_to_ffi(HTMLElement),
   CSSStyleDeclaration: prototype_to_ffi(CSSStyleDeclaration),
+  HTMLImageElement: prototype_to_ffi(HTMLImageElement),
 }

@@ -1,6 +1,8 @@
+pub impl DOM_Element for Element with to_element(self) = "%identity"
 pub impl DOM_Element for HTMLCanvasElement with to_element(self) = "%identity"
 pub impl DOM_Element for HTMLDivElement with to_element(self) = "%identity"
-pub impl DOM_Element for Element with to_element(self) = "%identity"
+pub impl DOM_Element for HTMLAnchorElement with to_element(self) = "%identity"
+pub impl DOM_Element for HTMLImageElement with to_element(self) = "%identity"
 pub impl DOM_Element for HTMLElement with to_element(self) = "%identity"
 
 

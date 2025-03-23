@@ -6,6 +6,8 @@ pub impl DOM_EventTarget for HTMLCanvasElement with to_eventTarget(self) = "%ide
 
 ///|
 pub impl DOM_EventTarget for HTMLDivElement with to_eventTarget(self) = "%identity"
+pub impl DOM_EventTarget for HTMLAnchorElement with to_eventTarget(self) = "%identity"
+pub impl DOM_EventTarget for HTMLImageElement with to_eventTarget(self) = "%identity"
 
 ///|
 pub impl DOM_EventTarget for Document with to_eventTarget(self) = "%identity"

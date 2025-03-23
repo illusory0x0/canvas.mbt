@@ -1,6 +1,7 @@
 ///|
 let canvas : @dom.HTMLCanvasElement = document.querySelector("#canvas")
 
+///|
 fn scale_size() -> Double {
   window.devicePixelRatio().round() + 1
 }
@@ -22,26 +23,52 @@ fn resize() -> Unit {
   ctx.scale(dpr, dpr)
 }
 
-
-pub fn View::text(text~: String, font~ : Font, color~: Color) -> View {
-  Render(Renderable::text(text~,font~,color~))
-}
-
+///|
 let ctx : Canvas2D = canvas.getContext("2d")
 
-let white : Color = hsl(0,0,100)
-let black : Color = hsl(0,0,0)
-let font : Font = {..Font::default(), weight:320}
+///|
+let white : Color = hsl(0, 0, 100)
+
+///|
+let black : Color = hsl(0, 0, 0)
+
+///|
+let yellow : Color = hsl(60, 100, 50)
+
+///|
+let font : Font = { ..Font::default(), weight: 320 }
+
 ///|
 fn render() -> Unit {
-
-  let text = View::text(text="Hello, world!", font~, color=white)
-
-  let view = text.padding(thickness=Thinkness::same(14), color=black)
-  let rs = view.to_render_sequence(Vector::new(20,20))
-
-  Renderable::render_sequence(ctx,rs)
-
+  let e1 = View::ellipse(
+    center={ x: 0, y: 0 },
+    strokeColor=yellow,
+    fillColor=white,
+    radiusX=100,
+    radiusY=50,
+    rotation=@math.PI / 2,
+    startAngle=0,
+    endAngle=@math.PI * 2,
+    counterclockwise=false,
+    lineWidth=10,
+  )
+  let e2 = View::ellipse(
+    center={ x: 0, y: 0 },
+    strokeColor=yellow,
+    fillColor=white,
+    radiusX=50,
+    radiusY=100,
+    rotation=0,
+    startAngle=0,
+    endAngle=@math.PI * 2,
+    counterclockwise=false,
+    lineWidth=10,
+  )
+  let view = View::coordinate([e1, e2])
+  println(e1.size())
+  println(e2.size())
+  let rs = view.to_render_sequence({ x: 100 + 20, y: 100 + 20 })
+  Renderable::render_sequence(ctx, rs)
 }
 
 ///|

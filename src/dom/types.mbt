@@ -5,6 +5,7 @@ pub extern type HTMLCanvasElement
 pub extern type HTMLDivElement
 pub extern type HTMLAnchorElement
 
+pub extern type HTMLImageElement
 pub extern type Document
 pub extern type Window
 

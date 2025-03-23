@@ -7,8 +7,3 @@ import { importObject } from '../ts-import-object/import-object.js'
 let { entry } = await import('../../target/js/release/build/canvas/canvas.js')
 
 entry()
-
-Window
-
-document.createElement
-

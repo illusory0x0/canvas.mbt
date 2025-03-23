@@ -30,6 +30,7 @@ pub extern "js" fn Canvas2D::fillRect(
   height : Int
 ) = "importObject.CanvasRenderingContext2D.fillRect"
 
+///|
 pub extern "js" fn Canvas2D::fillRectF(
   self : Canvas2D,
   x : Double,
@@ -38,7 +39,7 @@ pub extern "js" fn Canvas2D::fillRectF(
   height : Double
 ) = "importObject.CanvasRenderingContext2D.fillRect"
 
-
+///|
 pub extern "js" fn Canvas2D::clearRect(
   self : Canvas2D,
   x : Int,
@@ -56,9 +57,72 @@ pub extern "js" fn Canvas2D::clearRectF(
   height : Double
 ) = "importObject.CanvasRenderingContext2D.clearRect"
 
-pub extern "js" fn Canvas2D::measureText(self : Canvas2D, text : String) -> TextMetrics = "importObject.CanvasRenderingContext2D.measureText"
+///|
+pub extern "js" fn Canvas2D::measureText(
+  self : Canvas2D,
+  text : String
+) -> TextMetrics = "importObject.CanvasRenderingContext2D.measureText"
 
+///|
 pub extern "js" fn Canvas2D::set_textBaseline(self : Canvas2D, tag : String) = "importObject.CanvasRenderingContext2D.set_textBaseline"
 
+///|
+pub extern "js" fn Canvas2D::scale(self : Canvas2D, x : Int, y : Int) = "importObject.CanvasRenderingContext2D.scale"
 
-pub extern "js" fn Canvas2D::scale(self : Canvas2D, x : Int, y : Int) =  "importObject.CanvasRenderingContext2D.scale"
+///|
+pub extern "js" fn Canvas2D::beginPath(self : Canvas2D) = "importObject.CanvasRenderingContext2D.beginPath"
+
+///|
+pub extern "js" fn Canvas2D::closePath(self : Canvas2D) = "importObject.CanvasRenderingContext2D.closePath"
+
+///|
+pub extern "js" fn Canvas2D::stroke(self : Canvas2D) = "importObject.CanvasRenderingContext2D.stroke"
+
+///|
+pub extern "js" fn Canvas2D::fill(self : Canvas2D) = "importObject.CanvasRenderingContext2D.fill"
+
+///|
+pub extern "js" fn Canvas2D::moveTo(self : Canvas2D, x : Int, y : Int) = "importObject.CanvasRenderingContext2D.moveTo"
+
+///|
+pub extern "js" fn Canvas2D::lineTo(self : Canvas2D, x : Int, y : Int) = "importObject.CanvasRenderingContext2D.lineTo"
+
+///|
+pub extern "js" fn Canvas2D::arc(
+  self : Canvas2D,
+  x : Int,
+  y : Int,
+  radius : Int,
+  startAngle : Double,
+  endAngle : Double,
+  counterclockwise : Bool
+) = "importObject.CanvasRenderingContext2D.arc"
+
+///|
+pub extern "js" fn Canvas2D::arcTo(
+  self : Canvas2D,
+  x1 : Int,
+  y1 : Int,
+  x2 : Int,
+  y2 : Int,
+  radius : Int
+) = "importObject.CanvasRenderingContext2D.arcTo"
+
+///|
+pub extern "js" fn Canvas2D::ellipse(
+  self : Canvas2D,
+  x : Int,
+  y : Int,
+  radiusX : Int,
+  radiusY : Int,
+  rotation : Double,
+  startAngle : Double,
+  endAngle : Double,
+  counterclockwise : Bool
+) = "importObject.CanvasRenderingContext2D.ellipse"
+
+///|
+pub extern "js" fn Canvas2D::save(self : Canvas2D) = "importObject.CanvasRenderingContext2D.save"
+
+///|
+pub extern "js" fn Canvas2D::restore(self : Canvas2D) = "importObject.CanvasRenderingContext2D.restore"
