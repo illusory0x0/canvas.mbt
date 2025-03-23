@@ -3,7 +3,7 @@ pub fn Element::size(self : Element) -> Size {
   match self {
     Layout(size~, ..) => size
     Render(x) => x.size()
-    Control(element~, ..) => element.size()
+    Control(element,_) => element.size()
   }
 }
 
@@ -70,27 +70,16 @@ test "hstack" {
 pub fn Element::to_render_sequence(
   self : Element,
   origin : Vector
-) -> Array[(Vector,Renderable)] {
-  guard origin.x >= 0 && origin.y >= 0
-  let buf = []
-  fn dfs(root : Element, origin : Vector) {
-    if origin.inside_window() {
-      match root {
-        Layout(children~, ..) =>
-          for x in children {
-            let (offset,view) = x
-            dfs(view, origin + offset)
-          }
-        Render(x) => buf.push((origin, x))
-        Control(element~, ..) => dfs(element, origin)
-      }
+) -> Iter[(Vector,Renderable)] {
+  self.to_layout_sequence(origin).iter().filter_map(fn { (offset,element) => {
+    match element {
+      Render(x) => Some((offset, x))
+      _ => None
     }
-  }
-  dfs(self, origin)
-  buf
+  }})
 }
 
-pub fn Element::to_handler_sequence(
+pub fn Element::to_layout_sequence(
   self : Element,
   origin : Vector
 ) -> Array[(Vector,Element)] {
@@ -104,9 +93,9 @@ pub fn Element::to_handler_sequence(
             let (offset,view) = x
             dfs(view, origin + offset)
           }
-        Render(x) => ()
-        Control(element~, ..) =>  { 
-          buf.push((origin,self))
+        Render(_) => buf.push((origin, root))
+        Control(element, _) =>  { 
+          buf.push((origin,root))
           dfs(element, origin) 
         }
       }
@@ -261,18 +250,3 @@ pub fn Element::ellipse(
   )
 }
 
-///|
-pub impl Show for Element with to_string(self) {
-  match self {
-    Render(x) => "Render(\{x})"
-    Layout(sort~, size~, children~) =>
-      "Layout(sort=\{sort},size=\{size},children=\{children})"
-    Control(element~, on_click~) =>
-      "Control(element=\{element},on_click=\{not(on_click.is_empty())})"
-  }
-}
-
-///|
-pub impl Show for Element with output(self, logger) {
-  logger.write_string(self.to_string())
-}

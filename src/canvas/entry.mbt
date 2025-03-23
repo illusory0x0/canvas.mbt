@@ -47,29 +47,31 @@ struct App {
 ///|
 let app : App = {
   element: Element::Control(
-    element=Element::text(text="click me", font~, color=white).padding(
+    Element::text(text="click me", font~, color=white).padding(
       thickness=Thinkness::same(10),
       color=black,
     ),
-    on_click=Some(fn() { println("clicked") }),
+    {
+      on_click: Some(fn() { println("clicked") }),
+    }
   ),
   origin: { x: 20, y: 20 },
 }
 
 ///|
-pub fn App::render_sequence(self : App) -> Array[(Vector,Renderable)] {
+pub fn App::render_sequence(self : App) -> Iter[(Vector,Renderable)] {
   self.element.to_render_sequence(self.origin)
 }
 
 ///|
 pub fn App::event_sequence(self : App) -> Array[(Vector,Element)] {
-  self.element.to_handler_sequence(self.origin)
+  self.element.to_layout_sequence(self.origin)
 }
 
 ///|
 pub fn App::render(self : App) -> Unit {
   let rs = self.render_sequence()
-  Renderable::render_sequence(ctx, rs)
+  Renderable::render_sequence(ctx, rs.iter())
 }
 
 ///|
@@ -87,8 +89,8 @@ pub fn entry() -> Unit {
       let p = { x: e.clientX(), y: e.clientY() }
       if p.inside(rect) {
         match view {
-          Control(on_click~,..) => on_click.unwrap()()
-          _ => panic()
+          Control(_,handler) => handler.on_click.unwrap()()
+          _ => ()
         }
       }
 

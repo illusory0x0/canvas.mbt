@@ -93,5 +93,11 @@ pub typealias OnClick = () -> Unit
 pub enum Element {
   Layout(sort~ : String, size~ : Size, children~ : Array[(Vector, Element)])
   Render(Renderable)
-  Control(element~ : Element, on_click~ : OnClick?)
+  Control(Element, Handler)
+} derive(Show)
+
+pub struct Handler {
+  on_click : OnClick?
 }
+
+pub impl Show for Handler with output(self,logger) { }

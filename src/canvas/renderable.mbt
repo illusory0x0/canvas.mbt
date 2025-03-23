@@ -109,7 +109,7 @@ pub fn Renderable::text(
 ///|
 pub fn Renderable::render_sequence(
   ctx : Canvas2D,
-  xs : Array[(Vector,Renderable)]
+  xs : Iter[(Vector,Renderable)]
 ) -> Unit {
   for x in xs {
     let (offset, renderable) = x
