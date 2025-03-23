@@ -93,7 +93,11 @@ pub(all) struct Positioned[T] {
 } derive(Show)
 
 ///|
-pub enum View {
-  Layout(sort~ : String, size~ : Size, children~ : Array[Positioned[View]])
+pub typealias OnClick = () -> Unit
+
+///|
+pub enum Element {
+  Layout(sort~ : String, size~ : Size, children~ : Array[Positioned[Element]])
   Render(Renderable)
-} derive(Show)
+  Control(element~ : Element, on_click~ : OnClick?)
+}

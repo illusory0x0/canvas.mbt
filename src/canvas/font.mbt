@@ -75,85 +75,86 @@ pub impl Show for Font with output(self, logger) {
       logger.write_string(x)
       logger.write_char('"')
     }
-      for x in genericFamily {
-        logger.write_char(',')
-        x.output(logger)
-      }
+    for x in genericFamily {
+      logger.write_char(',')
+      x.output(logger)
+    }
   }
 }
 
+///|
 test {
   let font : Font = {
     family: [],
-    genericFamily:[],
+    genericFamily: [],
     size: 12,
     style: FontStyle::Normal,
-    weight: 400
+    weight: 400,
   }
   inspect!(font, content="normal 400 12px ")
   let font : Font = {
     family: ["Arial"],
-    genericFamily:[],
+    genericFamily: [],
     size: 12,
     style: FontStyle::Normal,
-    weight: 400
+    weight: 400,
   }
-
   inspect!(font, content="normal 400 12px \"Arial\"")
-
   let font : Font = {
     family: ["Arial"],
     genericFamily: [GenericFontFamily::Monospace],
     size: 12,
     style: FontStyle::Normal,
-    weight: 400
+    weight: 400,
   }
   inspect!(font, content="normal 400 12px \"Arial\",monospace")
 }
 
-
+///|
 let context : @dom.Canvas2D = {
-  let canvas : @dom.HTMLCanvasElement = @dom.document.createElement("canvas") |> @dom.coerce
-  canvas.getContext("2d") 
+  let canvas : @dom.HTMLCanvasElement = @dom.document.createElement("canvas")
+    |> @dom.coerce
+  canvas.getContext("2d")
 }
 
-
+///|
 fn Font::measure_text(self : Font, text : String) -> @dom.TextMetrics {
   context.set_font(self.to_string())
   context.measureText(text)
 }
+
+///|
 pub fn Font::width(self : Font, text : String) -> Int {
   self.measure_text(text).width()
 }
 
+///|
 pub fn Font::bounding_box_ascent(self : Font, text : String) -> Int {
   self.measure_text(text).fontBoundingBoxAscent()
 }
 
+///|
 pub fn Font::bounding_box_descent(self : Font, text : String) -> Int {
   self.measure_text(text).fontBoundingBoxDescent()
 }
 
+///|
 pub fn Font::height(self : Font, text : String) -> Int {
   self.bounding_box_ascent(text) + self.bounding_box_descent(text)
 }
 
+///|
 pub impl Default for Font with default() {
   Font::new()
 }
 
+///|
 pub fn Font::new(
   family~ : Array[String] = ["Cascadia Mono"],
-  genericFamily~ : Array[GenericFontFamily]=[ GenericFontFamily::Monospace],
+  genericFamily~ : Array[GenericFontFamily] = [GenericFontFamily::Monospace],
   size~ : Int = 14,
   style~ : FontStyle = FontStyle::Normal,
   weight~ : Int = 400
 ) -> Font {
-  {
-    family,
-    genericFamily,
-    size,
-    style,
-    weight
-  }
+  { family, genericFamily, size, style, weight }
 }

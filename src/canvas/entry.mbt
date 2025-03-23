@@ -40,7 +40,7 @@ let font : Font = { ..Font::default(), weight: 320 }
 
 ///|
 fn render() -> Unit {
-  let e1 = View::ellipse(
+  let e1 = Element::ellipse(
     center={ x: 0, y: 0 },
     strokeColor=yellow,
     fillColor=white,
@@ -52,7 +52,7 @@ fn render() -> Unit {
     counterclockwise=false,
     lineWidth=10,
   )
-  let e2 = View::ellipse(
+  let e2 = Element::ellipse(
     center={ x: 0, y: 0 },
     strokeColor=yellow,
     fillColor=white,
@@ -64,7 +64,7 @@ fn render() -> Unit {
     counterclockwise=false,
     lineWidth=10,
   )
-  let view = View::coordinate([e1, e2])
+  let view = Element::coordinate([e1, e2])
   println(e1.size())
   println(e2.size())
   let rs = view.to_render_sequence({ x: 100 + 20, y: 100 + 20 })

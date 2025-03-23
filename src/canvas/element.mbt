@@ -1,18 +1,19 @@
 ///|
-pub fn View::size(self : View) -> Size {
+pub fn Element::size(self : Element) -> Size {
   match self {
     Layout(size~, ..) => size
     Render(x) => x.size()
+    Control(element~, ..) => element.size()
   }
 }
 
 ///|
-pub fn View::spacer(size : Size) -> View {
+pub fn Element::spacer(size : Size) -> Element {
   Layout(size~, sort="spacer", children=[])
 }
 
 ///|
-pub fn View::hstack(xs : Array[View], spacing~ : Int) -> View {
+pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
   let mut w = 0
   let mut h = 0
   let len = xs.length()
@@ -24,11 +25,11 @@ pub fn View::hstack(xs : Array[View], spacing~ : Int) -> View {
     children.push(Positioned::new({ x: w, y: 0 }, x))
   }
   let size = Size::new(w + (len - 1) * spacing, h)
-  View::Layout(sort="hstack", size~, children~)
+  Element::Layout(sort="hstack", size~, children~)
 }
 
 ///|
-pub fn View::vstack(xs : Array[View], spacing~ : Int) -> View {
+pub fn Element::vstack(xs : Array[Element], spacing~ : Int) -> Element {
   let mut w = 0
   let mut h = 0
   let len = xs.length()
@@ -40,39 +41,39 @@ pub fn View::vstack(xs : Array[View], spacing~ : Int) -> View {
     children.push(Positioned::new({ x: 0, y: h }, x))
   }
   let size = Size::new(w, h + (len - 1) * spacing)
-  View::Layout(sort="vstack", size~, children~)
+  Element::Layout(sort="vstack", size~, children~)
 }
 
 ///|
 test "vstack" {
   let xs = [
-    View::spacer(Size::new(10, 10)),
-    View::spacer(Size::new(20, 20)),
-    View::spacer(Size::new(30, 30)),
+    Element::spacer(Size::new(10, 10)),
+    Element::spacer(Size::new(20, 20)),
+    Element::spacer(Size::new(30, 30)),
   ]
-  let view = View::vstack(xs, spacing=2)
+  let view = Element::vstack(xs, spacing=2)
   inspect!(view.size(), content="{width: 30, height: 64}")
 }
 
 ///|
 test "hstack" {
   let xs = [
-    View::spacer(Size::new(10, 10)),
-    View::spacer(Size::new(20, 20)),
-    View::spacer(Size::new(30, 30)),
+    Element::spacer(Size::new(10, 10)),
+    Element::spacer(Size::new(20, 20)),
+    Element::spacer(Size::new(30, 30)),
   ]
-  let view = View::hstack(xs, spacing=2)
+  let view = Element::hstack(xs, spacing=2)
   inspect!(view.size(), content="{width: 64, height: 30}")
 }
 
 ///|
-pub fn View::to_render_sequence(
-  self : View,
+pub fn Element::to_render_sequence(
+  self : Element,
   origin : Vector
 ) -> Array[Positioned[Renderable]] {
   guard origin.x >= 0 && origin.y >= 0
   let buf = []
-  fn dfs(root : View, origin : Vector) {
+  fn dfs(root : Element, origin : Vector) {
     if origin.inside_window() {
       match root {
         Layout(children~, ..) =>
@@ -81,6 +82,7 @@ pub fn View::to_render_sequence(
             dfs(view, origin + offset)
           }
         Render(x) => buf.push(Positioned::new(origin, x))
+        Control(element~, ..) => dfs(element, origin)
       }
     }
   }
@@ -90,7 +92,7 @@ pub fn View::to_render_sequence(
 }
 
 ///|
-pub fn View::layer(xs : Array[Positioned[View]]) -> View {
+pub fn Element::layer(xs : Array[Positioned[Element]]) -> Element {
   let mut w = 0
   let mut h = 0
   for x in xs {
@@ -100,11 +102,11 @@ pub fn View::layer(xs : Array[Positioned[View]]) -> View {
     h = @math.maximum(h, offset.y + sz.height)
   }
   let size = Size::new(w, h)
-  View::Layout(sort="layer", size~, children=xs)
+  Element::Layout(sort="layer", size~, children=xs)
 }
 
 ///|
-pub fn View::coordinate(xs : Array[View]) -> View {
+pub fn Element::coordinate(xs : Array[Element]) -> Element {
   let mut w = 0
   let mut h = 0
   let children = Array::new(capacity=xs.length())
@@ -115,16 +117,16 @@ pub fn View::coordinate(xs : Array[View]) -> View {
     children.push({ offset: { x: 0, y: 0 }, view: x })
   }
   let size = Size::new(w, h)
-  View::Layout(sort="coordinate", size~, children~)
+  Element::Layout(sort="coordinate", size~, children~)
 }
 
 ///|
-fn View::margin_offset(thickness : Thinkness) -> Vector {
+fn Element::margin_offset(thickness : Thinkness) -> Vector {
   { x: thickness.left, y: thickness.top }
 }
 
 ///|
-fn View::margin_size(self : View, thickness : Thinkness) -> Size {
+fn Element::margin_size(self : Element, thickness : Thinkness) -> Size {
   let { width, height } = self.size()
   Size::new(
     width + thickness.left + thickness.right,
@@ -133,15 +135,15 @@ fn View::margin_size(self : View, thickness : Thinkness) -> Size {
 }
 
 ///|
-fn View::margin(
-  self : View,
+fn Element::margin(
+  self : Element,
   thickness~ : Thinkness,
   color~ : Color,
   sort~ : String,
   background~ : Renderable
-) -> View {
+) -> Element {
   let size = self.margin_size(thickness)
-  let offset = View::margin_offset(thickness)
+  let offset = Element::margin_offset(thickness)
   let children = [
     Positioned::new(Vector::default(), Render(background)),
     Positioned::new(offset, self),
@@ -150,13 +152,13 @@ fn View::margin(
 }
 
 ///|
-pub fn View::border(
-  self : View,
+pub fn Element::border(
+  self : Element,
   thickness~ : Thinkness,
   color~ : Color
-) -> View {
+) -> Element {
   let size = self.margin_size(thickness)
-  let offset = View::margin_offset(thickness)
+  let offset = Element::margin_offset(thickness)
   let children = [
     Positioned::new(
       Vector::default(),
@@ -168,13 +170,13 @@ pub fn View::border(
 }
 
 ///|
-pub fn View::padding(
-  self : View,
+pub fn Element::padding(
+  self : Element,
   thickness~ : Thinkness,
   color~ : Color
-) -> View {
+) -> Element {
   let size = self.margin_size(thickness)
-  let offset = View::margin_offset(thickness)
+  let offset = Element::margin_offset(thickness)
   let children = [
     Positioned::new(
       Vector::default(),
@@ -186,27 +188,27 @@ pub fn View::padding(
 }
 
 ///|
-pub fn View::text(text~ : String, font~ : Font, color~ : Color) -> View {
+pub fn Element::text(text~ : String, font~ : Font, color~ : Color) -> Element {
   Render(Renderable::text(text~, font~, color~))
 }
 
 ///|
-pub fn View::rectangle(color~ : Color, size~ : Size) -> View {
+pub fn Element::rectangle(color~ : Color, size~ : Size) -> Element {
   Render(Renderable::rectangle(color~, size~))
 }
 
 ///|
-pub fn View::line(
+pub fn Element::line(
   p1~ : Vector,
   p2~ : Vector,
   color~ : Color,
   lineWidth~ : Int = 1
-) -> View {
+) -> Element {
   Render(Renderable::line(p1~, p2~, lineWidth~, color~))
 }
 
 ///|
-pub fn View::ellipse(
+pub fn Element::ellipse(
   center~ : Vector,
   strokeColor~ : Color,
   fillColor~ : Color,
@@ -217,7 +219,7 @@ pub fn View::ellipse(
   endAngle~ : Double,
   counterclockwise~ : Bool,
   lineWidth~ : Int
-) -> View {
+) -> Element {
   Render(
     Renderable::ellipse(
       center~,
@@ -232,4 +234,20 @@ pub fn View::ellipse(
       lineWidth~,
     ),
   )
+}
+
+///|
+pub impl Show for Element with to_string(self) {
+  match self {
+    Render(x) => "Render(\{x})"
+    Layout(sort~, size~, children~) =>
+      "Layout(sort=\{sort},size=\{size},children=\{children})"
+    Control(element~, on_click~) =>
+      "Control(element=\{element},on_click=\{not(on_click.is_empty())})"
+  }
+}
+
+///|
+pub impl Show for Element with output(self, logger) {
+  logger.write_string(self.to_string())
 }

@@ -1,0 +1,182 @@
+package illusory0x0/canvas/canvas
+
+alias @illusory0x0/canvas/dom as @dom
+
+// Values
+fn entry() -> Unit
+
+fn hsl(UInt, UInt, UInt) -> Color
+
+// Types and methods
+type Color
+impl Compare for Color
+impl Default for Color
+impl Eq for Color
+impl Hash for Color
+impl Show for Color
+
+pub enum Element {
+  Layout(String, Size, Array[Positioned[Element]])
+  Render(Renderable)
+  Control(Element, (() -> Unit)?)
+}
+impl Element {
+  border(Self, thickness~ : Thinkness, color~ : Color) -> Self
+  coordinate(Array[Self]) -> Self
+  ellipse(center~ : Vector, strokeColor~ : Color, fillColor~ : Color, radiusX~ : Int, radiusY~ : Int, rotation~ : Double, startAngle~ : Double, endAngle~ : Double, counterclockwise~ : Bool, lineWidth~ : Int) -> Self
+  hstack(Array[Self], spacing~ : Int) -> Self
+  layer(Array[Positioned[Self]]) -> Self
+  line(p1~ : Vector, p2~ : Vector, color~ : Color, lineWidth~ : Int = ..) -> Self
+  padding(Self, thickness~ : Thinkness, color~ : Color) -> Self
+  rectangle(color~ : Color, size~ : Size) -> Self
+  size(Self) -> Size
+  spacer(Size) -> Self
+  text(text~ : String, font~ : Font, color~ : Color) -> Self
+  to_render_sequence(Self, Vector) -> Array[Positioned[Renderable]]
+  vstack(Array[Self], spacing~ : Int) -> Self
+}
+impl Show for Element
+
+pub(all) struct Font {
+  family : Array[String]
+  genericFamily : Array[GenericFontFamily]
+  size : Int
+  style : FontStyle
+  weight : Int
+}
+impl Font {
+  bounding_box_ascent(Self, String) -> Int
+  bounding_box_descent(Self, String) -> Int
+  height(Self, String) -> Int
+  new(family~ : Array[String] = .., genericFamily~ : Array[GenericFontFamily] = .., size~ : Int = .., style~ : FontStyle = .., weight~ : Int = ..) -> Self
+  width(Self, String) -> Int
+}
+impl Compare for Font
+impl Default for Font
+impl Eq for Font
+impl Show for Font
+
+pub(all) enum FontStyle {
+  Normal
+  Italic
+}
+impl Compare for FontStyle
+impl Eq for FontStyle
+impl Hash for FontStyle
+impl Show for FontStyle
+
+pub(all) enum GenericFontFamily {
+  Serif
+  SansSerif
+  Monospace
+  Cursive
+  Fantasy
+  SystemUI
+  UISerif
+  UISansSerif
+  UIMonospace
+  UIRounded
+  Math
+  Emoji
+  FangSong
+}
+impl Compare for GenericFontFamily
+impl Eq for GenericFontFamily
+impl Hash for GenericFontFamily
+impl Show for GenericFontFamily
+
+pub(all) struct Positioned[T] {
+  offset : Vector
+  view : T
+}
+impl Positioned {
+  new[T](Vector, T) -> Self[T]
+}
+impl[T : Show] Show for Positioned[T]
+
+pub(all) struct Rect {
+  offset : Vector
+  size : Size
+}
+impl Rect {
+  bottom(Self) -> Int
+  left(Self) -> Int
+  new(Vector, Size) -> Self
+  right(Self) -> Int
+  top(Self) -> Int
+}
+impl Compare for Rect
+impl Default for Rect
+impl Eq for Rect
+impl Hash for Rect
+impl Show for Rect
+
+pub enum Renderable {
+  Text(Color, Size, String, Font)
+  Rectangle(Color, Size)
+  Border(Color, Size, Thinkness)
+  Line(Color, Size, Vector, Vector, Int)
+  Ellipse(Color, Color, Size, Vector, Int, Int, Double, Double, Double, Bool, Int)
+}
+impl Renderable {
+  border(size~ : Size, color~ : Color, thickness~ : Thinkness) -> Self
+  ellipse(center~ : Vector, strokeColor~ : Color, fillColor~ : Color, radiusX~ : Int, radiusY~ : Int, rotation~ : Double, startAngle~ : Double, endAngle~ : Double, counterclockwise~ : Bool, lineWidth~ : Int) -> Self
+  line(p1~ : Vector, p2~ : Vector, lineWidth~ : Int, color~ : Color) -> Self
+  rectangle(size~ : Size, color~ : Color) -> Self
+  render(Self, Vector, @dom.CanvasRenderingContext2D) -> Unit
+  render_sequence(@dom.CanvasRenderingContext2D, Array[Positioned[Self]]) -> Unit
+  size(Self) -> Size
+  text(text~ : String, font~ : Font, color~ : Color) -> Self
+}
+impl Show for Renderable
+
+pub(all) struct Size {
+  width : Int
+  height : Int
+}
+impl Size {
+  new(Int, Int) -> Self
+}
+impl Compare for Size
+impl Default for Size
+impl Eq for Size
+impl Hash for Size
+impl Show for Size
+
+pub(all) struct Thinkness {
+  left : Int
+  top : Int
+  right : Int
+  bottom : Int
+}
+impl Thinkness {
+  new(Int, Int, Int, Int) -> Self
+  same(Int) -> Self
+}
+impl Compare for Thinkness
+impl Default for Thinkness
+impl Eq for Thinkness
+impl Hash for Thinkness
+impl Show for Thinkness
+
+pub(all) struct Vector {
+  x : Int
+  y : Int
+}
+impl Vector {
+  inside(Self, Rect) -> Bool
+  inside_window(Self) -> Bool
+  new(Int, Int) -> Self
+}
+impl Add for Vector
+impl Compare for Vector
+impl Default for Vector
+impl Eq for Vector
+impl Hash for Vector
+impl Show for Vector
+
+// Type aliases
+pub typealias OnClick = () -> Unit
+
+// Traits
+
