@@ -61,7 +61,9 @@ fn App::new() -> App {
   let counter = Dependency::new(fn() { 0 })
   let button = Element::text(text="+", font~, color=white)
       .padding(thickness=Thinkness::same(10), color=black)
-      .control(on_click=fn() { counter.modify(fn { x => x + 1 }) })
+      .control(on_click=fn() { 
+        counter.modify(fn { x => x + 1 }) 
+      })
 
   let element = Dependency::new(fn() {
     let label = Element::text(
