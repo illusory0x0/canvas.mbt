@@ -118,6 +118,7 @@ fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
 ///|
 fn App::render(self : App) -> Unit {
   let rs = self.render_sequence()
+  ctx.clearRect(0,0,window.innerWidth(),window.innerHeight())
   Renderable::render_sequence(ctx, rs)
 }
 
@@ -147,15 +148,18 @@ pub fn entry() -> Unit {
     }
     app.render()
   })
-  for i in 0..<1000 {
+
+  resize()
+  app.render()
+}
+
+pub fn add_1000() -> Unit {
+    for i in 0..<1000 {
     let es = app.event_sequence()
     for x in es {
       let (rect, handler) = x
       handler.on_click.map(fn(f) { f() }) |> ignore
+      app.render()
     }
-    app.render()
   }
-
-  resize()
-  app.render()
 }

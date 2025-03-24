@@ -2,7 +2,8 @@
   "link": {
     "js": {
       "exports": [
-        "entry"
+        "entry",
+        "add_1000"
       ],
       "format": "esm"
     }
