@@ -72,7 +72,7 @@ fn App::new() -> App {
       font~,
       color=white,
     ).padding(thickness=Thinkness::same(10), color=black)
-    Element::vstack([label, button], spacing=20)
+    Element::hstack([label, button], spacing=20)
   })
   let layout = Dependency::new(fn() { element.value.to_layout_sequence(origin) })
   element.depend_on(counter)
