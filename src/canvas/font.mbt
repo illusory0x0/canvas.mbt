@@ -152,7 +152,7 @@ pub impl Default for Font with default() {
 pub fn Font::new(
   family~ : Array[String] = ["Cascadia Mono"],
   genericFamily~ : Array[GenericFontFamily] = [GenericFontFamily::Monospace],
-  size~ : Int = 14,
+  size~ : Int = 16,
   style~ : FontStyle = FontStyle::Normal,
   weight~ : Int = 400
 ) -> Font {

@@ -35,6 +35,7 @@ impl CanvasRenderingContext2D {
   measureText(Self, String) -> TextMetrics
   moveTo(Self, Int, Int) -> Unit
   restore(Self) -> Unit
+  roundRect(Self, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit
   save(Self) -> Unit
   scale(Self, Int, Int) -> Unit
   set_fillStyle(Self, String) -> Unit
@@ -43,6 +44,7 @@ impl CanvasRenderingContext2D {
   set_strokeStyle(Self, String) -> Unit
   set_textBaseline(Self, String) -> Unit
   stroke(Self) -> Unit
+  strokeRect(Self, Int, Int, Int, Int) -> Unit
 }
 
 pub extern type Console
@@ -64,6 +66,10 @@ impl DOM_EventTarget for Element
 impl DOM_HTMLElement for Element
 
 pub extern type Event
+impl Event {
+  downcast[T : DOM_Event](Self) -> T
+}
+impl DOM_Event for Event
 
 pub extern type EventTarget
 impl DOM_EventTarget for EventTarget
@@ -98,8 +104,14 @@ impl DOM_EventTarget for HTMLImageElement
 impl DOM_HTMLElement for HTMLImageElement
 
 pub extern type KeyboardEvent
+impl DOM_Event for KeyboardEvent
 
 pub extern type MouseEvent
+impl MouseEvent {
+  clientX(Self) -> Int
+  clientY(Self) -> Int
+}
+impl DOM_Event for MouseEvent
 
 pub extern type Node
 impl DOM_EventTarget for Node
@@ -131,6 +143,10 @@ pub(open) trait DOM_Element {
   querySelector(Self, String) -> Element?
 }
 impl DOM_Element::querySelector
+
+pub(open) trait DOM_Event {
+  to_event(Self) -> Event
+}
 
 pub(open) trait DOM_EventTarget {
   to_eventTarget(Self) -> EventTarget

@@ -27,6 +27,7 @@ pub(open) trait DOM_HTMLElement {
   style(Self) -> CSSStyleDeclaration
 }
 
+///|
 pub(open) trait DOM_Event {
   to_event(Self) -> Event
 }

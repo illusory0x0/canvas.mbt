@@ -1,8 +1,11 @@
 package illusory0x0/canvas/canvas
 
 alias @illusory0x0/canvas/dom as @dom
+alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
+fn add_1000() -> Unit
+
 fn entry() -> Unit
 
 fn hsl(UInt, UInt, UInt) -> Color
@@ -15,24 +18,44 @@ impl Eq for Color
 impl Hash for Color
 impl Show for Color
 
+pub struct Dependency[A] {
+  value : A
+  // private fields
+}
+impl Dependency {
+  depend_on[A, B](Self[A], Self[B]) -> Unit
+  modify[A](Self[A], (A) -> A) -> Unit
+  new[A](() -> A) -> Self[A]
+  update[A](Self[A], A) -> Unit
+}
+impl[A : Compare] Compare for Dependency[A]
+impl[A : Default] Default for Dependency[A]
+impl[A : Eq] Eq for Dependency[A]
+impl[A : Hash] Hash for Dependency[A]
+impl[A : Show] Show for Dependency[A]
+impl[A : ToJson] ToJson for Dependency[A]
+impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Dependency[A]
+
 pub enum Element {
-  Layout(String, Size, Array[Positioned[Element]])
+  Layout(String, Size, Array[(Vector, Element)])
   Render(Renderable)
-  Control(Element, (() -> Unit)?)
+  Control(Element, Handler)
 }
 impl Element {
   border(Self, thickness~ : Thinkness, color~ : Color) -> Self
+  control(Self, on_click? : () -> Unit, on_double_click? : () -> Unit) -> Self
   coordinate(Array[Self]) -> Self
   ellipse(center~ : Vector, strokeColor~ : Color, fillColor~ : Color, radiusX~ : Int, radiusY~ : Int, rotation~ : Double, startAngle~ : Double, endAngle~ : Double, counterclockwise~ : Bool, lineWidth~ : Int) -> Self
   hstack(Array[Self], spacing~ : Int) -> Self
-  layer(Array[Positioned[Self]]) -> Self
+  layer(Array[(Vector, Self)]) -> Self
   line(p1~ : Vector, p2~ : Vector, color~ : Color, lineWidth~ : Int = ..) -> Self
   padding(Self, thickness~ : Thinkness, color~ : Color) -> Self
   rectangle(color~ : Color, size~ : Size) -> Self
   size(Self) -> Size
   spacer(Size) -> Self
   text(text~ : String, font~ : Font, color~ : Color) -> Self
-  to_render_sequence(Self, Vector) -> Array[Positioned[Renderable]]
+  to_layout_sequence(Self, Vector) -> Array[(Vector, Self)]
+  to_render_sequence(Self, Vector) -> Iter[(Vector, Renderable)]
   vstack(Array[Self], spacing~ : Int) -> Self
 }
 impl Show for Element
@@ -85,14 +108,14 @@ impl Eq for GenericFontFamily
 impl Hash for GenericFontFamily
 impl Show for GenericFontFamily
 
-pub(all) struct Positioned[T] {
-  offset : Vector
-  view : T
+pub struct Handler {
+  on_click : (() -> Unit)?
+  on_double_click : (() -> Unit)?
 }
-impl Positioned {
-  new[T](Vector, T) -> Self[T]
+impl Handler {
+  new(on_click? : () -> Unit, on_double_click? : () -> Unit) -> Self
 }
-impl[T : Show] Show for Positioned[T]
+impl Show for Handler
 
 pub(all) struct Rect {
   offset : Vector
@@ -117,16 +140,12 @@ pub enum Renderable {
   Border(Color, Size, Thinkness)
   Line(Color, Size, Vector, Vector, Int)
   Ellipse(Color, Color, Size, Vector, Int, Int, Double, Double, Double, Bool, Int)
+  RoundedBorder(Color, Size, Int, Int)
 }
 impl Renderable {
-  border(size~ : Size, color~ : Color, thickness~ : Thinkness) -> Self
-  ellipse(center~ : Vector, strokeColor~ : Color, fillColor~ : Color, radiusX~ : Int, radiusY~ : Int, rotation~ : Double, startAngle~ : Double, endAngle~ : Double, counterclockwise~ : Bool, lineWidth~ : Int) -> Self
-  line(p1~ : Vector, p2~ : Vector, lineWidth~ : Int, color~ : Color) -> Self
-  rectangle(size~ : Size, color~ : Color) -> Self
   render(Self, Vector, @dom.CanvasRenderingContext2D) -> Unit
-  render_sequence(@dom.CanvasRenderingContext2D, Array[Positioned[Self]]) -> Unit
+  render_sequence(@dom.CanvasRenderingContext2D, Iter[(Vector, Self)]) -> Unit
   size(Self) -> Size
-  text(text~ : String, font~ : Font, color~ : Color) -> Self
 }
 impl Show for Renderable
 

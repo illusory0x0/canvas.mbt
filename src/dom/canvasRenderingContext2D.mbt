@@ -31,6 +31,15 @@ pub extern "js" fn Canvas2D::fillRect(
 ) = "importObject.CanvasRenderingContext2D.fillRect"
 
 ///|
+pub extern "js" fn Canvas2D::strokeRect(
+  self : Canvas2D,
+  x : Int,
+  y : Int,
+  width : Int,
+  height : Int
+) = "importObject.CanvasRenderingContext2D.strokeRect"
+
+///|
 pub extern "js" fn Canvas2D::fillRectF(
   self : Canvas2D,
   x : Double,
@@ -126,3 +135,18 @@ pub extern "js" fn Canvas2D::save(self : Canvas2D) = "importObject.CanvasRenderi
 
 ///|
 pub extern "js" fn Canvas2D::restore(self : Canvas2D) = "importObject.CanvasRenderingContext2D.restore"
+
+///|
+pub extern "js" fn Canvas2D::roundRect(
+  self : Canvas2D,
+  x : Int,
+  y : Int,
+  width : Int,
+  height : Int,
+  top_left_radius : Int,
+  top_right_radius : Int,
+  bottom_left_radius : Int,
+  bottom_right_radius : Int
+) = 
+#| (self, x, y, width, height, top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius) => 
+#|    self.roundRect(x, y, width,height,[top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius])

@@ -6,6 +6,8 @@ pub fn Renderable::size(self : Renderable) -> Size {
     Border(size~, ..) => size
     Line(size~, ..) => size
     Ellipse(size~, ..) => size
+    RoundedBorder(size~, ..) => size
+    RoundedRectangle(size~, ..) => size
   }
 }
 
@@ -77,35 +79,38 @@ pub fn Renderable::render(
       ctx.stroke()
       ctx.fill()
     }
+    RoundedBorder(size~, radius~, color~, thickness~) => {
+      ctx.set_strokeStyle(color.to_string())
+      ctx.set_lineWidth(thickness)
+      ctx.beginPath()
+      ctx.roundRect(
+        offset.x,
+        offset.y,
+        size.width,
+        size.height,
+        radius,
+        radius,
+        radius,
+        radius,
+      )
+      ctx.stroke()
+    }
+    RoundedRectangle(size~, radius~, color~) => {
+      ctx.set_fillStyle(color.to_string())
+      ctx.beginPath()
+      ctx.roundRect(
+        offset.x,
+        offset.y,
+        size.width,
+        size.height,
+        radius,
+        radius,
+        radius,
+        radius,
+      )
+      ctx.fill()
+    }
   }
-}
-
-///|
-pub fn Renderable::rectangle(size~ : Size, color~ : Color) -> Renderable {
-  Rectangle(size~, color~)
-}
-
-///|
-pub fn Renderable::border(
-  size~ : Size,
-  color~ : Color,
-  thickness~ : Thinkness
-) -> Renderable {
-  Border(size~, color~, thickness~)
-}
-
-///|
-pub fn Renderable::text(
-  text~ : String,
-  font~ : Font,
-  color~ : Color
-) -> Renderable {
-  Text(
-    text~,
-    color~,
-    font~,
-    size=Size::new(font.width(text), font.height(text)),
-  )
 }
 
 ///|
@@ -120,62 +125,4 @@ pub fn Renderable::render_sequence(
       renderable.render(offset, ctx)
     }
   }
-}
-
-///|
-pub fn Renderable::line(
-  p1~ : Vector,
-  p2~ : Vector,
-  lineWidth~ : Int,
-  color~ : Color
-) -> Renderable {
-  let width = p1.x - p2.x
-  let height = p1.y - p2.y
-  let width = if width == 0 { lineWidth } else { width.abs() }
-  let height = if height == 0 { lineWidth } else { height.abs() }
-  let size = { width, height }
-  Line(p1~, p2~, lineWidth~, color~, size~)
-}
-
-///|
-pub fn Renderable::ellipse(
-  center~ : Vector,
-  strokeColor~ : Color,
-  fillColor~ : Color,
-  radiusX~ : Int,
-  radiusY~ : Int,
-  rotation~ : Double,
-  startAngle~ : Double,
-  endAngle~ : Double,
-  counterclockwise~ : Bool,
-  lineWidth~ : Int
-) -> Renderable {
-  let a = 2 * (radiusX + lineWidth)
-  let b = 2 * (radiusY + lineWidth)
-  let size = if rotation % @math.PI == 0 { // 180 degree
-    let width = a
-    let height = b
-    { width, height }
-  } else if rotation % (@math.PI / 2) == 0 { // 90 degree
-    let width = b
-    let height = a
-    { width, height }
-  } else {
-    let width = (a.to_double() * @math.sin(rotation)).to_int()
-    let height = (b.to_double() * @math.cos(rotation)).to_int()
-    { width, height }
-  }
-  Ellipse(
-    center~,
-    strokeColor~,
-    fillColor~,
-    radiusX~,
-    radiusY~,
-    rotation~,
-    startAngle~,
-    endAngle~,
-    counterclockwise~,
-    lineWidth~,
-    size~,
-  )
 }

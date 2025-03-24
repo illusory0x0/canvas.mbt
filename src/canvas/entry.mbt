@@ -38,7 +38,6 @@ let yellow : Color = hsl(60, 100, 50)
 ///|
 let font : Font = { ..Font::default(), weight: 320 }
 
-
 ///|
 typealias @lazy.Lazy[T]
 
@@ -60,23 +59,20 @@ priv struct App {
 fn App::new() -> App {
   let counter = Dependency::new(fn() { 0 })
   let button = Element::text(text="+", font~, color=white)
-      .padding(thickness=Thinkness::same(10), color=black)
-      .control(on_click=fn() { 
-        counter.modify(fn { x => x + 1 }) 
-      })
-
+    .round_padding(thickness=16, color=black,radius=50)
+    .control(on_click=fn() { counter.modify(fn { x => x + 1 }) })
   let element = Dependency::new(fn() {
     let label = Element::text(
       text="counter: \{counter.value}",
       font~,
       color=white,
-    ).padding(thickness=Thinkness::same(10), color=black)
-    Element::hstack([label, button], spacing=20)
+    ).round_padding(thickness=20, color=black,radius=20)
+    Element::hstack([label, button], spacing=40)
   })
   let layout = Dependency::new(fn() { element.value.to_layout_sequence(origin) })
   element.depend_on(counter)
   layout.depend_on(element)
-  { counter, element, layout , button}
+  { counter, element, layout, button }
 }
 
 ///|
@@ -112,6 +108,7 @@ fn App::render(self : App) -> Unit {
   Renderable::render_sequence(ctx, rs)
 }
 
+///|
 let app : App = App::new()
 
 ///|
@@ -137,9 +134,10 @@ pub fn entry() -> Unit {
   app.render()
 }
 
+///|
 pub fn add_1000() -> Unit {
   for _ in 0..<1000 {
-    app.counter.modify(fn { x => x + 1})
+    app.counter.modify(fn { x => x + 1 })
     app.render()
   }
 }

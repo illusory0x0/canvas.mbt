@@ -3,7 +3,7 @@ pub fn Element::size(self : Element) -> Size {
   match self {
     Layout(size~, ..) => size
     Render(x) => x.size()
-    Control(element,_) => element.size()
+    Control(element, _) => element.size()
   }
 }
 
@@ -52,10 +52,12 @@ test "vstack" {
     Element::spacer(Size::new(30, 30)),
   ]
   let view = Element::vstack(xs, spacing=2)
-  inspect!(view, content=
-    #|Layout(sort="vstack", size={width: 30, height: 64}, children=[({x: 0, y: 0}, Layout(sort="spacer", size={width: 10, height: 10}, children=[])), ({x: 0, y: 12}, Layout(sort="spacer", size={width: 20, height: 20}, children=[])), ({x: 0, y: 34}, Layout(sort="spacer", size={width: 30, height: 30}, children=[]))])
+  inspect!(
+    view,
+    content=
+      #|Layout(sort="vstack", size={width: 30, height: 64}, children=[({x: 0, y: 0}, Layout(sort="spacer", size={width: 10, height: 10}, children=[])), ({x: 0, y: 12}, Layout(sort="spacer", size={width: 20, height: 20}, children=[])), ({x: 0, y: 34}, Layout(sort="spacer", size={width: 30, height: 30}, children=[]))])
+    ,
   )
-
 }
 
 ///|
@@ -66,8 +68,11 @@ test "hstack" {
     Element::spacer(Size::new(30, 30)),
   ]
   let view = Element::hstack(xs, spacing=2)
-  inspect!(view, content=
-    #|Layout(sort="hstack", size={width: 64, height: 30}, children=[({x: 0, y: 0}, Layout(sort="spacer", size={width: 10, height: 10}, children=[])), ({x: 12, y: 0}, Layout(sort="spacer", size={width: 20, height: 20}, children=[])), ({x: 34, y: 0}, Layout(sort="spacer", size={width: 30, height: 30}, children=[]))])
+  inspect!(
+    view,
+    content=
+      #|Layout(sort="hstack", size={width: 64, height: 30}, children=[({x: 0, y: 0}, Layout(sort="spacer", size={width: 10, height: 10}, children=[])), ({x: 12, y: 0}, Layout(sort="spacer", size={width: 20, height: 20}, children=[])), ({x: 34, y: 0}, Layout(sort="spacer", size={width: 30, height: 30}, children=[]))])
+    ,
   )
 }
 
@@ -75,19 +80,24 @@ test "hstack" {
 pub fn Element::to_render_sequence(
   self : Element,
   origin : Vector
-) -> Iter[(Vector,Renderable)] {
-  self.to_layout_sequence(origin).iter().filter_map(fn { (offset,element) => {
-    match element {
-      Render(x) => Some((offset, x))
-      _ => None
-    }
-  }})
+) -> Iter[(Vector, Renderable)] {
+  self
+  .to_layout_sequence(origin)
+  .iter()
+  .filter_map(fn {
+    (offset, element) =>
+      match element {
+        Render(x) => Some((offset, x))
+        _ => None
+      }
+  })
 }
 
+///|
 pub fn Element::to_layout_sequence(
   self : Element,
   origin : Vector
-) -> Array[(Vector,Element)] {
+) -> Array[(Vector, Element)] {
   guard origin.x >= 0 && origin.y >= 0
   let buf = []
   fn dfs(root : Element, origin : Vector) {
@@ -95,27 +105,28 @@ pub fn Element::to_layout_sequence(
       match root {
         Layout(children~, ..) =>
           for x in children {
-            let (offset,view) = x
+            let (offset, view) = x
             dfs(view, origin + offset)
           }
         Render(_) => buf.push((origin, root))
-        Control(element, _) =>  { 
-          buf.push((origin,root))
-          dfs(element, origin) 
+        Control(element, _) => {
+          buf.push((origin, root))
+          dfs(element, origin)
         }
       }
     }
   }
+
   dfs(self, origin)
   buf
 }
 
 ///|
-pub fn Element::layer(xs : Array[(Vector,Element)]) -> Element {
+pub fn Element::layer(xs : Array[(Vector, Element)]) -> Element {
   let mut w = 0
   let mut h = 0
   for x in xs {
-    let (offset,view) = x
+    let (offset, view) = x
     let sz = view.size()
     w = @math.maximum(w, offset.x + sz.width)
     h = @math.maximum(h, offset.y + sz.height)
@@ -133,7 +144,7 @@ pub fn Element::coordinate(xs : Array[Element]) -> Element {
     let sz = x.size()
     w = @math.maximum(w, sz.width)
     h = @math.maximum(h, sz.height)
-    children.push(({x : 0, y :0},x))
+    children.push(({ x: 0, y: 0 }, x))
   }
   let size = Size::new(w, h)
   Element::Layout(sort="coordinate", size~, children~)
@@ -163,10 +174,7 @@ fn Element::margin(
 ) -> Element {
   let size = self.margin_size(thickness)
   let offset = Element::margin_offset(thickness)
-  let children = [
-    (Vector::default(), Render(background)),
-    (offset, self),
-  ]
+  let children = [(Vector::default(), Render(background)), (offset, self)]
   Layout(sort~, size~, children~)
 }
 
@@ -179,13 +187,25 @@ pub fn Element::border(
   let size = self.margin_size(thickness)
   let offset = Element::margin_offset(thickness)
   let children = [
-    (
-      Vector::default(),
-      Render(Renderable::border(color~, thickness~, size~)),
-    ),
+    (Vector::default(), Render(Border(size~, color~, thickness~))),
     (offset, self),
   ]
   Layout(sort="border", size~, children~)
+}
+
+pub fn Element::round_border(
+  self : Element,
+  thickness~ : Int,
+  color~ : Color,
+  radius~ : Int
+) -> Element {
+  let size = self.margin_size(Thinkness::same(thickness))
+  let offset = Element::margin_offset(Thinkness::same(thickness))
+  let children = [
+    (Vector::default(), Render(RoundedBorder(size~, color~, thickness~,radius~))),
+    (offset, self),
+  ]
+  Layout(sort="round_border", size~, children~)
 }
 
 ///|
@@ -197,23 +217,47 @@ pub fn Element::padding(
   let size = self.margin_size(thickness)
   let offset = Element::margin_offset(thickness)
   let children = [
-    (
-      Vector::default(),
-      Element::rectangle(color~,size~)
-    ),
+    (Vector::default(), Element::rectangle(color~, size~)),
     (offset, self),
   ]
   Layout(sort="padding", size~, children~)
 }
 
+pub fn Element::round_padding(
+  self : Element,
+  thickness~ : Int,
+  color~ : Color,
+  radius~ : Int
+) -> Element {
+  let size = self.margin_size(Thinkness::same(thickness))
+  let offset = Element::margin_offset(Thinkness::same(thickness))
+  let children = [
+    (Vector::default(), Element::round_rectangle(color~, size~, radius~)),
+    (offset, self),
+  ]
+  Layout(sort="round_padding", size~, children~)
+}
+
+
 ///|
 pub fn Element::text(text~ : String, font~ : Font, color~ : Color) -> Element {
-  Render(Renderable::text(text~, font~, color~))
+  Render(
+    Text(
+      text~,
+      color~,
+      font~,
+      size=Size::new(font.width(text), font.height(text)),
+    ),
+  )
 }
 
 ///|
 pub fn Element::rectangle(color~ : Color, size~ : Size) -> Element {
-  Render(Renderable::rectangle(color~, size~))
+  Render(Rectangle(size~, color~))
+}
+
+pub fn Element::round_rectangle(color~ : Color, size~ : Size, radius~ : Int) -> Element {
+  Render(RoundedRectangle(size~, color~, radius~))
 }
 
 ///|
@@ -223,7 +267,12 @@ pub fn Element::line(
   color~ : Color,
   lineWidth~ : Int = 1
 ) -> Element {
-  Render(Renderable::line(p1~, p2~, lineWidth~, color~))
+  let width = p1.x - p2.x
+  let height = p1.y - p2.y
+  let width = if width == 0 { lineWidth } else { width.abs() }
+  let height = if height == 0 { lineWidth } else { height.abs() }
+  let size = { width, height }
+  Render(Line(p1~, p2~, lineWidth~, color~, size~))
 }
 
 ///|
@@ -239,8 +288,23 @@ pub fn Element::ellipse(
   counterclockwise~ : Bool,
   lineWidth~ : Int
 ) -> Element {
+  let a = 2 * (radiusX + lineWidth)
+  let b = 2 * (radiusY + lineWidth)
+  let size = if rotation % @math.PI == 0 { // 180 degree
+    let width = a
+    let height = b
+    { width, height }
+  } else if rotation % (@math.PI / 2) == 0 { // 90 degree
+    let width = b
+    let height = a
+    { width, height }
+  } else {
+    let width = (a.to_double() * @math.sin(rotation)).to_int()
+    let height = (b.to_double() * @math.cos(rotation)).to_int()
+    { width, height }
+  }
   Render(
-    Renderable::ellipse(
+    Ellipse(
       center~,
       strokeColor~,
       fillColor~,
@@ -251,13 +315,16 @@ pub fn Element::ellipse(
       endAngle~,
       counterclockwise~,
       lineWidth~,
+      size~,
     ),
   )
 }
 
-
-
-pub fn Element::control(self : Element,   on_click? : OnClick,
-  on_double_click? : OnClick) -> Element {
-    Control(self,{on_click,on_double_click})
+///|
+pub fn Element::control(
+  self : Element,
+  on_click? : OnClick,
+  on_double_click? : OnClick
+) -> Element {
+  Control(self, { on_click, on_double_click })
 }

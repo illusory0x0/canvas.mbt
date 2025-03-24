@@ -81,6 +81,8 @@ pub enum Renderable {
     counterclockwise~ : Bool,
     lineWidth~ : Int
   )
+  RoundedBorder(color~ : Color, size~ : Size, radius~ : Int, thickness~ : Int)
+  RoundedRectangle(color~ : Color, size~ : Size, radius~ : Int)
 } derive(Show)
 
 ///|
@@ -96,9 +98,13 @@ pub enum Element {
   Control(Element, Handler)
 } derive(Show)
 
+///|
 pub struct Handler {
   on_click : OnClick?
   on_double_click : OnClick?
 }
 
-pub impl Show for Handler with output(self,logger) { }
+///|
+pub impl Show for Handler with output(self, logger) {
+
+}
