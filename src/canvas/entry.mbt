@@ -38,11 +38,6 @@ let yellow : Color = hsl(60, 100, 50)
 ///|
 let font : Font = { ..Font::default(), weight: 320 }
 
-// ///|
-// struct App {
-//   element : Element
-//   origin : Vector
-// }
 
 ///|
 typealias @lazy.Lazy[T]
@@ -56,6 +51,7 @@ let origin : Vector = { x: 20, y: 20 }
 ///|
 priv struct App {
   counter : Dependency[Int]
+  button : Element
   element : Dependency[Element]
   layout : Dependency[Array[(Vector, Element)]]
 }
@@ -63,10 +59,11 @@ priv struct App {
 ///|
 fn App::new() -> App {
   let counter = Dependency::new(fn() { 0 })
-  let element = Dependency::new(fn() {
-    let button = Element::text(text="+", font~, color=white)
+  let button = Element::text(text="+", font~, color=white)
       .padding(thickness=Thinkness::same(10), color=black)
       .control(on_click=fn() { counter.modify(fn { x => x + 1 }) })
+
+  let element = Dependency::new(fn() {
     let label = Element::text(
       text="counter: \{counter.value}",
       font~,
@@ -77,7 +74,7 @@ fn App::new() -> App {
   let layout = Dependency::new(fn() { element.value.to_layout_sequence(origin) })
   element.depend_on(counter)
   layout.depend_on(element)
-  { counter, element, layout }
+  { counter, element, layout , button}
 }
 
 ///|
@@ -96,7 +93,7 @@ fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
 ///|
 fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
   self.layout.value
-  .iter()
+  .rev_iter()
   .filter_map(fn {
     (offset, e) =>
       match e {
@@ -130,6 +127,7 @@ pub fn entry() -> Unit {
       let p = { x: e.clientX(), y: e.clientY() }
       if p.inside(rect) {
         handler.on_click.map(fn(f) { f() }) |> ignore
+        break
       }
     }
     app.render()
