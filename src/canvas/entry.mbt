@@ -141,6 +141,6 @@ pub fn entry() -> Unit {
 pub fn add_1000() -> Unit {
   for _ in 0..<1000 {
     app.counter.modify(fn { x => x + 1})
-
+    app.render()
   }
 }
