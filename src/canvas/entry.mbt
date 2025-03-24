@@ -103,7 +103,6 @@ fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
   })
 }
 
-// ///|
 ///|
 fn App::render(self : App) -> Unit {
   let rs = self.render_sequence()
