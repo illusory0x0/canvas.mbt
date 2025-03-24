@@ -38,44 +38,99 @@ let yellow : Color = hsl(60, 100, 50)
 ///|
 let font : Font = { ..Font::default(), weight: 320 }
 
+// ///|
+// struct App {
+//   element : Element
+//   origin : Vector
+// }
+
 ///|
-struct App {
-  element : Element
+typealias @lazy.Lazy[T]
+
+///|
+typealias @lazy.LazyRec[T]
+
+///|
+priv struct AppRepr {
   origin : Vector
+  count : Int
+  handler : Handler
+  element : Lazy[Element]
+  layout : Lazy[Array[(Vector, Element)]]
 }
 
 ///|
-let app : App = {
-  element: Element::Control(
-    Element::text(text="click me", font~, color=white).padding(
+priv type App LazyRec[AppRepr]
+
+///|
+let app : App = LazyRec::new(fn(self : Lazy[AppRepr]) {
+  let element = Lazy::new(fn() {
+    let count = self.force().count
+    let label = Element::text(text="counter: \{count}", font~, color=white).padding(
       thickness=Thinkness::same(10),
       color=black,
-    ),
-    {
-      on_click: Some(fn() { println("clicked") }),
-    }
-  ),
-  origin: { x: 20, y: 20 },
+    )
+    let btn = Element::text(text="+", font~, color=white)
+      .padding(thickness=Thinkness::same(10), color=black)
+      .add_event_handler(self.force().handler)
+    Element::hstack([label, btn], spacing=20)
+  })
+  {
+    count: 0,
+    handler: Handler::new(),
+    origin: { x: 20, y: 20 },
+    element,
+    layout: Lazy::new(fn() {
+      let self : AppRepr = self.force()
+      self.element.force().to_layout_sequence(self.origin)
+    }),
+  }
+})
+
+///|
+fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
+  self._.force().layout
+  .force()
+  .iter()
+  .filter_map(fn {
+    (o, e) =>
+      match e {
+        Render(x) => Some((o, x))
+        _ => None
+      }
+  })
 }
 
 ///|
-pub fn App::render_sequence(self : App) -> Iter[(Vector,Renderable)] {
-  self.element.to_render_sequence(self.origin)
+fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
+  self._.force().layout
+  .force()
+  .iter()
+  .filter_map(fn {
+    (offset, e) =>
+      match e {
+        Control(e, h) => Some(({ offset, size: e.size() }, h))
+        _ => None
+      }
+  })
 }
 
 ///|
-pub fn App::event_sequence(self : App) -> Array[(Vector,Element)] {
-  self.element.to_layout_sequence(self.origin)
-}
-
-///|
-pub fn App::render(self : App) -> Unit {
+fn App::render(self : App) -> Unit {
   let rs = self.render_sequence()
-  Renderable::render_sequence(ctx, rs.iter())
+  Renderable::render_sequence(ctx, rs)
 }
 
 ///|
 pub fn entry() -> Unit {
+  app._.modify(fn(self) {
+    {
+      ..self,
+      handler: Handler::new(on_click=fn() {
+        app._.modify(fn(self) { { ..self, count: self.count + 1 } })
+      }),
+    }
+  })
   window.addEventListener("resize", fn(_) {
     resize()
     app.render()
@@ -84,18 +139,23 @@ pub fn entry() -> Unit {
     let e : @dom.MouseEvent = e.downcast()
     let es = app.event_sequence()
     for x in es {
-      let (offset, view) = x 
-      let rect = { offset, size : view.size() }
+      let (rect, handler) = x
       let p = { x: e.clientX(), y: e.clientY() }
       if p.inside(rect) {
-        match view {
-          Control(_,handler) => handler.on_click.unwrap()()
-          _ => ()
-        }
+        handler.on_click.map(fn(f) { f() }) |> ignore
       }
-
     }
+    app.render()
   })
+  for i in 0..<1000 {
+    let es = app.event_sequence()
+    for x in es {
+      let (rect, handler) = x
+      handler.on_click.map(fn(f) { f() }) |> ignore
+    }
+    app.render()
+  }
+
   resize()
   app.render()
 }

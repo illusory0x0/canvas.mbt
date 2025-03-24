@@ -98,6 +98,7 @@ pub enum Element {
 
 pub struct Handler {
   on_click : OnClick?
+  on_double_click : OnClick?
 }
 
 pub impl Show for Handler with output(self,logger) { }

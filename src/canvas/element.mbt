@@ -19,12 +19,12 @@ pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
   let len = xs.length()
   let children = Array::new(capacity=len)
   for x in xs {
-    let { width, height } = x.size()
-    w += width
-    h = @math.maximum(h, height)
     children.push(({ x: w, y: 0 }, x))
+    let { width, height } = x.size()
+    w += width + spacing
+    h = @math.maximum(h, height)
   }
-  let size = Size::new(w + (len - 1) * spacing, h)
+  let size = Size::new(w - spacing, h)
   Element::Layout(sort="hstack", size~, children~)
 }
 
@@ -35,12 +35,12 @@ pub fn Element::vstack(xs : Array[Element], spacing~ : Int) -> Element {
   let len = xs.length()
   let children = Array::new(capacity=len)
   for x in xs {
+    children.push(({ x: 0, y: h }, x))
     let { width, height } = x.size()
     w = @math.maximum(w, width)
-    h += height
-    children.push(({ x: 0, y: h }, x))
+    h += height + spacing
   }
-  let size = Size::new(w, h + (len - 1) * spacing)
+  let size = Size::new(w, h - spacing)
   Element::Layout(sort="vstack", size~, children~)
 }
 
@@ -52,7 +52,10 @@ test "vstack" {
     Element::spacer(Size::new(30, 30)),
   ]
   let view = Element::vstack(xs, spacing=2)
-  inspect!(view.size(), content="{width: 30, height: 64}")
+  inspect!(view, content=
+    #|Layout(sort="vstack", size={width: 30, height: 64}, children=[({x: 0, y: 0}, Layout(sort="spacer", size={width: 10, height: 10}, children=[])), ({x: 0, y: 12}, Layout(sort="spacer", size={width: 20, height: 20}, children=[])), ({x: 0, y: 34}, Layout(sort="spacer", size={width: 30, height: 30}, children=[]))])
+  )
+
 }
 
 ///|
@@ -63,7 +66,9 @@ test "hstack" {
     Element::spacer(Size::new(30, 30)),
   ]
   let view = Element::hstack(xs, spacing=2)
-  inspect!(view.size(), content="{width: 64, height: 30}")
+  inspect!(view, content=
+    #|Layout(sort="hstack", size={width: 64, height: 30}, children=[({x: 0, y: 0}, Layout(sort="spacer", size={width: 10, height: 10}, children=[])), ({x: 12, y: 0}, Layout(sort="spacer", size={width: 20, height: 20}, children=[])), ({x: 34, y: 0}, Layout(sort="spacer", size={width: 30, height: 30}, children=[]))])
+  )
 }
 
 ///|
@@ -194,7 +199,7 @@ pub fn Element::padding(
   let children = [
     (
       Vector::default(),
-      Render(Renderable::rectangle(color~, size~)),
+      Element::rectangle(color~,size~)
     ),
     (offset, self),
   ]
@@ -250,3 +255,6 @@ pub fn Element::ellipse(
   )
 }
 
+pub fn Element::add_event_handler(self : Element, handler : Handler) -> Element {
+  Control(self,handler)
+}

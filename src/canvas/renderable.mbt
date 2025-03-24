@@ -16,8 +16,10 @@ pub fn Renderable::render(
   ctx : Canvas2D
 ) -> Unit {
   match self {
-    Rectangle(size={ width, height }, ..) =>
+    Rectangle(size={ width, height }, color~) => {
+      ctx.set_fillStyle(color.to_string())
       ctx.fillRect(offset.x, offset.y, width, height)
+    }
     Text(text~, font~, color~, ..) => {
       ctx.set_fillStyle(color.to_string())
       ctx.set_font(font.to_string())
@@ -109,7 +111,7 @@ pub fn Renderable::text(
 ///|
 pub fn Renderable::render_sequence(
   ctx : Canvas2D,
-  xs : Iter[(Vector,Renderable)]
+  xs : Iter[(Vector, Renderable)]
 ) -> Unit {
   for x in xs {
     let (offset, renderable) = x
