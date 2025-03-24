@@ -51,46 +51,38 @@ typealias @lazy.Lazy[T]
 typealias @lazy.LazyRec[T]
 
 ///|
-priv struct AppRepr {
-  origin : Vector
-  count : Int
-  handler : Handler
-  element : Lazy[Element]
-  layout : Lazy[Array[(Vector, Element)]]
+let origin : Vector = { x: 20, y: 20 }
+
+///|
+priv struct App {
+  counter : Dependency[Int]
+  element : Dependency[Element]
+  layout : Dependency[Array[(Vector, Element)]]
 }
 
 ///|
-priv type App LazyRec[AppRepr]
-
-///|
-let app : App = LazyRec::new(fn(self : Lazy[AppRepr]) {
-  let element = Lazy::new(fn() {
-    let count = self.force().count
-    let label = Element::text(text="counter: \{count}", font~, color=white).padding(
-      thickness=Thinkness::same(10),
-      color=black,
-    )
-    let btn = Element::text(text="+", font~, color=white)
+fn App::new() -> App {
+  let counter = Dependency::new(fn() { 0 })
+  let element = Dependency::new(fn() {
+    let button = Element::text(text="+", font~, color=white)
       .padding(thickness=Thinkness::same(10), color=black)
-      .add_event_handler(self.force().handler)
-    Element::hstack([label, btn], spacing=20)
+      .control(on_click=fn() { counter.modify(fn { x => x + 1 }) })
+    let label = Element::text(
+      text="counter: \{counter.value}",
+      font~,
+      color=white,
+    ).padding(thickness=Thinkness::same(10), color=black)
+    Element::vstack([label, button], spacing=20)
   })
-  {
-    count: 0,
-    handler: Handler::new(),
-    origin: { x: 20, y: 20 },
-    element,
-    layout: Lazy::new(fn() {
-      let self : AppRepr = self.force()
-      self.element.force().to_layout_sequence(self.origin)
-    }),
-  }
-})
+  let layout = Dependency::new(fn() { element.value.to_layout_sequence(origin) })
+  element.depend_on(counter)
+  layout.depend_on(element)
+  { counter, element, layout }
+}
 
 ///|
 fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
-  self._.force().layout
-  .force()
+  self.layout.value
   .iter()
   .filter_map(fn {
     (o, e) =>
@@ -103,8 +95,7 @@ fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
 
 ///|
 fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
-  self._.force().layout
-  .force()
+  self.layout.value
   .iter()
   .filter_map(fn {
     (offset, e) =>
@@ -115,23 +106,17 @@ fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
   })
 }
 
+// ///|
 ///|
 fn App::render(self : App) -> Unit {
   let rs = self.render_sequence()
-  ctx.clearRect(0,0,window.innerWidth(),window.innerHeight())
+  ctx.clearRect(0, 0, window.innerWidth(), window.innerHeight())
   Renderable::render_sequence(ctx, rs)
 }
 
 ///|
 pub fn entry() -> Unit {
-  app._.modify(fn(self) {
-    {
-      ..self,
-      handler: Handler::new(on_click=fn() {
-        app._.modify(fn(self) { { ..self, count: self.count + 1 } })
-      }),
-    }
-  })
+  let app = App::new()
   window.addEventListener("resize", fn(_) {
     resize()
     app.render()
@@ -148,18 +133,6 @@ pub fn entry() -> Unit {
     }
     app.render()
   })
-
   resize()
   app.render()
-}
-
-pub fn add_1000() -> Unit {
-    for i in 0..<1000 {
-    let es = app.event_sequence()
-    for x in es {
-      let (rect, handler) = x
-      handler.on_click.map(fn(f) { f() }) |> ignore
-      app.render()
-    }
-  }
 }

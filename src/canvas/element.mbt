@@ -255,6 +255,9 @@ pub fn Element::ellipse(
   )
 }
 
-pub fn Element::add_event_handler(self : Element, handler : Handler) -> Element {
-  Control(self,handler)
+
+
+pub fn Element::control(self : Element,   on_click? : OnClick,
+  on_double_click? : OnClick) -> Element {
+    Control(self,{on_click,on_double_click})
 }
