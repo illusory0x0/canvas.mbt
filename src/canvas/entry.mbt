@@ -114,9 +114,10 @@ fn App::render(self : App) -> Unit {
   Renderable::render_sequence(ctx, rs)
 }
 
+let app : App = App::new()
+
 ///|
 pub fn entry() -> Unit {
-  let app = App::new()
   window.addEventListener("resize", fn(_) {
     resize()
     app.render()
@@ -135,4 +136,11 @@ pub fn entry() -> Unit {
   })
   resize()
   app.render()
+}
+
+pub fn add_1000() -> Unit {
+  for _ in 0..<1000 {
+    app.counter.modify(fn { x => x + 1})
+
+  }
 }
