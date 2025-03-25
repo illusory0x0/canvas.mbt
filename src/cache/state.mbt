@@ -1,8 +1,4 @@
-///|
-pub struct State[A] {
-  mut value : A
-  priv children : Array[() -> Unit]
-}
+
 
 ///|
 pub fn State::new[A](value : A) -> State[A] {

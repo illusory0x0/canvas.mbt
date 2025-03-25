@@ -1,10 +1,3 @@
-///|
-pub struct Cache[A] {
-  mut cache : A
-  priv init : () -> A
-  priv children : Array[() -> Unit]
-  mut refresh : () -> Unit
-}
 
 ///|
 fn do_nothing() -> Unit {
@@ -37,28 +30,4 @@ pub fn Cache::cache[A, B](self : Cache[A], f : (A) -> B) -> Cache[B] {
   let target = Cache::new(fn() { f(source.cache) })
   target.depend_on(source)
   target
-}
-
-///|
-pub(open) trait RequiredBy {
-  require_by(Self, () -> Unit) -> Unit
-}
-
-///|
-pub impl[A] RequiredBy for Cache[A] with require_by(self, refresh) {
-  self.children.push(refresh)
-}
-
-///|
-pub impl[A] RequiredBy for State[A] with require_by(self, refresh) {
-  self.children.push(refresh)
-}
-
-
-pub impl[A : Show ] Show for State[A] with output(self,logger) {
-  self.value.output(logger)
-}
-
-pub impl[A : Show ] Show for Cache[A] with output(self,logger) {
-  self.cache.output(logger)
 }
