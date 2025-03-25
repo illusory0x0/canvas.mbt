@@ -1,23 +1,18 @@
 ///|
 pub fn RoundedRectangle::new(
-  color : () -> Color,
-  size : () -> Size,
-  radius : () -> Int
+  color : Cache[Color],
+  size : Cache[Size],
+  radius : Cache[Int]
 ) -> RoundedRectangle {
-  let color = Cache::new(color)
-  let size = Cache::new(size)
-  let radius = Cache::new(radius)
   { color, size, radius }
 }
 
-pub impl RequiredBy for RoundedRectangle with require_by(self,refresh) {
+///|
+pub impl RequiredBy for RoundedRectangle with require_by(self, refresh) {
   self.color.require_by(refresh)
   self.size.require_by(refresh)
   self.radius.require_by(refresh)
 }
-
-
-
 
 ///|
 pub impl Renderable for RoundedRectangle with size(self) {

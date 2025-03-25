@@ -176,35 +176,50 @@ fn Element::margin_size(self : Element, thickness : Thinkness) -> Size {
 ///|
 pub fn Element::round_border(
   self : Element,
-  thickness~ : () -> Int,
-  color~ : () -> Color,
-  radius~ : () -> Int
+  thickness~ : Cache[Int],
+  color~ : Cache[Color],
+  radius~ : Cache[Int]
 ) -> Element {
   let layout = Cache::new(fn() {
-    let size = self.margin_size(Thinkness::same(thickness()))
-    let offset = Element::margin_offset(Thinkness::same(thickness()))
-    let render = RoundedBorder::new(color, fn() { size }, radius, thickness)
+    let size = self.margin_size(Thinkness::same(thickness.cache))
+    let offset = Element::margin_offset(Thinkness::same(thickness.cache))
+    let render = RoundedBorder::new(
+      color,
+      thickness.cache(fn(t) { self.margin_size(Thinkness::same(t)) }),
+      radius,
+      thickness,
+    )
     let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
   self.require_by(layout.refresh)
+  thickness.require_by(layout.refresh)
+  color.require_by(layout.refresh)
+  radius.require_by(layout.refresh)
   Layout(layout)
 }
 
 ///|
 pub fn Element::round_padding(
   self : Element,
-  thickness~ : () -> Int,
-  color~ : () -> Color,
-  radius~ : () -> Int
+  thickness : Cache[Int],
+  color~ : Cache[Color],
+  radius~ : Cache[Int]
 ) -> Element {
   let layout = Cache::new(fn() {
-    let size = self.margin_size(Thinkness::same(thickness()))
-    let offset = Element::margin_offset(Thinkness::same(thickness()))
-    let render = RoundedRectangle::new(color, fn() { size }, radius)
+    let size = self.margin_size(Thinkness::same(thickness.cache))
+    let offset = Element::margin_offset(Thinkness::same(thickness.cache))
+    let render = RoundedRectangle::new(
+      color,
+      thickness.cache(fn(t) { self.margin_size(Thinkness::same(t)) }),
+      radius,
+    )
     let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
   self.require_by(layout.refresh)
+  thickness.require_by(layout.refresh)
+  color.require_by(layout.refresh)
+  radius.require_by(layout.refresh)
   Layout(layout)
 }

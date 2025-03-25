@@ -1,14 +1,10 @@
 ///|
 pub fn RoundedBorder::new(
-  color : () -> Color,
-  size : () -> Size,
-  radius : () -> Int,
-  thickness : () -> Int
+  color : Cache[Color],
+  size :  Cache[Size],
+  radius : Cache[Int],
+  thickness : Cache[Int]
 ) -> RoundedBorder {
-  let color = Cache::new(color)
-  let size = Cache::new(size)
-  let radius = Cache::new(radius)
-  let thickness = Cache::new(thickness)
   { color, size, radius, thickness }
 }
 
