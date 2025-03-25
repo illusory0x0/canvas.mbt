@@ -25,7 +25,7 @@
 /// ```
 pub struct Dependency[A] {
   mut value : A
-  priv mut thunk : () -> A
+  priv thunk : () -> A
   priv children : Array[() -> Unit]
   priv mut closure : () -> Unit
 }
@@ -45,21 +45,23 @@ pub fn Dependency::new[A](thunk : () -> A) -> Dependency[A] {
   self
 }
 
-///|
-pub fn Dependency::update[A](self : Dependency[A], thunk : () -> A) -> Unit {
-  self.value = thunk()
-  self.thunk = thunk
-  self.closure = fn() {
-    self.value = (self.thunk)()
-    self.dispatch()
-  }
+// ///| Warning: this method doesn't change thunk
+// pub fn Dependency::set[A](self : Dependency[A], value : A) -> Unit {
+//   self.value = value
+//   self.dispatch()
+// }
+
+// ///| Warning: this method doesn't change thunk
+// pub fn Dependency::modify[A](self : Dependency[A], f : (A) -> A) -> Unit {
+//   self.set(f(self.value))
+// }
+
+
+pub fn Dependency::update[A](self : Dependency[A]) -> Unit {
+  self.value = (self.thunk)()
   self.dispatch()
 }
 
-///|
-pub fn Dependency::modify[A](self : Dependency[A], f : (A) -> A) -> Unit {
-  self.update(fn() { f(self.value) })
-}
 
 ///|
 fn Dependency::dispatch[A](self : Dependency[A]) -> Unit {

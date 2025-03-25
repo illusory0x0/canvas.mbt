@@ -335,17 +335,7 @@ let handler_counter : Ref[Int] = Ref::new(0)
 ///|
 pub fn Element::handle(
   self : Element,
-  on_click? : OnClick,
-  on_double_click? : OnClick,
-  on_mouse_enter? : OnMouseEnter,
-  on_mouse_leave? : OnMouseLeave
+  handle : Handler
 ) -> Element {
-  handler_counter.update(fn { x => x + 1 })
-  Control(self, {
-    on_click,
-    on_double_click,
-    on_mouse_enter,
-    on_mouse_leave,
-    id: handler_counter.val,
-  })
+  Control(self, handle)
 }

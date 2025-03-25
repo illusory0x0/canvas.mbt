@@ -18,7 +18,7 @@ pub fn entry() -> Unit {
       let p = { x: e.clientX(), y: e.clientY() }
       if p.inside(rect) {
         handler.on_click |> run
-        break
+        // break
       }
     }
   })
@@ -32,7 +32,7 @@ pub fn entry() -> Unit {
           if p.inside(rect) {
             handler.on_mouse_enter |> run
             hover.val = Some(x)
-            break
+            // break
           }
         }
       Some((rect, handler)) =>

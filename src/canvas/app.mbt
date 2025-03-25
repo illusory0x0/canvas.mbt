@@ -49,17 +49,27 @@ priv struct App {
 
 ///|
 fn App::new() -> App {
-  let source = Dependency::new(fn() { 0 })
+
+  let mut counter = 0 
+  let source = Dependency::new(fn() { counter })
   let button = Element::text(text="+", font~, color=white)
     .round_padding(thickness=16, color=black, radius=50)
-    .handle(on_click=fn() { source.modify(fn { x => x + 1 }) })
+    .handle(Handler::new(on_click=fn() { 
+      counter += 1
+      source.update()      
+    }))
+ 
   let label = Widget::hover(
     fn() { Element::text(text="counter: \{source.value}", font~, color=white) },
-    leave=fn { e => e.round_padding(thickness=20, color=black, radius=20) },
+    leave=fn (e){ 
+       e.round_padding(thickness=20, color=hsl(0,0,60), radius=20) },
     enter=fn(e) {
       e.round_padding(thickness=20, color=hsl(0, 0, 20), radius=20)
     },
   )
+
+  // println(label.target.value)
+
   let target = Dependency::new(fn() {
     Element::hstack([label.target.value, button], spacing=40)
   })
