@@ -1,9 +1,39 @@
 ///|
+let hover : Ref[(Rect, Handler)?] = Ref::new(None)
+
+///|
+fn Element::hover(
+  self : Element,
+  leave~ : (Element) -> Element,
+  enter~ : (Element) -> Element
+) -> Cache[Element] {
+  let is_hoved = State::new(false)
+  let modifier = is_hoved.cache(fn {
+    is_hoved => if is_hoved { enter } else { leave }
+  })
+  fn on_mouse_enter() {
+    is_hoved.set(true)
+  }
+
+  fn on_mouse_leave() {
+    is_hoved.set(false)
+  }
+
+  let handler = Handler::new(on_mouse_enter~, on_mouse_leave~)
+  let target = Cache::new(fn () {
+    (modifier.cache)(self)
+  })
+  target.depend_on(self)
+  target
+  // modifier.cache(fn { f => f(self) })
+}
+
+///|
 pub fn entry() -> Unit {
   let text = State::new("xx")
   let font = State::new(font)
   let color = State::new(white)
-  let element : Element = Element::hstack(
+  let e1 : Element = Element::hstack(
     [
       Render(
         Text::new(
@@ -20,14 +50,30 @@ pub fn entry() -> Unit {
         ),
       ),
     ],
-    spacing=0,
+    spacing=20,
   )
-  let rs : Cache[Iter[(@basic.Vector, &Renderable)]] = Cache::new(fn() {
-    element.to_render_sequence(origin)
+  let e2 : Cache[Element] = e1.hover(
+    leave=fn(e) {
+      e.round_padding(
+        thickness=Cache::new(fn() { 20 }),
+        color=Cache::new(fn() { hsl(0, 0, 60) }),
+        radius=Cache::new(fn() { 20 }),
+      )
+    },
+    enter=fn(e) {
+      e.round_padding(
+        thickness=Cache::new(fn() { 20 }),
+        color=Cache::new(fn() { hsl(0, 0, 20) }),
+        radius=Cache::new(fn() { 20 }),
+      )
+    },
+  )
+  // e2.depend_on(e1)
+  let rs : Cache[Iter[(@basic.Vector, &Renderable)]] = e2.cache(fn(e) {
+    e.to_render_sequence(origin)
   })
-  rs.depend_on(element)
   let render : Trigger = fn() {
-    debug("render action")
+    debug("App::render")
     ctx.clearRect(0, 0, window.innerWidth(), window.innerHeight())
     &Renderable::render_iter(ctx, rs.cache)
   }
@@ -39,7 +85,43 @@ pub fn entry() -> Unit {
 
   run_app()
   window.addEventListener("resize", fn(_) { run_app() })
-  window.addEventListener("click", fn(_) { text.modify(fn(x) { x + "x" }) })
+  window.addEventListener("click", fn(_) {
+    debug("Window::click")
+    text.modify(fn(x) { x + "x" })
+  })
+  let event = fn {
+    (o, e) =>
+      match e {
+        Handle(e, h) => Some((Rect::new(o, e.size()), h))
+        _ => None
+      }
+  }
+  window.addEventListener("mousemove", fn(e) {
+    let e : @dom.MouseEvent = e.downcast()
+    let p : Vector = { x: e.clientX(), y: e.clientY() }
+    let es = e2.cache.to_layout_sequence(origin).rev_iter().filter_map(event)
+
+    debug(es)
+    
+    
+    match hover.val {
+      None =>
+        for x in es {
+          let (rect, handler) = x
+          if p.inside(rect) {
+            println("xx")
+            handler.on_mouse_enter.map(fn(f) { f() }) |> ignore
+            hover.val = Some(x)
+            // break
+          }
+        }
+      Some((rect, handler)) =>
+        if not(p.inside(rect)) {
+          handler.on_mouse_enter.map(fn(f) { f() }) |> ignore
+          hover.val = None
+        }
+    }
+  })
 }
 
 // let app : App = App::new()

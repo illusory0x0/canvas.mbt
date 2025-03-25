@@ -74,4 +74,3 @@ pub struct Handler {
 // }
 
 // ///|
-// let hover : Ref[(Rect, Handler)?] = Ref::new(None)

@@ -202,7 +202,7 @@ pub fn Element::round_border(
 ///|
 pub fn Element::round_padding(
   self : Element,
-  thickness : Cache[Int],
+  thickness~ : Cache[Int],
   color~ : Cache[Color],
   radius~ : Cache[Int]
 ) -> Element {
@@ -222,4 +222,11 @@ pub fn Element::round_padding(
   layout.depend_on(color)
   layout.depend_on(radius)
   Layout(layout)
+}
+
+pub fn Element::handle(
+  self : Element,
+  handler  : Handler
+) -> Element {
+  self.handle(handler)
 }

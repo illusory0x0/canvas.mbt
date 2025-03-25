@@ -7,6 +7,7 @@ pub fn Text::new(
   let size = Cache::new(fn() {
     let font = font.cache
     let text = text.cache
+    debug("Text::measure font size")
     Size::new(font.width(text), font.height(text))
   })
   size.depend_on(font)

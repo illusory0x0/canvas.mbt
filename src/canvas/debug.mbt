@@ -4,6 +4,10 @@ const DEBUG = true
 ///|
 fn debug[A : Show](x : A) -> Unit {
   if DEBUG {
-    println(x)
+    let str = x.to_string()
+    match str {
+      [.."Text",..] => ()
+      _ => println(str)
+    }
   }
 }
