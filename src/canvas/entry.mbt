@@ -26,7 +26,7 @@ pub fn entry() -> Unit {
     element.to_render_sequence(origin)
   })
   rs.depend_on(element)
-  let render : @cache.Trigger = fn() {
+  let render : Trigger = fn() {
     debug("render action")
     ctx.clearRect(0, 0, window.innerWidth(), window.innerHeight())
     &Renderable::render_iter(ctx, rs.cache)
