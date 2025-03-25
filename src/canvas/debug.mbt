@@ -6,7 +6,7 @@ fn debug[A : Show](x : A) -> Unit {
   if DEBUG {
     let str = x.to_string()
     match str {
-      [.."Text",..] => ()
+      // [.."Text",..] => ()
       _ => println(str)
     }
   }
