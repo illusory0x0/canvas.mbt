@@ -193,6 +193,7 @@ pub fn Element::border(
   Layout(sort="border", size~, children~)
 }
 
+///|
 pub fn Element::round_border(
   self : Element,
   thickness~ : Int,
@@ -202,7 +203,10 @@ pub fn Element::round_border(
   let size = self.margin_size(Thinkness::same(thickness))
   let offset = Element::margin_offset(Thinkness::same(thickness))
   let children = [
-    (Vector::default(), Render(RoundedBorder(size~, color~, thickness~,radius~))),
+    (
+      Vector::default(),
+      Render(RoundedBorder(size~, color~, thickness~, radius~)),
+    ),
     (offset, self),
   ]
   Layout(sort="round_border", size~, children~)
@@ -223,6 +227,7 @@ pub fn Element::padding(
   Layout(sort="padding", size~, children~)
 }
 
+///|
 pub fn Element::round_padding(
   self : Element,
   thickness~ : Int,
@@ -237,7 +242,6 @@ pub fn Element::round_padding(
   ]
   Layout(sort="round_padding", size~, children~)
 }
-
 
 ///|
 pub fn Element::text(text~ : String, font~ : Font, color~ : Color) -> Element {
@@ -256,7 +260,12 @@ pub fn Element::rectangle(color~ : Color, size~ : Size) -> Element {
   Render(Rectangle(size~, color~))
 }
 
-pub fn Element::round_rectangle(color~ : Color, size~ : Size, radius~ : Int) -> Element {
+///|
+pub fn Element::round_rectangle(
+  color~ : Color,
+  size~ : Size,
+  radius~ : Int
+) -> Element {
   Render(RoundedRectangle(size~, color~, radius~))
 }
 
@@ -320,8 +329,9 @@ pub fn Element::ellipse(
   )
 }
 
-
+///|
 let handler_counter : Ref[Int] = Ref::new(0)
+
 ///|
 pub fn Element::handle(
   self : Element,
@@ -330,6 +340,12 @@ pub fn Element::handle(
   on_mouse_enter? : OnMouseEnter,
   on_mouse_leave? : OnMouseLeave
 ) -> Element {
-  handler_counter.update(fn { x => x + 1})
-  Control(self, { on_click, on_double_click, on_mouse_enter, on_mouse_leave ,id:handler_counter.val})
+  handler_counter.update(fn { x => x + 1 })
+  Control(self, {
+    on_click,
+    on_double_click,
+    on_mouse_enter,
+    on_mouse_leave,
+    id: handler_counter.val,
+  })
 }

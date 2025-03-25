@@ -69,6 +69,9 @@ fn Dependency::dispatch[A](self : Dependency[A]) -> Unit {
 }
 
 ///|
+/// 
+///      self ⇐------------------ other
+/// 
 pub fn Dependency::depend_on[A, B](
   self : Dependency[A],
   other : Dependency[B]

@@ -4,8 +4,6 @@ alias @illusory0x0/canvas/dom as @dom
 alias @moonbitlang/core/quickcheck as @quickcheck
 
 // Values
-fn add_1000() -> Unit
-
 fn entry() -> Unit
 
 fn hsl(UInt, UInt, UInt) -> Color
@@ -26,7 +24,7 @@ impl Dependency {
   depend_on[A, B](Self[A], Self[B]) -> Unit
   modify[A](Self[A], (A) -> A) -> Unit
   new[A](() -> A) -> Self[A]
-  update[A](Self[A], A) -> Unit
+  update[A](Self[A], () -> A) -> Unit
 }
 impl[A : Compare] Compare for Dependency[A]
 impl[A : Default] Default for Dependency[A]
@@ -43,14 +41,17 @@ pub enum Element {
 }
 impl Element {
   border(Self, thickness~ : Thinkness, color~ : Color) -> Self
-  control(Self, on_click? : () -> Unit, on_double_click? : () -> Unit) -> Self
   coordinate(Array[Self]) -> Self
   ellipse(center~ : Vector, strokeColor~ : Color, fillColor~ : Color, radiusX~ : Int, radiusY~ : Int, rotation~ : Double, startAngle~ : Double, endAngle~ : Double, counterclockwise~ : Bool, lineWidth~ : Int) -> Self
+  handle(Self, on_click? : () -> Unit, on_double_click? : () -> Unit, on_mouse_enter? : () -> Unit, on_mouse_leave? : () -> Unit) -> Self
   hstack(Array[Self], spacing~ : Int) -> Self
   layer(Array[(Vector, Self)]) -> Self
   line(p1~ : Vector, p2~ : Vector, color~ : Color, lineWidth~ : Int = ..) -> Self
   padding(Self, thickness~ : Thinkness, color~ : Color) -> Self
   rectangle(color~ : Color, size~ : Size) -> Self
+  round_border(Self, thickness~ : Int, color~ : Color, radius~ : Int) -> Self
+  round_padding(Self, thickness~ : Int, color~ : Color, radius~ : Int) -> Self
+  round_rectangle(color~ : Color, size~ : Size, radius~ : Int) -> Self
   size(Self) -> Size
   spacer(Size) -> Self
   text(text~ : String, font~ : Font, color~ : Color) -> Self
@@ -109,12 +110,16 @@ impl Hash for GenericFontFamily
 impl Show for GenericFontFamily
 
 pub struct Handler {
+  id : Int
   on_click : (() -> Unit)?
   on_double_click : (() -> Unit)?
+  on_mouse_enter : (() -> Unit)?
+  on_mouse_leave : (() -> Unit)?
 }
-impl Handler {
-  new(on_click? : () -> Unit, on_double_click? : () -> Unit) -> Self
-}
+impl Compare for Handler
+impl Default for Handler
+impl Eq for Handler
+impl Hash for Handler
 impl Show for Handler
 
 pub(all) struct Rect {
@@ -141,6 +146,7 @@ pub enum Renderable {
   Line(Color, Size, Vector, Vector, Int)
   Ellipse(Color, Color, Size, Vector, Int, Int, Double, Double, Double, Bool, Int)
   RoundedBorder(Color, Size, Int, Int)
+  RoundedRectangle(Color, Size, Int)
 }
 impl Renderable {
   render(Self, Vector, @dom.CanvasRenderingContext2D) -> Unit
@@ -194,8 +200,18 @@ impl Eq for Vector
 impl Hash for Vector
 impl Show for Vector
 
+type Widget[S]
+impl Widget {
+  depend_on[A, B](Self[A], Self[B]) -> Unit
+  hover[T](() -> T, leave~ : (T) -> Element, enter~ : (T) -> Element) -> Self[T]
+}
+
 // Type aliases
 pub typealias OnClick = () -> Unit
+
+pub typealias OnMouseEnter = () -> Unit
+
+pub typealias OnMouseLeave = () -> Unit
 
 // Traits
 

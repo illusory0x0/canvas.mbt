@@ -42,7 +42,7 @@ let font : Font = { ..Font::default(), weight: 320 }
 let origin : Vector = { x: 20, y: 20 }
 
 ///|
-struct App {
+priv struct App {
   widget : Widget[Int]
   cache : Dependency[Array[(Vector, Element)]]
 }
