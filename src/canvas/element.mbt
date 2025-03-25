@@ -245,6 +245,7 @@ pub fn Element::round_padding(
 
 ///|
 pub fn Element::text(text~ : String, font~ : Font, color~ : Color) -> Element {
+  println("calclute text size")
   Render(
     Text(
       text~,
