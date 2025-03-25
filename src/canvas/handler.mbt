@@ -1,23 +1,20 @@
 ///|
+let default_handler : Handler = {
+  id: 0,
+  on_click: None,
+  on_double_click: None,
+  on_mouse_enter: None,
+  on_mouse_leave: None,
+}
+
+///|
 pub impl Show for Handler with output(self, logger) {
   logger.write_string("handler_id: ")
   self.id.output(logger)
 }
 
 ///|
-pub impl Eq for Handler with op_equal(self, other) {
-  self.id == other.id
-}
-
-///|
-pub impl Compare for Handler with compare(self, other) {
-  self.id.compare(other.id)
-}
-
-///|
-pub impl Hash for Handler with hash_combine(self, state) {
-  self.id.hash_combine(state)
-}
+let handler_counter : Ref[Int] = Ref::new(0)
 
 ///|
 pub fn Handler::new(

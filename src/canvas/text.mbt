@@ -1,0 +1,34 @@
+///|
+pub fn Text::new(
+  text~ : () -> String,
+  font~ : () -> Font,
+  color~ : () -> Color
+) -> Text {
+  let text = Cache::new(text)
+  let font = Cache::new(font)
+  let color = Cache::new(color)
+  let size = Cache::new(fn() {
+    let font = font.cache
+    let text = text.cache
+    Size::new(font.width(text), font.height(text))
+  })
+  size.depend_on(font)
+  size.depend_on(text)
+  { text, font, color, size }
+}
+
+///|
+pub impl Renderable for Text with size(self) {
+  self.size.cache
+}
+
+///|
+pub impl Renderable for Text with render(self, offset, ctx) {
+  let color = self.color.cache
+  let font = self.font.cache
+  let text = self.text.cache
+  ctx.set_fillStyle(color.to_string())
+  ctx.set_font(font.to_string())
+  ctx.set_textBaseline("top")
+  ctx.fillText(text, offset.x, offset.y)
+}
