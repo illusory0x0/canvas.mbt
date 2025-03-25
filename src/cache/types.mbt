@@ -11,3 +11,5 @@ pub struct Cache[A] {
   priv children : Array[() -> Unit]
   mut refresh : () -> Unit
 }
+
+pub(all) type Trigger () -> Unit
