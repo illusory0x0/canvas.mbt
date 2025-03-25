@@ -1,4 +1,28 @@
-///|
+///| Warning: when nest `Dependency[A]` in `struct`, `tuple`, `enum`, those `Aggregation type`
+/// dependency relation won't derive.
+/// ```moonbit
+/// test {
+///   let y = Dependency::new(fn () { 0 })
+///   let a = Dependency::new(fn () { y.value })
+///   let b = Dependency::new(fn () { a.value + 10 })
+///
+///   let x : Dependency[(Dependency[Int],Dependency[Int])] = Dependency::new(fn () { 
+///      a.depend_on(b)
+///     (a,b)
+///   })
+///
+///   let old_value = x.value
+///   x.depend_on(y)
+///   y.modify(fn { x => x + 1})    // modify y will update x, but update x just call thunk to create new x
+///                                // but (a,b) of the new x is the same as old one
+///   let new_value = x.value 
+///
+///   assert_false!(physical_equal(old_value,new_value))
+///   assert_true!(physical_equal(old_value.0,new_value.0))
+///   assert_true!(physical_equal(old_value.1,new_value.1))
+///   inspect!(x, content="(0, 10)")
+/// }
+/// ```
 pub struct Dependency[A] {
   mut value : A
   priv mut thunk : () -> A
@@ -34,7 +58,7 @@ pub fn Dependency::update[A](self : Dependency[A], thunk : () -> A) -> Unit {
 
 ///|
 pub fn Dependency::modify[A](self : Dependency[A], f : (A) -> A) -> Unit {
-  self.update(fn () { f(self.value) })
+  self.update(fn() { f(self.value) })
 }
 
 ///|
@@ -90,18 +114,4 @@ pub impl[A : Arbitrary] Arbitrary for Dependency[A] with arbitrary(seed, state) 
 pub impl[A : Default] Default for Dependency[A] with default() {
   let value = A::default()
   Dependency::new(fn() { value })
-}
-
-test "update" {
-  let a = Dependency::new(fn () { 0 })
-  let b = Dependency::new(fn () { a.value + 1})
-  b.depend_on(a)
-  a.update(fn () { 2 })
-  println(b.value)
-  a.update(fn () { 3 })
-  println(b.value)
-  b.update(fn() {  a.value + 10 })
-  println(b.value)
-  a.update(fn () { 0 })
-  println(b.value)
 }
