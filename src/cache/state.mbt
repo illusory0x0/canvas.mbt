@@ -1,18 +1,20 @@
 ///|
 pub struct State[A] {
   mut value : A
-  priv mut refresh : () -> Unit
+  priv children : Array[() -> Unit]
 }
 
 ///|
 pub fn State::new[A](value : A) -> State[A] {
-  { value, refresh: do_nothing }
+  { value, children: [] }
 }
 
 ///|
 pub fn State::set[A](self : State[A], value : A) -> Unit {
   self.value = value
-  (self.refresh)()
+  for refresh in self.children {
+    refresh()
+  }
 }
 
 ///|
@@ -27,7 +29,8 @@ pub fn State::modify[A](self : State[A], f : (A) -> A) -> Unit {
 
 ///|
 pub fn State::cache[A, B](self : State[A], f : (A) -> B) -> Cache[B] {
-  let cache = Cache::new(fn() { f(self.value) })
-  self.refresh = cache.refresh
-  cache
+  let source = self
+  let target = Cache::new(fn() { f(source.value) })
+  self.children.push(target.refresh)
+  target
 }

@@ -19,11 +19,8 @@ pub fn Cache::new[A](init : () -> A) -> Cache[A] {
 }
 
 ///|
-/// 
-///      self <---- other
-/// 
-pub fn Cache::depend_on[A, B](self : Cache[A], other : Cache[B]) -> Unit {
-  other.children.push(self.refresh)
+pub fn Cache::depend_on[A, B : RequiredBy](self : Cache[A], other : B) -> Unit {
+  other.require_by(self.refresh)
 }
 
 ///|
@@ -32,4 +29,36 @@ pub fn Cache::refresh[A](self : Cache[A]) -> Unit {
   for refresh in self.children {
     refresh()
   }
+}
+
+///|
+pub fn Cache::cache[A, B](self : Cache[A], f : (A) -> B) -> Cache[B] {
+  let source = self
+  let target = Cache::new(fn() { f(source.cache) })
+  target.depend_on(source)
+  target
+}
+
+///|
+trait RequiredBy {
+  require_by(Self, () -> Unit) -> Unit
+}
+
+///|
+pub impl[A] RequiredBy for Cache[A] with require_by(self, refresh) {
+  self.children.push(refresh)
+}
+
+///|
+pub impl[A] RequiredBy for State[A] with require_by(self, refresh) {
+  self.children.push(refresh)
+}
+
+
+pub impl[A : Show ] Show for State[A] with output(self,logger) {
+  self.value.output(logger)
+}
+
+pub impl[A : Show ] Show for Cache[A] with output(self,logger) {
+  self.cache.output(logger)
 }

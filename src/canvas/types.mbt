@@ -2,7 +2,7 @@
 typealias @basic.(Color, Size, Font, Thinkness, Vector, Rect)
 
 ///|
-typealias @cache.Cache[T]
+typealias @cache.(Cache[T], State[T])
 
 ///|
 fnalias @basic.hsl
@@ -46,17 +46,14 @@ pub typealias OnMouseEnter = () -> Unit
 pub typealias OnMouseLeave = () -> Unit
 
 ///|
-pub(all) struct Layout {
-  size : Cache[Size]
-  children : Cache[(Vector, Element)]
-}
+typealias Layout = Cache[(Size, Array[(Vector, Element)])]
 
 ///|
 pub enum Element {
   Layout(Layout)
   Render(&Renderable)
   Handle(Element, Handler)
-}
+} derive(Show)
 
 ///|
 pub struct Handler {

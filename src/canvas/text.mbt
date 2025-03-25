@@ -1,12 +1,9 @@
 ///|
 pub fn Text::new(
-  text~ : () -> String,
-  font~ : () -> Font,
-  color~ : () -> Color
+  text~ : Cache[String],
+  font~ : Cache[Font],
+  color~ : Cache[Color]
 ) -> Text {
-  let text = Cache::new(text)
-  let font = Cache::new(font)
-  let color = Cache::new(color)
   let size = Cache::new(fn() {
     let font = font.cache
     let text = text.cache
