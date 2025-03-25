@@ -14,7 +14,7 @@ pub fn entry() -> Unit {
       ),
       Render(
         Text::new(
-          text=Cache::new(fn () { "AA" }),
+          text=Cache::new(fn() { "AA" }),
           font=font.cache(@fun.id),
           color=color.cache(@fun.id),
         ),
@@ -28,10 +28,9 @@ pub fn entry() -> Unit {
   rs.depend_on(element)
   let render : Cache[Unit] = rs.cache(fn(xs) {
     debug("render action")
-    ctx.clearRect(0,0,window.innerWidth(),window.innerHeight())
+    ctx.clearRect(0, 0, window.innerWidth(), window.innerHeight())
     &Renderable::render_iter(ctx, xs)
   })
-
   fn run_app() {
     resize()
     &Renderable::render_iter(ctx, rs.cache)
@@ -39,9 +38,7 @@ pub fn entry() -> Unit {
 
   run_app()
   window.addEventListener("resize", fn(_) { run_app() })
-  window.addEventListener("click", fn(_) {
-    text.modify(fn(x) { x + "x" })
-  })
+  window.addEventListener("click", fn(_) { text.modify(fn(x) { x + "x" }) })
 }
 
 // let app : App = App::new()

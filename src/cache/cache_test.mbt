@@ -27,6 +27,7 @@ test (t : @test.T) {
   fn deg_to_rad(deg : Double) -> Double {
     deg * @math.PI / 180
   }
+
   fn rad_to_deg(rad : Double) -> Double {
     rad * 180 / @math.PI
   }
@@ -35,24 +36,27 @@ test (t : @test.T) {
   let b = State::new(deg_to_rad(15))
   let tan_a = a.cache(@math.tan)
   let tan_b = b.cache(@math.tan)
-  let tan_a_M_tan_b = Cache::new(fn() { 
+  let tan_a_M_tan_b = Cache::new(fn() {
     t.writeln("eval: tan(a) * tan(b)")
-    tan_a.cache * tan_b.cache 
+    tan_a.cache * tan_b.cache
   })
   tan_a_M_tan_b.depend_on(tan_a)
   tan_a_M_tan_b.depend_on(tan_b)
-
   let tan_a_P_b = Cache::new(fn() {
     t.writeln("eval: tan(a + b)")
-    (tan_a.cache + tan_b.cache) / (1. - tan_a_M_tan_b.cache)
+    (tan_a.cache + tan_b.cache) / (1.0 - tan_a_M_tan_b.cache)
   })
-
   let tan_a_S_b = Cache::new(fn() {
     t.writeln("eval: tan(a - b)")
-    (tan_a.cache - tan_b.cache) / (1. + tan_a_M_tan_b.cache)
+    (tan_a.cache - tan_b.cache) / (1.0 + tan_a_M_tan_b.cache)
   })
-
-  inspect!(tan_a_P_b.cache |> @math.atan |> rad_to_deg, content="59.99999999999999")
-  inspect!(tan_a_S_b.cache |>@math.atan |> rad_to_deg, content="29.999999999999996")
+  inspect!(
+    tan_a_P_b.cache |> @math.atan |> rad_to_deg,
+    content="59.99999999999999",
+  )
+  inspect!(
+    tan_a_S_b.cache |> @math.atan |> rad_to_deg,
+    content="29.999999999999996",
+  )
   t.snapshot!(filename="expr2.txt")
 }

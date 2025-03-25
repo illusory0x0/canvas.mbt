@@ -23,7 +23,6 @@ fn resize() -> Unit {
   ctx.scale(dpr, dpr)
 }
 
-
 ///|
 let ctx : @dom.Canvas2D = canvas.getContext("2d")
 

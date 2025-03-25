@@ -1,24 +1,20 @@
 ///|
 pub fn RoundedBorder::new(
   color : Cache[Color],
-  size :  Cache[Size],
+  size : Cache[Size],
   radius : Cache[Int],
   thickness : Cache[Int]
 ) -> RoundedBorder {
   { color, size, radius, thickness }
 }
 
-
-
-pub impl RequiredBy for RoundedBorder with require_by(self,refresh) {
+///|
+pub impl RequiredBy for RoundedBorder with require_by(self, refresh) {
   self.color.require_by(refresh)
   self.size.require_by(refresh)
   self.radius.require_by(refresh)
   self.thickness.require_by(refresh)
 }
-
-
-
 
 ///|
 pub impl Renderable for RoundedBorder with size(self) {

@@ -1,8 +1,9 @@
-const DEBUG = true 
+///|
+const DEBUG = true
 
-
+///|
 fn debug[A : Show](x : A) -> Unit {
-  if (DEBUG) {
+  if DEBUG {
     println(x)
   }
 }

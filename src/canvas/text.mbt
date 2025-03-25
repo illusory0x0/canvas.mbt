@@ -14,10 +14,10 @@ pub fn Text::new(
   { text, font, color, size }
 }
 
-pub impl RequiredBy for Text with require_by(self,refresh) {
+///|
+pub impl RequiredBy for Text with require_by(self, refresh) {
   self.size.require_by(refresh)
 }
-
 
 ///|
 pub impl Renderable for Text with size(self) {

@@ -5,8 +5,8 @@ pub fn Rectangle::new(color~ : () -> Color, size~ : () -> Size) -> Rectangle {
   { color, size }
 }
 
-
-pub impl RequiredBy for Rectangle with require_by(self,refresh) {
+///|
+pub impl RequiredBy for Rectangle with require_by(self, refresh) {
   self.color.require_by(refresh)
   self.size.require_by(refresh)
 }

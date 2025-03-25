@@ -1,5 +1,3 @@
-
-
 ///|
 pub fn State::new[A](value : A) -> State[A] {
   { value, children: [] }
