@@ -92,6 +92,12 @@ typealias @dom.Canvas2D
 pub typealias OnClick = () -> Unit
 
 ///|
+pub typealias OnMouseEnter = () -> Unit
+
+///|
+pub typealias OnMouseLeave = () -> Unit
+
+///|
 pub enum Element {
   Layout(sort~ : String, size~ : Size, children~ : Array[(Vector, Element)])
   Render(Renderable)
@@ -100,11 +106,22 @@ pub enum Element {
 
 ///|
 pub struct Handler {
+  id : Int
   on_click : OnClick?
   on_double_click : OnClick?
+  on_mouse_enter : OnMouseEnter?
+  on_mouse_leave : OnMouseLeave?
 }
 
 ///|
-pub impl Show for Handler with output(self, logger) {
+let default_handler : Handler = {
+  id: 0,
+  on_click: None,
+  on_double_click: None,
+  on_mouse_enter: None,
+  on_mouse_leave: None,
+}
 
+pub impl Default for Handler with default() {
+  default_handler
 }

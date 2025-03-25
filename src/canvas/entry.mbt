@@ -52,32 +52,32 @@ priv struct App {
   counter : Dependency[Int]
   button : Element
   element : Dependency[Element]
-  layout : Dependency[Array[(Vector, Element)]]
+  cache : Dependency[Array[(Vector, Element)]]
 }
 
 ///|
 fn App::new() -> App {
   let counter = Dependency::new(fn() { 0 })
   let button = Element::text(text="+", font~, color=white)
-    .round_padding(thickness=16, color=black,radius=50)
-    .control(on_click=fn() { counter.modify(fn { x => x + 1 }) })
+    .round_padding(thickness=16, color=black, radius=50)
+    .handle(on_click=fn() { counter.modify(fn { x => x + 1 }) })
   let element = Dependency::new(fn() {
     let label = Element::text(
       text="counter: \{counter.value}",
       font~,
       color=white,
-    ).round_padding(thickness=20, color=black,radius=20)
+    ).round_padding(thickness=20, color=black, radius=20)
     Element::hstack([label, button], spacing=40)
   })
   let layout = Dependency::new(fn() { element.value.to_layout_sequence(origin) })
   element.depend_on(counter)
   layout.depend_on(element)
-  { counter, element, layout, button }
+  { counter, element, cache: layout, button }
 }
 
 ///|
 fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
-  self.layout.value
+  self.cache.value
   .iter()
   .filter_map(fn {
     (o, e) =>
@@ -90,7 +90,7 @@ fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
 
 ///|
 fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
-  self.layout.value
+  self.cache.value
   .rev_iter()
   .filter_map(fn {
     (offset, e) =>
@@ -109,26 +109,57 @@ fn App::render(self : App) -> Unit {
 }
 
 ///|
+let hover : Ref[(Rect, Handler)?] = Ref::new(None)
+
+///|
 let app : App = App::new()
 
 ///|
 pub fn entry() -> Unit {
+  fn run(action) {
+    match action {
+      None => ()
+      Some(f) => f()
+    }
+  }
+
+  let render = Dependency::new(fn() { app.render() })
+  render.depend_on(app.cache)
+
+
   window.addEventListener("resize", fn(_) {
     resize()
-    app.render()
   })
   window.addEventListener("click", fn(e) {
     let e : @dom.MouseEvent = e.downcast()
-    let es = app.event_sequence()
-    for x in es {
+    for x in app.event_sequence() {
       let (rect, handler) = x
       let p = { x: e.clientX(), y: e.clientY() }
       if p.inside(rect) {
-        handler.on_click.map(fn(f) { f() }) |> ignore
+        handler.on_click |> run
         break
       }
     }
-    app.render()
+  })
+  window.addEventListener("mousemove", fn(e) {
+    let e : @dom.MouseEvent = e.downcast()
+    let p = { x: e.clientX(), y: e.clientY() }
+    match hover.val {
+      None =>
+        for x in app.event_sequence() {
+          let (rect, handler) = x
+          if p.inside(rect) {
+            handler.on_mouse_enter |> run
+            hover.val = Some(x)
+            break
+          }
+        }
+      Some((rect, handler)) =>
+        if not(p.inside(rect)) {
+          handler.on_mouse_leave |> run
+          hover.val = None
+        }
+    }
   })
   resize()
   app.render()
@@ -138,6 +169,5 @@ pub fn entry() -> Unit {
 pub fn add_1000() -> Unit {
   for _ in 0..<1000 {
     app.counter.modify(fn { x => x + 1 })
-    app.render()
   }
 }
