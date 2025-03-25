@@ -8,6 +8,15 @@ pub fn Element::size(self : Element) -> Size {
 }
 
 ///|
+pub impl RequiredBy for Element with require_by(self, refresh) {
+  match self {
+    Layout(layout) => layout.require_by(refresh)
+    Render(render) => render.require_by(refresh)
+    Handle(element, _) => element.require_by(refresh)
+  }
+}
+
+///|
 pub fn Element::spacer(size : Size) -> Element {
   let layout = Cache::new(fn() { (size, []) })
   Layout(layout)
@@ -199,11 +208,8 @@ pub fn Element::round_padding(
   let layout = Cache::new(fn() {
     let size = self.margin_size(Thinkness::same(thickness()))
     let offset = Element::margin_offset(Thinkness::same(thickness()))
-    let render = RoundedRectangle::new(color,fn () { size}, radius)
-    let children = [
-      (Vector::default(),Render(render)),
-      (offset, self),
-    ]
+    let render = RoundedRectangle::new(color, fn() { size }, radius)
+    let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
   Layout(layout)

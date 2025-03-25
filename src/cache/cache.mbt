@@ -3,7 +3,7 @@ pub struct Cache[A] {
   mut cache : A
   priv init : () -> A
   priv children : Array[() -> Unit]
-  priv mut refresh : () -> Unit
+  mut refresh : () -> Unit
 }
 
 ///|
@@ -40,7 +40,7 @@ pub fn Cache::cache[A, B](self : Cache[A], f : (A) -> B) -> Cache[B] {
 }
 
 ///|
-trait RequiredBy {
+pub(open) trait RequiredBy {
   require_by(Self, () -> Unit) -> Unit
 }
 

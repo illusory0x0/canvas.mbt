@@ -10,6 +10,15 @@ pub fn RoundedRectangle::new(
   { color, size, radius }
 }
 
+pub impl RequiredBy for RoundedRectangle with require_by(self,refresh) {
+  self.color.require_by(refresh)
+  self.size.require_by(refresh)
+  self.radius.require_by(refresh)
+}
+
+
+
+
 ///|
 pub impl Renderable for RoundedRectangle with size(self) {
   self.size.cache

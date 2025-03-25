@@ -1,4 +1,4 @@
-pub(open) trait Renderable {
+pub(open) trait Renderable : RequiredBy {
   size(Self) -> Size 
   render(Self, Vector,@dom.Canvas2D) -> Unit
 } 
