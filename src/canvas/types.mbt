@@ -2,7 +2,7 @@
 typealias @basic.(Color, Size, Font, Thinkness, Vector, Rect)
 
 ///|
-typealias @cache.(Cache[T], State[T])
+typealias @cache.(Cache[T], State[T],Trigger)
 
 ///|
 traitalias @cache.RequiredBy

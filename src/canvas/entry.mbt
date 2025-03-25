@@ -26,11 +26,12 @@ pub fn entry() -> Unit {
     element.to_render_sequence(origin)
   })
   rs.depend_on(element)
-  let render : Cache[Unit] = rs.cache(fn(xs) {
+  let render : @cache.Trigger = fn() {
     debug("render action")
     ctx.clearRect(0, 0, window.innerWidth(), window.innerHeight())
-    &Renderable::render_iter(ctx, xs)
-  })
+    &Renderable::render_iter(ctx, rs.cache)
+  }
+  render.depend_on(rs)
   fn run_app() {
     resize()
     &Renderable::render_iter(ctx, rs.cache)
