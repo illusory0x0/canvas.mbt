@@ -39,7 +39,7 @@ pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
     (size, children)
   })
   for x in xs {
-    x.require_by(layout.refresh)
+    layout.depend_on(x)
   }
   Layout(layout)
 }
@@ -61,7 +61,7 @@ pub fn Element::vstack(xs : Array[Element], spacing~ : Int) -> Element {
     (size, children)
   })
   for x in xs {
-    x.require_by(layout.refresh)
+    layout.depend_on(x)
   }
   Layout(layout)
 }
@@ -154,7 +154,7 @@ pub fn Element::layer(xs : Array[(Vector, Element)]) -> Element {
     (size, xs)
   })
   for x in xs {
-    x.1.require_by(layout.refresh)
+    layout.depend_on(x.1)
   }
   Layout(layout)
 }
@@ -192,10 +192,10 @@ pub fn Element::round_border(
     let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
-  self.require_by(layout.refresh)
-  thickness.require_by(layout.refresh)
-  color.require_by(layout.refresh)
-  radius.require_by(layout.refresh)
+  layout.depend_on(self)
+  layout.depend_on(thickness)
+  layout.depend_on(color)
+  layout.depend_on(radius)
   Layout(layout)
 }
 
@@ -217,9 +217,9 @@ pub fn Element::round_padding(
     let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
-  self.require_by(layout.refresh)
-  thickness.require_by(layout.refresh)
-  color.require_by(layout.refresh)
-  radius.require_by(layout.refresh)
+  layout.depend_on(self)
+  layout.depend_on(thickness)
+  layout.depend_on(color)
+  layout.depend_on(radius)
   Layout(layout)
 }
