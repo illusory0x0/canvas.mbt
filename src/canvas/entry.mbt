@@ -22,13 +22,12 @@ pub fn entry() -> Unit {
     ],
     spacing=0,
   )
-  // println(element)
   let rs : Cache[Iter[(@basic.Vector, &Renderable)]] = Cache::new(fn() {
     element.to_render_sequence(origin)
   })
   rs.depend_on(element)
   let render : Cache[Unit] = rs.cache(fn(xs) {
-    println("render")
+    debug("render action")
     ctx.clearRect(0,0,window.innerWidth(),window.innerHeight())
     &Renderable::render_iter(ctx, xs)
   })
@@ -41,7 +40,6 @@ pub fn entry() -> Unit {
   run_app()
   window.addEventListener("resize", fn(_) { run_app() })
   window.addEventListener("click", fn(_) {
-    // println(element)
     text.modify(fn(x) { x + "x" })
   })
 }

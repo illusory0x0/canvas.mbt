@@ -1,8 +1,8 @@
-let debug = true 
+const DEBUG = true 
 
 
-fn debug_print[A : Show](x : A) -> Unit {
-  if (debug) {
+fn debug[A : Show](x : A) -> Unit {
+  if (DEBUG) {
     println(x)
   }
 }
