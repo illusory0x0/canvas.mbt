@@ -1,7 +1,7 @@
 ///|
 pub struct Dependency[A] {
   mut value : A
-  priv thunk : () -> A
+  priv mut thunk : () -> A
   priv children : Array[() -> Unit]
   priv mut closure : () -> Unit
 }
@@ -22,15 +22,19 @@ pub fn Dependency::new[A](thunk : () -> A) -> Dependency[A] {
 }
 
 ///|
-pub fn Dependency::update[A](self : Dependency[A], value : A) -> Unit {
-  self.value = value
+pub fn Dependency::update[A](self : Dependency[A], thunk : () -> A) -> Unit {
+  self.value = thunk()
+  self.thunk = thunk
+  self.closure = fn() {
+    self.value = (self.thunk)()
+    self.dispatch()
+  }
   self.dispatch()
 }
 
 ///|
 pub fn Dependency::modify[A](self : Dependency[A], f : (A) -> A) -> Unit {
-  self.value = self.value |> f
-  self.dispatch()
+  self.update(fn () { f(self.value) })
 }
 
 ///|
@@ -86,4 +90,18 @@ pub impl[A : Arbitrary] Arbitrary for Dependency[A] with arbitrary(seed, state) 
 pub impl[A : Default] Default for Dependency[A] with default() {
   let value = A::default()
   Dependency::new(fn() { value })
+}
+
+test "update" {
+  let a = Dependency::new(fn () { 0 })
+  let b = Dependency::new(fn () { a.value + 1})
+  b.depend_on(a)
+  a.update(fn () { 2 })
+  println(b.value)
+  a.update(fn () { 3 })
+  println(b.value)
+  b.update(fn() {  a.value + 10 })
+  println(b.value)
+  a.update(fn () { 0 })
+  println(b.value)
 }

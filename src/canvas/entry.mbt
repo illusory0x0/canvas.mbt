@@ -48,9 +48,46 @@ typealias @lazy.LazyRec[T]
 let origin : Vector = { x: 20, y: 20 }
 
 ///|
+typealias Modifier = (Element) -> Element
+
+///|
+priv struct Hover {
+  content : Dependency[Element]
+  leave : Modifier
+  enter : Modifier
+  element : Dependency[Element]
+}
+
+///|
+fn Hover::new(
+  make_content : () -> Element,
+  leave~ : Modifier,
+  enter~ : Modifier
+) -> Hover {
+  let content = Dependency::new(make_content)
+  let element = Dependency::new(fn() { leave(content.value) })
+  fn on_mouse_enter() {
+    element.update(fn() {
+      enter(content.value).handle(on_mouse_enter~, on_mouse_leave~)
+    })
+  }
+
+  fn on_mouse_leave() {
+    element.update(fn() {
+      leave(content.value).handle(on_mouse_enter~, on_mouse_leave~)
+    })
+  }
+
+  element.modify(fn(e) { e.handle(on_mouse_enter~, on_mouse_leave~) })
+  element.depend_on(content)
+  { content, leave, enter, element }
+}
+
+///|
 priv struct App {
   counter : Dependency[Int]
   button : Element
+  label : Hover
   element : Dependency[Element]
   cache : Dependency[Array[(Vector, Element)]]
 }
@@ -61,18 +98,27 @@ fn App::new() -> App {
   let button = Element::text(text="+", font~, color=white)
     .round_padding(thickness=16, color=black, radius=50)
     .handle(on_click=fn() { counter.modify(fn { x => x + 1 }) })
+  let label = 
+    Hover::new(
+      fn() {
+        Element::text(text="counter: \{counter.value}", font~, color=white)
+      },
+      leave=fn { e => e.round_padding(thickness=20, color=black, radius=20) },
+      enter=fn(e) {
+        e.round_padding(thickness=20, color=hsl(0, 0, 20), radius=20)
+      },
+    )
+  
   let element = Dependency::new(fn() {
-    let label = Element::text(
-      text="counter: \{counter.value}",
-      font~,
-      color=white,
-    ).round_padding(thickness=20, color=black, radius=20)
-    Element::hstack([label, button], spacing=40)
+    Element::hstack([label.element.value, button], spacing=40)
   })
-  let layout = Dependency::new(fn() { element.value.to_layout_sequence(origin) })
-  element.depend_on(counter)
-  layout.depend_on(element)
-  { counter, element, cache: layout, button }
+  let cache = Dependency::new(fn() { element.value.to_layout_sequence(origin) })
+
+  label.content.depend_on(counter)
+  element.depend_on(label.element)
+  cache.depend_on(element)
+
+  { counter, element, cache, button, label }
 }
 
 ///|
@@ -125,11 +171,7 @@ pub fn entry() -> Unit {
 
   let render = Dependency::new(fn() { app.render() })
   render.depend_on(app.cache)
-
-
-  window.addEventListener("resize", fn(_) {
-    resize()
-  })
+  window.addEventListener("resize", fn(_) { resize() })
   window.addEventListener("click", fn(e) {
     let e : @dom.MouseEvent = e.downcast()
     for x in app.event_sequence() {
