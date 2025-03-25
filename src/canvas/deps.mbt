@@ -24,7 +24,7 @@
 /// }
 /// ```
 pub struct Dependency[A] {
-  mut value : A
+  mut cache : A
   priv thunk : () -> A
   priv children : Array[() -> Unit]
   priv mut closure : () -> Unit
@@ -37,9 +37,9 @@ fn do_nothing() -> Unit {
 
 ///|
 pub fn Dependency::new[A](thunk : () -> A) -> Dependency[A] {
-  let self = { value: thunk(), thunk, children: [], closure: do_nothing }
+  let self = { cache: thunk(), thunk, children: [], closure: do_nothing }
   self.closure = fn() {
-    self.value = (self.thunk)()
+    self.cache = (self.thunk)()
     self.dispatch()
   }
   self
@@ -58,7 +58,7 @@ pub fn Dependency::new[A](thunk : () -> A) -> Dependency[A] {
 
 
 pub fn Dependency::update[A](self : Dependency[A]) -> Unit {
-  self.value = (self.thunk)()
+  self.cache = (self.thunk)()
   self.dispatch()
 }
 
@@ -83,27 +83,27 @@ pub fn Dependency::depend_on[A, B](
 
 ///|
 pub impl[A : Show] Show for Dependency[A] with output(self, logger) {
-  self.value.output(logger)
+  self.cache.output(logger)
 }
 
 ///|
 pub impl[A : Eq] Eq for Dependency[A] with op_equal(self, other) {
-  self.value == other.value
+  self.cache == other.cache
 }
 
 ///|
 pub impl[A : Compare] Compare for Dependency[A] with compare(self, other) {
-  self.value.compare(other.value)
+  self.cache.compare(other.cache)
 }
 
 ///|
 pub impl[A : ToJson] ToJson for Dependency[A] with to_json(self) {
-  self.value.to_json()
+  self.cache.to_json()
 }
 
 ///|
 pub impl[A : Hash] Hash for Dependency[A] with hash_combine(self, hasher) {
-  self.value.hash_combine(hasher)
+  self.cache.hash_combine(hasher)
 }
 
 ///|

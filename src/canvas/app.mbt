@@ -60,7 +60,7 @@ fn App::new() -> App {
       }),
     )
   let text = Dependency::new(fn() {
-    Element::text(text="counter: \{source.value}", font~, color=white)
+    Element::text(text="counter: \{source.cache}", font~, color=white)
   })
   let label = Widget::hover(
     text,
@@ -75,9 +75,9 @@ fn App::new() -> App {
   // println(label.target.value)
 
   let target = Dependency::new(fn() {
-    Element::hstack([label.target.value, button], spacing=40)
+    Element::hstack([label.target.cache, button], spacing=40)
   })
-  let cache = Dependency::new(fn() { target.value.to_layout_sequence(origin) })
+  let cache = Dependency::new(fn() { target.cache.to_layout_sequence(origin) })
   let widget = { source, target }
   widget.depend_on(label)
   cache.depend_on(target)
@@ -86,7 +86,7 @@ fn App::new() -> App {
 
 ///|
 fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
-  self.cache.value
+  self.cache.cache
   .iter()
   .filter_map(fn {
     (o, e) =>
@@ -99,7 +99,7 @@ fn App::render_sequence(self : App) -> Iter[(Vector, Renderable)] {
 
 ///|
 fn App::event_sequence(self : App) -> Iter[(Rect, Handler)] {
-  self.cache.value
+  self.cache.cache
   .rev_iter()
   .filter_map(fn {
     (offset, e) =>

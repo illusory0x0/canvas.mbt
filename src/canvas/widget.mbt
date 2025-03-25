@@ -6,7 +6,7 @@ pub fn Widget::hover[T](
 ) -> Widget[(T)] {
   let mut is_hoved = false
   let tmp = Dependency::new(fn() {
-    (source.value, if is_hoved { leave } else { enter })
+    (source.cache, if is_hoved { leave } else { enter })
   })
   is_hoved = false
   fn on_mouse_enter() {
@@ -21,8 +21,8 @@ pub fn Widget::hover[T](
 
   let handler = Handler::new(on_mouse_enter~, on_mouse_leave~)
   let target = Dependency::new(fn() {
-    let (element, modifier) = tmp.value
-    modifier(source.value).handle(handler)
+    let (element, modifier) = tmp.cache
+    modifier(source.cache).handle(handler)
   })
   tmp.depend_on(source)
   target.depend_on(tmp)
