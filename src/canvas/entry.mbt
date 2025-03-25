@@ -3,20 +3,36 @@ pub fn entry() -> Unit {
   let text = State::new("xx")
   let font = State::new(font)
   let color = State::new(white)
-  let element : Element = Render(
-    Text::new(
-      text=text.cache(@fun.id),
-      font=font.cache(@fun.id),
-      color=color.cache(@fun.id),
-    ),
+  let element : Element = Element::hstack(
+    [
+      Render(
+        Text::new(
+          text=text.cache(@fun.id),
+          font=font.cache(@fun.id),
+          color=color.cache(@fun.id),
+        ),
+      ),
+      Render(
+        Text::new(
+          text=Cache::new(fn () { "AA" }),
+          font=font.cache(@fun.id),
+          color=color.cache(@fun.id),
+        ),
+      ),
+    ],
+    spacing=0,
   )
+  // println(element)
   let rs : Cache[Iter[(@basic.Vector, &Renderable)]] = Cache::new(fn() {
     element.to_render_sequence(origin)
   })
   rs.depend_on(element)
   let render : Cache[Unit] = rs.cache(fn(xs) {
+    println("render")
+    ctx.clearRect(0,0,window.innerWidth(),window.innerHeight())
     &Renderable::render_iter(ctx, xs)
   })
+
   fn run_app() {
     resize()
     &Renderable::render_iter(ctx, rs.cache)
@@ -25,7 +41,7 @@ pub fn entry() -> Unit {
   run_app()
   window.addEventListener("resize", fn(_) { run_app() })
   window.addEventListener("click", fn(_) {
-    println("done")
+    // println(element)
     text.modify(fn(x) { x + "x" })
   })
 }

@@ -38,6 +38,9 @@ pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
     let size = Size::new(w - spacing, h)
     (size, children)
   })
+  for x in xs {
+    x.require_by(layout.refresh)
+  }
   Layout(layout)
 }
 
@@ -57,6 +60,9 @@ pub fn Element::vstack(xs : Array[Element], spacing~ : Int) -> Element {
     let size = Size::new(w, h - spacing)
     (size, children)
   })
+  for x in xs {
+    x.require_by(layout.refresh)
+  }
   Layout(layout)
 }
 
@@ -147,6 +153,9 @@ pub fn Element::layer(xs : Array[(Vector, Element)]) -> Element {
     let size = Size::new(w, h)
     (size, xs)
   })
+  for x in xs {
+    x.1.require_by(layout.refresh)
+  }
   Layout(layout)
 }
 
@@ -165,23 +174,6 @@ fn Element::margin_size(self : Element, thickness : Thinkness) -> Size {
 }
 
 ///|
-fn Element::margin(
-  self : Element,
-  thickness~ : Thinkness,
-  color~ : Color,
-  sort~ : String,
-  background~ : &Renderable
-) -> Element {
-  let layout = Cache::new(fn() {
-    let size = self.margin_size(thickness)
-    let offset = Element::margin_offset(thickness)
-    let children = [(Vector::default(), Render(background)), (offset, self)]
-    (size, children)
-  })
-  Layout(layout)
-}
-
-///|
 pub fn Element::round_border(
   self : Element,
   thickness~ : () -> Int,
@@ -195,6 +187,7 @@ pub fn Element::round_border(
     let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
+  self.require_by(layout.refresh)
   Layout(layout)
 }
 
@@ -212,5 +205,6 @@ pub fn Element::round_padding(
     let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
+  self.require_by(layout.refresh)
   Layout(layout)
 }
