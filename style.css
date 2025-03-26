@@ -81,7 +81,7 @@ body {
   overflow: hidden;
   /* hide document scroll bar */
   position: relative;
-  /* set body to document absolute postion ancester */
+  /* set body to document absolute position ancestor */
 }
 
 /* 
