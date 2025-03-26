@@ -6,13 +6,16 @@
     "illusory0x0/lazy": "0.1.1"
   },
   "readme": "README.md",
-  "repository": "https://github.com/moonbit-community/moonbit-wasm-vite-ts-template",
+  "repository": "https://github.com/illusory0x0/canvas.mbt",
   "license": "Apache-2.0",
   "keywords": [
-    "vite",
-    "typescript",
-    "template"
+    "canvas",
+    "cache",
+    "memoization",
+    "combinator",
+    "GUI",
+    "JavaScript Backend"
   ],
-  "description": "moonbit vite template",
+  "description": "Canvas GUI library",
   "source": "src"
 }
