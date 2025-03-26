@@ -2,7 +2,7 @@
 typealias @basic.(Color, Size, Font, Thinkness, Vector, Rect)
 
 ///|
-typealias @cache.(Cache[T], State[T],Trigger)
+typealias @cache.(Cache[T], State[T], Trigger)
 
 ///|
 traitalias @cache.RequiredBy
@@ -66,11 +66,3 @@ pub struct Handler {
   on_mouse_enter : OnMouseEnter?
   on_mouse_leave : OnMouseLeave?
 }
-
-// ///|
-// struct Widget[S] {
-//   source : Dependency[S]
-//   target : Dependency[Element]
-// }
-
-// ///|

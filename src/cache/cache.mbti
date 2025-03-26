@@ -14,6 +14,7 @@ impl Cache {
   new[A](() -> A) -> Self[A]
   refresh[A](Self[A]) -> Unit
 }
+impl[A] DependOn for Cache[A]
 impl[A] RequiredBy for Cache[A]
 impl[A : Show] Show for Cache[A]
 
@@ -31,9 +32,20 @@ impl State {
 impl[A] RequiredBy for State[A]
 impl[A : Show] Show for State[A]
 
+pub(all) type Trigger () -> Unit
+impl Trigger {
+  depend_on[A : RequiredBy](Self, A) -> Unit
+  run(Self) -> Unit
+}
+impl DependOn for Trigger
+
 // Type aliases
 
 // Traits
+pub(open) trait DependOn {
+  depend_on(Self, &RequiredBy) -> Unit
+}
+
 pub(open) trait RequiredBy {
   require_by(Self, () -> Unit) -> Unit
 }

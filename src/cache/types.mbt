@@ -12,4 +12,5 @@ pub struct Cache[A] {
   mut refresh : () -> Unit
 }
 
+///|
 pub(all) type Trigger () -> Unit

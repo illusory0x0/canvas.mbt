@@ -14,10 +14,11 @@ pub enum Element {
   Handle(Element, Handler)
 }
 impl Element {
+  handle(Self, Handler) -> Self
   hstack(Array[Self], spacing~ : Int) -> Self
   layer(Array[(@basic.Vector, Self)]) -> Self
   round_border(Self, thickness~ : @cache.Cache[Int], color~ : @cache.Cache[@basic.Color], radius~ : @cache.Cache[Int]) -> Self
-  round_padding(Self, @cache.Cache[Int], color~ : @cache.Cache[@basic.Color], radius~ : @cache.Cache[Int]) -> Self
+  round_padding(Self, thickness~ : @cache.Cache[Int], color~ : @cache.Cache[@basic.Color], radius~ : @cache.Cache[Int]) -> Self
   size(Self) -> @basic.Size
   spacer(@basic.Size) -> Self
   to_layout_sequence(Self, @basic.Vector) -> Array[(@basic.Vector, Self)]

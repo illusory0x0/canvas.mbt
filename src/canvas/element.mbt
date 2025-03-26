@@ -111,8 +111,9 @@ pub fn Element::to_render_sequence(
   })
 }
 
+///|
+typealias LayoutSequence = Array[(Vector, Element)]
 
-typealias LayoutSequence  = Array[(Vector, Element)] 
 ///|
 pub fn Element::to_layout_sequence(
   self : Element,
