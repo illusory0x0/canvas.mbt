@@ -111,11 +111,13 @@ pub fn Element::to_render_sequence(
   })
 }
 
+
+typealias LayoutSequence  = Array[(Vector, Element)] 
 ///|
 pub fn Element::to_layout_sequence(
   self : Element,
   origin : Vector
-) -> Array[(Vector, Element)] {
+) -> LayoutSequence {
   guard origin.x >= 0 && origin.y >= 0
   let buf = []
   fn dfs(root : Element, origin : Vector) {
