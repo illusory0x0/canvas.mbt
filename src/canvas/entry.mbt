@@ -101,25 +101,23 @@ fn App::new() -> App {
   let text = counter.cache(fn { x => "counter: \{x}" })
   let font = Cache::new(fn() { font })
   let color = Cache::new(fn() { white })
+  let i_20 = Cache::val(20)
+  let padding_color = Cache::val(hsl(0, 0, 20))
   let button = Element::Render(
       Text::new(text=Cache::new(fn() { "+" }), font~, color~),
     )
-    .round_padding(
-      thickness=Cache::new(fn() { 20 }),
-      color=Cache::new(fn() { hsl(0, 0, 20) }),
-      radius=Cache::new(fn() { 20 }),
-    )
+    .round_padding(thickness=i_20, color=padding_color, radius=i_20)
     .handle(Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }))
   let label = Element::Render(Text::new(text~, font~, color~))
   fn padding(e : Element, c) {
-    e.round_padding(
-      thickness=Cache::new(fn() { 20 }),
-      color=c,
-      radius=Cache::new(fn() { 20 }),
-    )
+    e.round_padding(thickness=i_20, color=c, radius=i_20)
   }
 
-  let label = label.hover(leave=hsl(0, 0, 50), enter=hsl(0, 0, 20), padding~)
+  let label = label.hover(
+    leave=hsl(0, 0, 50),
+    enter=padding_color.cache,
+    padding~,
+  )
   let target = label.cache(fn {
     label => Element::hstack([label, button], spacing=20)
   })
