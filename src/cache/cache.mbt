@@ -11,6 +11,11 @@ pub fn Cache::new[A](init : () -> A) -> Cache[A] {
 }
 
 ///|
+pub fn Cache::val[A](value : A) -> Cache[A] {
+  { cache: value, init: fn() { value }, children: [], refresh: do_nothing }
+}
+
+///|
 pub fn Cache::depend_on[A, B : RequiredBy](self : Cache[A], other : B) -> Unit {
   other.require_by(self.refresh)
 }
