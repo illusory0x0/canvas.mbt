@@ -1,0 +1,17 @@
+EVAL BEGIN
+case 1
+case 1
+case 4
+EVAL END
+
+EVAL BEGIN
+EVAL END
+
+EVAL BEGIN
+case 1
+case 4
+EVAL END
+
+EVAL BEGIN
+EVAL END
+

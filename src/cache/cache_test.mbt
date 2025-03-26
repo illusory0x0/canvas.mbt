@@ -60,3 +60,76 @@ test (t : @test.T) {
   )
   t.snapshot!(filename="expr2.txt")
 }
+
+///|
+let t : @test.T = { name: "expr", buffer: StringBuilder::new() }
+
+///|
+priv enum Expr {
+  Lit(State[Int])
+  Add(Cache[Int])
+} derive(Show)
+
+///|
+impl Add for Expr with op_add(self, other) {
+  match (self, other) {
+    (Lit(x), Lit(y)) => {
+      let cache = Cache::new(fn() {
+        t.writeln("case 1")
+        x.value + y.value
+      })
+      cache.depend_on(x)
+      cache.depend_on(y)
+      Add(cache)
+    }
+    (Lit(x), Add(y)) => {
+      let cache = Cache::new(fn() {
+        t.writeln("case 2")
+        x.value + y.cache
+      })
+      cache.depend_on(x)
+      cache.depend_on(y)
+      Add(cache)
+    }
+    (Add(x), Lit(y)) => {
+      let cache = Cache::new(fn() {
+        t.writeln("case 3")
+        x.cache + y.value
+      })
+      cache.depend_on(x)
+      cache.depend_on(y)
+      Add(cache)
+    }
+    (Add(x), Add(y)) => {
+      let cache = Cache::new(fn() {
+        t.writeln("case 4")
+        x.cache + y.cache
+      })
+      cache.depend_on(x)
+      cache.depend_on(y)
+      Add(cache)
+    }
+  }
+}
+
+
+///|
+test {
+  let x = State::new(3)
+  let y = State::new(5)
+  let z = State::new(8)
+  let w = State::new(75)
+  t.writeln("EVAL BEGIN")
+  let expr = Lit(x) + Lit(y) + (Lit(z) + Lit(w))
+  t.writeln("EVAL END\n")
+  t.writeln("EVAL BEGIN")
+  inspect!(expr, content="Add(91)")
+  t.writeln("EVAL END\n")
+  t.writeln("EVAL BEGIN")
+  x.modify(fn { x => x * x * x })
+  t.writeln("EVAL END\n")
+  t.writeln("EVAL BEGIN")
+  inspect!(expr, content="Add(115)")
+  t.writeln("EVAL END\n")
+  t.snapshot!(filename="ast.txt")
+}
