@@ -13,6 +13,7 @@ impl Cache {
   depend_on[A, B : RequiredBy](Self[A], B) -> Unit
   new[A](() -> A) -> Self[A]
   refresh[A](Self[A]) -> Unit
+  val[A](A) -> Self[A]
 }
 impl[A] DependOn for Cache[A]
 impl[A] RequiredBy for Cache[A]

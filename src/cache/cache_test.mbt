@@ -112,7 +112,6 @@ impl Add for Expr with op_add(self, other) {
   }
 }
 
-
 ///|
 test {
   let x = State::new(3)
