@@ -1,18 +1,2 @@
-# Moonbit wasm vite template
+# illusory0x0/canvas
 
-## Feature 
-
-* vite
-* typescript
-* moonbit
-
-
-## Usage
-
-```bash
-make dev-mbt
-```
-
-```bash
-make dev
-```
