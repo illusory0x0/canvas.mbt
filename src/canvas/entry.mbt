@@ -2,37 +2,14 @@
 let hover : Ref[(Rect, Handler)?] = Ref::new(None)
 
 ///|
-fn Element::hover(
-  self : Element,
-  leave~ : Color,
-  enter~ : Color,
-  padding~ : (Element, Cache[Color]) -> Element
-) -> Cache[Element] {
-  let is_hoved = State::new(false)
-  let color = is_hoved.cache(fn { b => if b { enter } else { leave } })
-  fn on_mouse_enter() {
-    is_hoved.set(true)
-  }
-
-  fn on_mouse_leave() {
-    is_hoved.set(false)
-  }
-
-  let handler = Handler::new(on_mouse_enter~, on_mouse_leave~)
-  let target = Cache::new(fn() { padding(self, color).handle(handler) })
-  target.depend_on(color)
-  target.depend_on(self)
-  target
-}
-
-///|
 typealias DomEventHandler = (@dom.Element) -> Unit
 
 ///|
 priv struct App {
-  counter : State[Int]
-  target : Cache[Element]
-  layout_sequence : Cache[LayoutSequence]
+  counter : Node[Int]
+  target : Element
+  layout_sequence : Node[LayoutSequence]
+  render_action : Node[Unit]
 }
 
 ///|
@@ -58,7 +35,8 @@ fn element_refine_to_render(x : (Vector, Element)) -> (Vector, &Renderable)? {
 fn App::on_mousemove(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
   let p : Vector = { x: e.clientX(), y: e.clientY() }
-  let es = self.layout_sequence.cache
+  let es = self.layout_sequence
+    .get()
     .rev_iter()
     .filter_map(element_refine_to_handler)
   match hover.val {
@@ -83,7 +61,8 @@ fn App::on_mousemove(self : App, e : @dom.Event) -> Unit {
 fn App::on_click(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
   let p : Vector = { x: e.clientX(), y: e.clientY() }
-  let es = self.layout_sequence.cache
+  let es = self.layout_sequence
+    .get()
     .rev_iter()
     .filter_map(element_refine_to_handler)
   for x in es {
@@ -97,14 +76,15 @@ fn App::on_click(self : App, e : @dom.Event) -> Unit {
 
 ///|
 fn App::new() -> App {
-  let counter = State::new(0)
-  let text = counter.cache(fn { x => "counter: \{x}" })
-  let font = Cache::new(fn() { font })
-  let color = Cache::new(fn() { white })
-  let i_20 = Cache::val(20)
-  let padding_color = Cache::val(hsl(0, 0, 20))
+  window.sync()
+  let counter = Node::from_val(0)
+  let text = counter.map(fn { x => "counter: \{x}" })
+  let font = Node::from_fun(fn() { font })
+  let color = Node::from_fun(fn() { white })
+  let i_20 = Node::from_val(20)
+  let padding_color = Node::from_val(hsl(0, 0, 20))
   let button = Element::Render(
-      Text::new(text=Cache::new(fn() { "+" }), font~, color~),
+      Text::new(text=Node::from_fun(fn() { "+" }), font~, color~),
     )
     .round_padding(thickness=i_20, color=padding_color, radius=i_20)
     .handle(Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }))
@@ -115,34 +95,42 @@ fn App::new() -> App {
 
   let label = label.hover(
     leave=hsl(0, 0, 50),
-    enter=padding_color.cache,
+    enter=padding_color.get(),
     padding~,
   )
-  let target = label.cache(fn {
-    label => Element::hstack([label, button], spacing=20)
+  let target = Element::hstack([label, button], spacing=20)
+  let layout_sequence = Node::from_fun(fn() {
+    window.size.sync()
+    target.to_layout_sequence(origin)
   })
-  let layout_sequence = target.cache(fn { x => x.to_layout_sequence(origin) })
-  { counter, target, layout_sequence }
+  layout_sequence.depend_on(window.size)
+  layout_sequence.depend_on(target.layout_node())
+  let render_sequence = layout_sequence.map(fn {
+    x => x.iter().filter_map(element_refine_to_render)
+  })
+  let render_action = render_sequence.map(fn(rs) {
+    window.dpr.sync()
+    debug("App::render")
+    ctx.clearRect(0, 0, @dom.window.innerWidth(), @dom.window.innerHeight())
+    &Renderable::render_iter(ctx, rs)
+  })
+  render_action.depend_on(window.dpr)
+  { counter, target, layout_sequence, render_action }
 }
 
 ///|
 pub fn entry() -> Unit {
   let app = App::new()
-  let rs = app.layout_sequence.cache(fn {
-    x => x.iter().filter_map(element_refine_to_render)
+  @dom.window.addEventListener("resize", fn(_) {
+    window.sync()
+    app.render_action.sync()
   })
-  let render : Trigger = fn() {
-    debug("App::render")
-    ctx.clearRect(0, 0, window.innerWidth(), window.innerHeight())
-    &Renderable::render_iter(ctx, rs.cache)
-  }
-  render.depend_on(rs)
-  resize()
-  render.run()
-  window.addEventListener("resize", fn(_) {
-    resize()
-    app.counter.modify(@fun.id)
+  @dom.window.addEventListener("click", fn(e) {
+    app.on_click(e)
+    app.render_action.sync()
   })
-  window.addEventListener("click", fn(e) { app.on_click(e) })
-  window.addEventListener("mousemove", fn(e) { app.on_mousemove(e) })
+  @dom.window.addEventListener("mousemove", fn(e) {
+    app.on_mousemove(e)
+    app.render_action.sync()
+  })
 }

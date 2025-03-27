@@ -1,9 +1,13 @@
-// 添加粒度更小的依赖管理，现在是把全部更新状态往父节点，上传递
-
 ///|
-pub(open) trait Renderable: RequiredBy {
+pub(open) trait Renderable: DepsKind {
   size(Self) -> Size
   render(Self, Vector, @dom.Canvas2D) -> Unit
+}
+
+///|
+pub(open) trait DepsKind {
+  render_node(Self) -> &VNode
+  layout_node(Self) -> &VNode
 }
 
 ///|

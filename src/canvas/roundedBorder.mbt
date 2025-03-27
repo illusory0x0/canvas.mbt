@@ -1,32 +1,39 @@
 ///|
 pub fn RoundedBorder::new(
-  color : Cache[Color],
-  size : Cache[Size],
-  radius : Cache[Int],
-  thickness : Cache[Int]
+  color~ : Node[Color],
+  size~ : Node[Size],
+  radius~ : Node[Int],
+  thickness~ : Node[Int]
 ) -> RoundedBorder {
-  { color, size, radius, thickness }
-}
-
-///|
-pub impl RequiredBy for RoundedBorder with require_by(self, refresh) {
-  self.color.require_by(refresh)
-  self.size.require_by(refresh)
-  self.radius.require_by(refresh)
-  self.thickness.require_by(refresh)
+  let rnode = Node::from_fun(fn() {
+    color.sync()
+    size.sync()
+    radius.sync()
+  })
+  { color, size, radius, thickness, rnode }
 }
 
 ///|
 pub impl Renderable for RoundedBorder with size(self) {
-  self.size.cache
+  self.size.get()
+}
+
+///|
+pub impl DepsKind for RoundedBorder with render_node(self) {
+  self.rnode
+}
+
+///|
+pub impl DepsKind for RoundedBorder with layout_node(self) {
+  self.size
 }
 
 ///|
 pub impl Renderable for RoundedBorder with render(self, offset, ctx) {
-  let size = self.size.cache
-  let radius = self.radius.cache
-  let thickness = self.thickness.cache
-  let color = self.color.cache
+  let size = self.size.get()
+  let radius = self.radius.get()
+  let thickness = self.thickness.get()
+  let color = self.color.get()
   ctx.set_strokeStyle(color.to_string())
   ctx.set_lineWidth(thickness)
   ctx.beginPath()

@@ -6,7 +6,7 @@ pub fn &Renderable::render_iter(
   for x in xs {
     let (offset, renderable) = x
     guard offset.x >= 0 && offset.y >= 0
-    if offset.inside_window() {
+    if window.contains(offset) {
       renderable.render(offset, ctx)
     }
   }

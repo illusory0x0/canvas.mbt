@@ -1,15 +1,17 @@
-package illusory0x0/canvas/canvas
+package "illusory0x0/canvas/canvas"
 
-alias @illusory0x0/canvas/basic as @basic
-alias @illusory0x0/canvas/cache as @cache
-alias @illusory0x0/canvas/dom as @dom
+import(
+  "illusory0x0/canvas/basic"
+  "illusory0x0/canvas/cache"
+  "illusory0x0/canvas/dom"
+)
 
 // Values
 fn entry() -> Unit
 
 // Types and methods
 pub enum Element {
-  Layout(@cache.Cache[(@basic.Size, Array[(@basic.Vector, Element)])])
+  Layout(@cache.Node[(@basic.Size, Array[(@basic.Vector, Element)])])
   Render(&Renderable)
   Handle(Element, Handler)
 }
@@ -17,15 +19,15 @@ impl Element {
   handle(Self, Handler) -> Self
   hstack(Array[Self], spacing~ : Int) -> Self
   layer(Array[(@basic.Vector, Self)]) -> Self
-  round_border(Self, thickness~ : @cache.Cache[Int], color~ : @cache.Cache[@basic.Color], radius~ : @cache.Cache[Int]) -> Self
-  round_padding(Self, thickness~ : @cache.Cache[Int], color~ : @cache.Cache[@basic.Color], radius~ : @cache.Cache[Int]) -> Self
+  round_border(Self, thickness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
+  round_padding(Self, thickness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
   size(Self) -> @basic.Size
   spacer(@basic.Size) -> Self
   to_layout_sequence(Self, @basic.Vector) -> Array[(@basic.Vector, Self)]
   to_render_sequence(Self, @basic.Vector) -> Iter[(@basic.Vector, &Renderable)]
   vstack(Array[Self], spacing~ : Int) -> Self
 }
-impl @cache.RequiredBy for Element
+impl DepsKind for Element
 impl Show for Element
 
 pub struct Handler {
@@ -41,49 +43,63 @@ impl Handler {
 impl Show for Handler
 
 pub(all) struct Rectangle {
-  color : @cache.Cache[@basic.Color]
-  size : @cache.Cache[@basic.Size]
+  color : @cache.Node[@basic.Color]
+  size : @cache.Node[@basic.Size]
+  rnode : &@cache.VNode
 }
 impl Rectangle {
   new(color~ : () -> @basic.Color, size~ : () -> @basic.Size) -> Self
 }
-impl @cache.RequiredBy for Rectangle
+impl DepsKind for Rectangle
 impl Renderable for Rectangle
 
 pub(all) struct RoundedBorder {
-  color : @cache.Cache[@basic.Color]
-  size : @cache.Cache[@basic.Size]
-  radius : @cache.Cache[Int]
-  thickness : @cache.Cache[Int]
+  color : @cache.Node[@basic.Color]
+  size : @cache.Node[@basic.Size]
+  radius : @cache.Node[Int]
+  thickness : @cache.Node[Int]
+  rnode : &@cache.VNode
 }
 impl RoundedBorder {
-  new(@cache.Cache[@basic.Color], @cache.Cache[@basic.Size], @cache.Cache[Int], @cache.Cache[Int]) -> Self
+  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Int], thickness~ : @cache.Node[Int]) -> Self
 }
-impl @cache.RequiredBy for RoundedBorder
+impl DepsKind for RoundedBorder
 impl Renderable for RoundedBorder
 
 pub(all) struct RoundedRectangle {
-  color : @cache.Cache[@basic.Color]
-  size : @cache.Cache[@basic.Size]
-  radius : @cache.Cache[Int]
+  color : @cache.Node[@basic.Color]
+  size : @cache.Node[@basic.Size]
+  radius : @cache.Node[Int]
+  rnode : &@cache.VNode
 }
 impl RoundedRectangle {
-  new(@cache.Cache[@basic.Color], @cache.Cache[@basic.Size], @cache.Cache[Int]) -> Self
+  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Int]) -> Self
 }
-impl @cache.RequiredBy for RoundedRectangle
+impl DepsKind for RoundedRectangle
 impl Renderable for RoundedRectangle
 
 pub(all) struct Text {
-  color : @cache.Cache[@basic.Color]
-  size : @cache.Cache[@basic.Size]
-  text : @cache.Cache[String]
-  font : @cache.Cache[@basic.Font]
+  color : @cache.Node[@basic.Color]
+  size : @cache.Node[@basic.Size]
+  text : @cache.Node[String]
+  font : @cache.Node[@basic.Font]
+  rnode : &@cache.VNode
 }
 impl Text {
-  new(text~ : @cache.Cache[String], font~ : @cache.Cache[@basic.Font], color~ : @cache.Cache[@basic.Color]) -> Self
+  new(text~ : @cache.Node[String], font~ : @cache.Node[@basic.Font], color~ : @cache.Node[@basic.Color]) -> Self
 }
-impl @cache.RequiredBy for Text
+impl DepsKind for Text
 impl Renderable for Text
+
+pub struct Window {
+  size : @cache.Node[@basic.Size]
+  dpr : @cache.Node[Int]
+}
+impl Window {
+  sync(Self) -> Unit
+  sync_from_dom(Self, @dom.Window) -> Unit
+}
+impl Show for Window
 
 impl Renderable {
   render_iter(@dom.CanvasRenderingContext2D, Iter[(@basic.Vector, &Self)]) -> Unit
@@ -98,7 +114,12 @@ pub typealias OnMouseEnter = () -> Unit
 pub typealias OnMouseLeave = () -> Unit
 
 // Traits
-pub(open) trait Renderable : @cache.RequiredBy {
+pub(open) trait DepsKind {
+  render_node(Self) -> &@cache.VNode
+  layout_node(Self) -> &@cache.VNode
+}
+
+pub(open) trait Renderable : DepsKind {
   size(Self) -> @basic.Size
   render(Self, @basic.Vector, @dom.CanvasRenderingContext2D) -> Unit
 }

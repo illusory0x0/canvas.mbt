@@ -1,4 +1,0 @@
-eval: a_pow_2
-eval: b_pow_2
-eval: a_pow_2
-eval: b_pow_2

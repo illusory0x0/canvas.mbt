@@ -1,4 +1,4 @@
-package illusory0x0/canvas/basic
+package "illusory0x0/canvas/basic"
 
 // Values
 fn hsl(UInt, UInt, UInt) -> Color
@@ -111,7 +111,6 @@ pub(all) struct Vector {
 }
 impl Vector {
   inside(Self, Rect) -> Bool
-  inside_window(Self) -> Bool
   new(Int, Int) -> Self
 }
 impl Add for Vector
