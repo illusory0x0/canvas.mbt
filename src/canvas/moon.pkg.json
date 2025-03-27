@@ -12,14 +12,7 @@
     "illusory0x0/color",
     "illusory0x0/fun",
     "illusory0x0/canvas/basic",
-    {
-      "path": "illusory0x0/canvas/dom",
-      "value": [
-        "console",
-        "window",
-        "document"
-      ]
-    },
+    "illusory0x0/canvas/dom",
     "illusory0x0/lazy",
     "illusory0x0/canvas/cache"
   ],

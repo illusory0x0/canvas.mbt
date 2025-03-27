@@ -2,41 +2,45 @@
 typealias @basic.(Color, Size, Font, Thinkness, Vector, Rect)
 
 ///|
-typealias @cache.(Cache[T], State[T], Trigger)
+typealias @cache.Node[T]
 
 ///|
-traitalias @cache.RequiredBy
+traitalias @cache.VNode
 
 ///|
 fnalias @basic.hsl
 
 ///|
 pub(all) struct Text {
-  color : Cache[Color]
-  size : Cache[Size]
-  text : Cache[String]
-  font : Cache[Font]
+  color : Node[Color]
+  size : Node[Size]
+  text : Node[String]
+  font : Node[Font]
+  rnode : &VNode
 }
 
 ///|
 pub(all) struct RoundedBorder {
-  color : Cache[Color]
-  size : Cache[Size]
-  radius : Cache[Int]
-  thickness : Cache[Int]
+  color : Node[Color]
+  size : Node[Size]
+  radius : Node[Int]
+  thickness : Node[Int]
+  rnode : &VNode
 }
 
 ///|
 pub(all) struct RoundedRectangle {
-  color : Cache[Color]
-  size : Cache[Size]
-  radius : Cache[Int]
+  color : Node[Color]
+  size : Node[Size]
+  radius : Node[Int]
+  rnode : &VNode
 }
 
 ///|
 pub(all) struct Rectangle {
-  color : Cache[Color]
-  size : Cache[Size]
+  color : Node[Color]
+  size : Node[Size]
+  rnode : &VNode
 }
 
 ///|
@@ -49,7 +53,7 @@ pub typealias OnMouseEnter = () -> Unit
 pub typealias OnMouseLeave = () -> Unit
 
 ///|
-typealias Layout = Cache[(Size, Array[(Vector, Element)])]
+typealias Layout = Node[(Size, Array[(Vector, Element)])]
 
 ///|
 pub enum Element {
@@ -66,3 +70,9 @@ pub struct Handler {
   on_mouse_enter : OnMouseEnter?
   on_mouse_leave : OnMouseLeave?
 }
+
+///|
+pub struct Window {
+  size : Node[Size]
+  dpr : Node[Int]
+} derive(Show)

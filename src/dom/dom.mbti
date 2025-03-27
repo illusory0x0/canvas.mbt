@@ -1,4 +1,4 @@
-package illusory0x0/canvas/dom
+package "illusory0x0/canvas/dom"
 
 // Values
 fn coerce[A, B](A) -> B

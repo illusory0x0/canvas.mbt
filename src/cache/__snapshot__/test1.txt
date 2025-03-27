@@ -1,15 +1,13 @@
 EVAL BEGIN
-case 1
-case 1
-case 4
+2
+3
+5
 EVAL END
 
 EVAL BEGIN
-EVAL END
-
-EVAL BEGIN
-case 1
-case 4
+12
+18
+30
 EVAL END
 
 EVAL BEGIN

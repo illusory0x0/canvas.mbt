@@ -1,35 +1,45 @@
 ///|
 pub fn Text::new(
-  text~ : Cache[String],
-  font~ : Cache[Font],
-  color~ : Cache[Color]
+  text~ : Node[String],
+  font~ : Node[Font],
+  color~ : Node[Color]
 ) -> Text {
-  let size = Cache::new(fn() {
-    let font = font.cache
-    let text = text.cache
+  let size = Node::from_fun(fn() {
+    let font = font.get()
+    let text = text.get()
     debug("Text::measure font size")
     Size::new(font.width(text), font.height(text))
   })
   size.depend_on(font)
   size.depend_on(text)
-  { text, font, color, size }
-}
-
-///|
-pub impl RequiredBy for Text with require_by(self, refresh) {
-  self.size.require_by(refresh)
+  let rnode = Node::from_fun(fn() {
+    size.sync()
+    font.sync()
+    color.sync()
+  })
+  { text, font, color, size, rnode }
 }
 
 ///|
 pub impl Renderable for Text with size(self) {
-  self.size.cache
+  self.size.get()
+}
+
+///|
+pub impl DepsKind for Text with render_node(self) {
+  self.rnode
+}
+
+///|
+pub impl DepsKind for Text with layout_node(self) {
+  self.size
 }
 
 ///|
 pub impl Renderable for Text with render(self, offset, ctx) {
-  let color = self.color.cache
-  let font = self.font.cache
-  let text = self.text.cache
+  let color = self.color.get()
+  let font = self.font.get()
+  let text = self.text.get()
   ctx.set_fillStyle(color.to_string())
   ctx.set_font(font.to_string())
   ctx.set_textBaseline("top")

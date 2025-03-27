@@ -1,53 +1,39 @@
-package illusory0x0/canvas/cache
+package "illusory0x0/canvas/cache"
+
+import(
+  "moonbitlang/core/test"
+)
 
 // Values
+fn map_log[A : Show, B : Show](Node[A], @test.T, (A) -> B) -> Node[B]
 
 // Types and methods
-pub struct Cache[A] {
-  cache : A
-  refresh : () -> Unit
-  // private fields
+type Node[A]
+impl Node {
+  depend_on[A : Show](Self[A], &VNode) -> Unit
+  from_fun[A](() -> A) -> Self[A]
+  from_val[A](A) -> Self[A]
+  get[A : Show](Self[A]) -> A
+  map[A : Show, B : Show](Self[A], (A) -> B) -> Self[B]
+  map_log[A : Show, B : Show](Self[A], @test.T, (A) -> B) -> Self[B]
+  modify[A : Show + Eq](Self[A], (A) -> A) -> Unit
+  set[A : Show + Eq](Self[A], A) -> Unit
+  sync[A : Show](Self[A]) -> Unit
 }
-impl Cache {
-  cache[A, B](Self[A], (A) -> B) -> Self[B]
-  depend_on[A, B : RequiredBy](Self[A], B) -> Unit
-  new[A](() -> A) -> Self[A]
-  refresh[A](Self[A]) -> Unit
-  val[A](A) -> Self[A]
-}
-impl[A] DependOn for Cache[A]
-impl[A] RequiredBy for Cache[A]
-impl[A : Show] Show for Cache[A]
+impl[A : Show] VNode for Node[A]
+impl[A] Compare for Node[A]
+impl[A] Eq for Node[A]
+impl[A : Show] Show for Node[A]
 
-pub struct State[A] {
-  value : A
-  // private fields
+impl VNode {
+  dirty(&Self) -> Unit
 }
-impl State {
-  cache[A, B](Self[A], (A) -> B) -> Cache[B]
-  get[A](Self[A]) -> A
-  modify[A](Self[A], (A) -> A) -> Unit
-  new[A](A) -> Self[A]
-  set[A](Self[A], A) -> Unit
-}
-impl[A] RequiredBy for State[A]
-impl[A : Show] Show for State[A]
-
-pub(all) type Trigger () -> Unit
-impl Trigger {
-  depend_on[A : RequiredBy](Self, A) -> Unit
-  run(Self) -> Unit
-}
-impl DependOn for Trigger
+impl Compare for &VNode
+impl Eq for &VNode
+impl Show for &VNode
 
 // Type aliases
 
 // Traits
-pub(open) trait DependOn {
-  depend_on(Self, &RequiredBy) -> Unit
-}
-
-pub(open) trait RequiredBy {
-  require_by(Self, () -> Unit) -> Unit
-}
+trait VNode
 
