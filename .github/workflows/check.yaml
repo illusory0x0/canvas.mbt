@@ -112,7 +112,7 @@ jobs:
 
       - name: moon test --doc
         run: |
-          moon test --doc
+          moon test --doc --target js
 
   moon-json-format-check:
     runs-on: ubuntu-latest
