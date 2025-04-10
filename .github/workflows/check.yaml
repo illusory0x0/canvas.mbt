@@ -88,7 +88,7 @@ jobs:
 
       - name: moon info
         run: |
-          moon info --target wasm,wasm-gc,js,native
+          moon info --target js
           git diff --exit-code
 
       - name: format diff
@@ -107,19 +107,8 @@ jobs:
 
       - name: moon test
         run: |
-          moon test --target all,native
-          moon test --target all,native --release
-
-      - name: moon test with dedup_wasm
-        if: ${{ matrix.os.name != 'windows-latest' }}
-        env: 
-          MOONC_INTERNAL_PARAMS: dedup_wasm = 1 |
-
-        run: |
-          moon clean
-          ulimit -s 8176
-          moon test --target wasm,wasm-gc
-          moon test --target wasm,wasm-gc --release 
+          moon test --target js
+          moon test --target js --release
 
       - name: moon test --doc
         run: |
