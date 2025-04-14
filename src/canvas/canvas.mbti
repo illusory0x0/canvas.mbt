@@ -16,7 +16,7 @@ pub enum Element {
   Handle(Element, Handler)
 }
 impl Element {
-  handle(Self, Handler) -> Self
+  add_handler(Self, Handler) -> Self
   hstack(Array[Self], spacing~ : Int) -> Self
   layer(Array[(@basic.Vector, Self)]) -> Self
   round_border(Self, thickness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
