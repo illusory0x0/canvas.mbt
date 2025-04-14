@@ -16,5 +16,5 @@ fn Element::hover(
   }
 
   let handler = Handler::new(on_mouse_enter~, on_mouse_leave~)
-  padding(self, color).handle(handler)
+  padding(self, color).add_handler(handler)
 }

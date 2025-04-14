@@ -74,6 +74,6 @@ pub fn Element::to_layout_sequence(
 }
 
 ///|
-pub fn Element::handle(self : Element, handler : Handler) -> Element {
+pub fn Element::add_handler(self : Element, handler : Handler) -> Element {
   Handle(self, handler)
 }

@@ -87,7 +87,7 @@ fn App::new() -> App {
       Text::new(text=Node::from_fun(fn() { "+" }), font~, color~),
     )
     .round_padding(thickness=i_20, color=padding_color, radius=i_20)
-    .handle(Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }))
+    .add_handler(Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }))
   let label = Element::Render(Text::new(text~, font~, color~))
   fn padding(e : Element, c) {
     e.round_padding(thickness=i_20, color=c, radius=i_20)
