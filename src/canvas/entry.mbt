@@ -90,15 +90,10 @@ fn App::new() -> App {
     .add_handler(
       Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }),
     )
-  let label = Element::Render(Text::new(text~, font~, color~))
-  fn padding(e : Element, c) {
-    e.round_padding(thickness=i_20, color=c, radius=i_20)
-  }
-
-  let label = label.hover(
+  let label = Element::Render(Text::new(text~, font~, color~)).hover(
     leave=hsl(0, 0, 50),
-    enter=padding_color.get(),
-    padding~,
+    enter=hsl(0, 0, 20),
+    padding=fn { e, c => e.round_padding(thickness=i_20, color=c, radius=i_20) },
   )
   let target = Element::hstack([label, button], spacing=20)
   let layout_sequence = Node::from_fun(fn() {

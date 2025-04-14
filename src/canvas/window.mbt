@@ -30,7 +30,7 @@ pub fn Window::sync(self : Window) -> Unit {
 
 ///|
 let window : Window = {
-  size: Node::from_val(Size::new(0, 0)),
+  size: Node::from_val(Size::new(1280, 720)),
   dpr: Node::from_val(1),
 }
 

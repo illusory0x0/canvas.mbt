@@ -9,9 +9,9 @@ pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
   let layout = Node::from_fun(fn() {
     let mut w = 0
     let mut h = 0
-    let len = xs.length()
-    let children : Array[(Vector, Element)] = Array::new(capacity=len)
+    let children : Array[(Vector, Element)] = Array::new(capacity=xs.length())
     for x in xs {
+      guard w < window.size.get().width else { break } // doesn't layout beyond window
       children.push(({ x: w, y: 0 }, x))
       let { width, height } = x.size()
       w += width + spacing
@@ -31,9 +31,9 @@ pub fn Element::vstack(xs : Array[Element], spacing~ : Int) -> Element {
   let layout = Node::from_fun(fn() {
     let mut w = 0
     let mut h = 0
-    let len = xs.length()
-    let children = Array::new(capacity=len)
+    let children = Array::new(capacity=xs.length())
     for x in xs {
+      guard h < window.size.get().height else { break } // doesn't layout beyond window
       children.push((({ x: 0, y: h } : Vector), x))
       let { width, height } = x.size()
       w = @math.maximum(w, width)
@@ -79,10 +79,12 @@ test "hstack" {
 ///|
 pub fn Element::layer(xs : Array[(Vector, Element)]) -> Element {
   let layout = Node::from_fun(fn() {
+    let window = window.size.get()
     let mut w = 0
     let mut h = 0
     for x in xs {
       let (offset, view) = x
+      guard offset.x < window.width && offset.y < window.height else { break } // doesn't layout beyond window
       let sz = view.size()
       w = @math.maximum(w, offset.x + sz.width)
       h = @math.maximum(h, offset.y + sz.height)
