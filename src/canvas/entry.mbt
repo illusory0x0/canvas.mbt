@@ -46,7 +46,7 @@ fn App::on_mousemove(self : App, e : @dom.Event) -> Unit {
         if p.inside(rect) {
           handler.on_mouse_enter.map(fn(f) { f() }) |> ignore
           hover.val = Some(x)
-          // break
+          break
         }
       }
     Some((rect, handler)) =>
@@ -69,7 +69,7 @@ fn App::on_click(self : App, e : @dom.Event) -> Unit {
     let (rect, handler) = x
     if p.inside(rect) {
       handler.on_click.map(fn(f) { f() }) |> ignore
-      // break
+      break
     }
   }
 }
