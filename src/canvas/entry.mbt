@@ -75,6 +75,23 @@ fn App::on_click(self : App, e : @dom.Event) -> Unit {
 }
 
 ///|
+fn App::on_double_click(self : App, e : @dom.Event) -> Unit {
+  let e : @dom.MouseEvent = e.downcast()
+  let p : Vector = { x: e.clientX(), y: e.clientY() }
+  let es = self.layout_sequence
+    .get()
+    .rev_iter()
+    .filter_map(element_refine_to_handler)
+  for x in es {
+    let (rect, handler) = x
+    if p.inside(rect) {
+      handler.on_double_click.map(fn(f) { f() }) |> ignore
+      break
+    }
+  }
+}
+
+///|
 fn App::new() -> App {
   window.sync()
   let counter = Node::from_val(0)
@@ -88,7 +105,11 @@ fn App::new() -> App {
     )
     .round_padding(thickness=i_20, color=padding_color, radius=i_20)
     .add_handler(
-      Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }),
+      Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }, on_double_click=fn(
+
+      ) {
+        counter.modify(fn { x => x + 100 })
+      }),
     )
   let label = Element::Render(Text::new(text~, font~, color~)).hover(
     leave=hsl(0, 0, 50),
@@ -128,6 +149,10 @@ pub fn entry() -> Unit {
   })
   @dom.window.addEventListener("mousemove", fn(e) {
     app.on_mousemove(e)
+    app.render_action.sync()
+  })
+  @dom.window.addEventListener("dblclick", fn(e) {
+    app.on_double_click(e)
     app.render_action.sync()
   })
 }
