@@ -13,32 +13,10 @@ priv struct App {
 }
 
 ///|
-fn element_refine_to_handler(x : (Vector, Element)) -> (Rect, Handler)? {
-  let (offset, element) = x
-  match element {
-    Handle(element, handler) =>
-      Some((Rect::new(offset, element.size()), handler))
-    _ => None
-  }
-}
-
-///|
-fn element_refine_to_render(x : (Vector, Element)) -> (Vector, &Renderable)? {
-  let (offset, x) = x
-  match x {
-    Render(rander) => Some((offset, rander))
-    _ => None
-  }
-}
-
-///|
 fn App::on_mousemove(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
   let p : Vector = { x: e.clientX(), y: e.clientY() }
-  let es = self.layout_sequence
-    .get()
-    .rev_iter()
-    .filter_map(element_refine_to_handler)
+  let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   match hover.val {
     None =>
       for x in es {
@@ -61,10 +39,7 @@ fn App::on_mousemove(self : App, e : @dom.Event) -> Unit {
 fn App::on_click(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
   let p : Vector = { x: e.clientX(), y: e.clientY() }
-  let es = self.layout_sequence
-    .get()
-    .rev_iter()
-    .filter_map(element_refine_to_handler)
+  let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   for x in es {
     let (rect, handler) = x
     if p.inside(rect) {
@@ -78,10 +53,7 @@ fn App::on_click(self : App, e : @dom.Event) -> Unit {
 fn App::on_double_click(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
   let p : Vector = { x: e.clientX(), y: e.clientY() }
-  let es = self.layout_sequence
-    .get()
-    .rev_iter()
-    .filter_map(element_refine_to_handler)
+  let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   for x in es {
     let (rect, handler) = x
     if p.inside(rect) {
@@ -124,7 +96,7 @@ fn App::new() -> App {
   layout_sequence.depend_on(window.size)
   layout_sequence.depend_on(target.layout_node())
   let render_sequence = layout_sequence.map(fn {
-    x => x.iter().filter_map(element_refine_to_render)
+    x => x.iter().filter_map(Element::to_render)
   })
   let render_action = render_sequence.map(fn(rs) {
     window.dpr.sync()

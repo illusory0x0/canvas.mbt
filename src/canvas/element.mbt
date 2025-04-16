@@ -77,3 +77,22 @@ pub fn Element::to_layout_sequence(
 pub fn Element::add_handler(self : Element, handler : Handler) -> Element {
   Handle(self, handler)
 }
+
+///|
+fn Element::to_handler(x : (Vector, Element)) -> (Rect, Handler)? {
+  let (offset, element) = x
+  match element {
+    Handle(element, handler) =>
+      Some((Rect::new(offset, element.size()), handler))
+    _ => None
+  }
+}
+
+///|
+fn Element::to_render(x : (Vector, Element)) -> (Vector, &Renderable)? {
+  let (offset, x) = x
+  match x {
+    Render(rander) => Some((offset, rander))
+    _ => None
+  }
+}
