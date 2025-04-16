@@ -171,28 +171,29 @@ fn App::new() -> App {
 ///|
 pub fn entry() -> Unit {
   let app = App::new()
+  app.render_action.get()
   @dom.window.addEventListener("resize", fn(_) {
     window.sync()
-    app.render_action.get() |> ignore
+    app.render_action.get()
   })
   @dom.window.addEventListener("click", fn(e) {
     app.on_click(e)
-    app.render_action.get() |> ignore
+    app.render_action.get()
   })
   @dom.window.addEventListener("mousemove", fn(e) {
     app.on_mouse_move(e)
-    app.render_action.get() |> ignore
+    app.render_action.get()
   })
   @dom.window.addEventListener("mousedown", fn(e) {
     app.on_mouse_down(e)
-    app.render_action.get() |> ignore
+    app.render_action.get()
   })
   @dom.window.addEventListener("mouseup", fn(e) {
     app.on_mouse_up(e)
-    app.render_action.get() |> ignore
+    app.render_action.get()
   })
   @dom.window.addEventListener("dblclick", fn(e) {
     app.on_double_click(e)
-    app.render_action.get() |> ignore
+    app.render_action.get()
   })
 }
