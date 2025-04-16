@@ -4,6 +4,11 @@ pub impl Add for Vector with op_add(self, other) {
 }
 
 ///|
+pub impl Sub for Vector with op_sub(self, other) {
+  { x: self.x - other.x, y: self.y - other.y }
+}
+
+///|
 pub fn Vector::new(x : Int, y : Int) -> Vector {
   { x, y }
 }

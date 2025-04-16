@@ -141,23 +141,23 @@ pub fn Element::round_border(
 ///|
 pub fn Element::round_padding(
   self : Element,
-  thickness~ : Node[Int],
+  thinkness~ : Node[Int],
   color~ : Node[Color],
   radius~ : Node[Int]
 ) -> Element {
   let layout = Node::from_fun(fn() {
-    let size = self.margin_size(Thinkness::same(thickness.get()))
-    let offset = Element::margin_offset(Thinkness::same(thickness.get()))
+    let size = self.margin_size(Thinkness::same(thinkness.get()))
+    let offset = Element::margin_offset(Thinkness::same(thinkness.get()))
     let render = RoundedRectangle::new(
       color~,
-      size=thickness.map(fn(t) { self.margin_size(Thinkness::same(t)) }),
+      size=thinkness.map(fn(t) { self.margin_size(Thinkness::same(t)) }),
       radius~,
     )
     let children = [(Vector::default(), Render(render)), (offset, self)]
     (size, children)
   })
   layout.depend_on(self.layout_node())
-  layout.depend_on(thickness)
+  layout.depend_on(thinkness)
   layout.depend_on(color)
   layout.depend_on(radius)
   Layout(layout)
