@@ -5,6 +5,7 @@ package "illusory0x0/canvas/cache"
 // Types and methods
 type Node[A]
 impl Node {
+  add_dependents[A](Self[A], Array[&VNode]) -> Unit
   depend_on[A](Self[A], &VNode) -> Unit
   from_fun[A](() -> A) -> Self[A]
   from_val[A](A) -> Self[A]

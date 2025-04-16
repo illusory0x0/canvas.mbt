@@ -19,8 +19,9 @@ impl Element {
   add_handler(Self, Handler) -> Self
   hstack(Array[Self], spacing~ : Int) -> Self
   layer(Array[(@basic.Vector, Self)]) -> Self
+  layer_(Array[(@cache.Node[@basic.Vector], Self)]) -> Self
   round_border(Self, thickness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
-  round_padding(Self, thickness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
+  round_padding(Self, thinkness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
   size(Self) -> @basic.Size
   spacer(@basic.Size) -> Self
   to_layout_sequence(Self, @basic.Vector) -> Array[(@basic.Vector, Self)]
@@ -36,9 +37,12 @@ pub struct Handler {
   on_double_click : (() -> Unit)?
   on_mouse_enter : (() -> Unit)?
   on_mouse_leave : (() -> Unit)?
+  on_mouse_move : ((@basic.Vector) -> Unit)?
+  on_mouse_down : ((@basic.Vector) -> Unit)?
+  on_mouse_up : ((@basic.Vector) -> Unit)?
 }
 impl Handler {
-  new(on_click? : () -> Unit, on_double_click? : () -> Unit, on_mouse_enter? : () -> Unit, on_mouse_leave? : () -> Unit) -> Self
+  new(on_click? : () -> Unit, on_double_click? : () -> Unit, on_mouse_enter? : () -> Unit, on_mouse_leave? : () -> Unit, on_mouse_move? : (@basic.Vector) -> Unit, on_mouse_down? : (@basic.Vector) -> Unit, on_mouse_up? : (@basic.Vector) -> Unit) -> Self
 }
 impl Show for Handler
 
@@ -109,9 +113,15 @@ impl Show for &Renderable
 // Type aliases
 pub typealias OnClick = () -> Unit
 
+pub typealias OnMouseDown = (@basic.Vector) -> Unit
+
 pub typealias OnMouseEnter = () -> Unit
 
 pub typealias OnMouseLeave = () -> Unit
+
+pub typealias OnMouseMove = (@basic.Vector) -> Unit
+
+pub typealias OnMouseUp = (@basic.Vector) -> Unit
 
 // Traits
 pub(open) trait DepsKind {

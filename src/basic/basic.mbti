@@ -119,6 +119,7 @@ impl Default for Vector
 impl Eq for Vector
 impl Hash for Vector
 impl Show for Vector
+impl Sub for Vector
 
 // Type aliases
 
