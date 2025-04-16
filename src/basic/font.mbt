@@ -124,22 +124,22 @@ fn Font::measure_text(self : Font, text : String) -> @dom.TextMetrics {
 }
 
 ///|
-pub fn Font::width(self : Font, text : String) -> Int {
+pub fn Font::width(self : Font, text : String) -> Double {
   self.measure_text(text).width()
 }
 
 ///|
-pub fn Font::bounding_box_ascent(self : Font, text : String) -> Int {
+pub fn Font::bounding_box_ascent(self : Font, text : String) -> Double {
   self.measure_text(text).fontBoundingBoxAscent()
 }
 
 ///|
-pub fn Font::bounding_box_descent(self : Font, text : String) -> Int {
+pub fn Font::bounding_box_descent(self : Font, text : String) -> Double {
   self.measure_text(text).fontBoundingBoxDescent()
 }
 
 ///|
-pub fn Font::height(self : Font, text : String) -> Int {
+pub fn Font::height(self : Font, text : String) -> Double {
   self.bounding_box_ascent(text) + self.bounding_box_descent(text)
 }
 

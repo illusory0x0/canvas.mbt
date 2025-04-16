@@ -37,7 +37,7 @@ fn Element::selected_text(
 ) -> Element {
   let text_end = Node::from_fun(fn() {
     let res = []
-    let mut e = 0
+    let mut e = 0.0
     for ch in text.get() {
       e += font.get().width(ch.to_string())
       res.push(e)
@@ -70,7 +70,7 @@ fn Element::selected_text(
           (current_index, prev + 1)
         }
         let x = if start_offset == 0 {
-          0
+          0.0
         } else {
           text_end.get()[start_offset - 1]
         }
@@ -102,8 +102,8 @@ fn Element::selected_text(
 pub fn Element::layer_(xs : Array[(Node[Vector], Element)]) -> Element {
   let layout = Node::from_fun(fn() {
     let window = window.size.get()
-    let mut w = 0
-    let mut h = 0
+    let mut w = 0.0
+    let mut h = 0.0
     for x in xs {
       let (offset, view) = x
       let offset = offset.get()

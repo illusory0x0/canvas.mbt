@@ -1,7 +1,7 @@
 ///|
 pub(all) struct Size {
-  width : Int
-  height : Int
+  width : Double
+  height : Double
 } derive(Default, Show, Compare, Eq, Hash)
 
 ///|
@@ -12,16 +12,16 @@ pub(all) struct Rect {
 
 ///|
 pub(all) struct Vector {
-  x : Int
-  y : Int
+  x : Double
+  y : Double
 } derive(Default, Show, Compare, Eq, Hash)
 
 ///|
 pub(all) struct Thinkness {
-  left : Int
-  top : Int
-  right : Int
-  bottom : Int
+  left : Double
+  top : Double
+  right : Double
+  bottom : Double
 } derive(Default, Show, Compare, Eq, Hash)
 
 ///|

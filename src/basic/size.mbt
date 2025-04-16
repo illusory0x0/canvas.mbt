@@ -1,4 +1,4 @@
 ///|
-pub fn Size::new(width : Int, height : Int) -> Size {
+pub fn Size::new(width : Double, height : Double) -> Size {
   { width, height }
 }

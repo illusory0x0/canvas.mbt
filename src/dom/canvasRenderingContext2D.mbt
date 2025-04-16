@@ -11,36 +11,27 @@ pub extern "js" fn Canvas2D::set_fillStyle(self : Canvas2D, style : String) = "i
 pub extern "js" fn Canvas2D::set_strokeStyle(self : Canvas2D, style : String) = "importObject.CanvasRenderingContext2D.set_strokeStyle"
 
 ///|
-pub extern "js" fn Canvas2D::set_lineWidth(self : Canvas2D, width : Int) = "importObject.CanvasRenderingContext2D.set_lineWidth"
+pub extern "js" fn Canvas2D::set_lineWidth(self : Canvas2D, width : Double) = "importObject.CanvasRenderingContext2D.set_lineWidth"
 
 ///|
 pub extern "js" fn Canvas2D::fillText(
   self : Canvas2D,
   text : String,
-  x : Int,
-  y : Int
+  x : Double,
+  y : Double
 ) = "importObject.CanvasRenderingContext2D.fillText"
-
-///|
-pub extern "js" fn Canvas2D::fillRect(
-  self : Canvas2D,
-  x : Int,
-  y : Int,
-  width : Int,
-  height : Int
-) = "importObject.CanvasRenderingContext2D.fillRect"
 
 ///|
 pub extern "js" fn Canvas2D::strokeRect(
   self : Canvas2D,
-  x : Int,
-  y : Int,
-  width : Int,
-  height : Int
+  x : Double,
+  y : Double,
+  width : Double,
+  height : Double
 ) = "importObject.CanvasRenderingContext2D.strokeRect"
 
 ///|
-pub extern "js" fn Canvas2D::fillRectF(
+pub extern "js" fn Canvas2D::fillRect(
   self : Canvas2D,
   x : Double,
   y : Double,
@@ -50,15 +41,6 @@ pub extern "js" fn Canvas2D::fillRectF(
 
 ///|
 pub extern "js" fn Canvas2D::clearRect(
-  self : Canvas2D,
-  x : Int,
-  y : Int,
-  width : Int,
-  height : Int
-) = "importObject.CanvasRenderingContext2D.clearRect"
-
-///|
-pub extern "js" fn Canvas2D::clearRectF(
   self : Canvas2D,
   x : Double,
   y : Double,
@@ -76,7 +58,7 @@ pub extern "js" fn Canvas2D::measureText(
 pub extern "js" fn Canvas2D::set_textBaseline(self : Canvas2D, tag : String) = "importObject.CanvasRenderingContext2D.set_textBaseline"
 
 ///|
-pub extern "js" fn Canvas2D::scale(self : Canvas2D, x : Int, y : Int) = "importObject.CanvasRenderingContext2D.scale"
+pub extern "js" fn Canvas2D::scale(self : Canvas2D, x : Double, y : Double) = "importObject.CanvasRenderingContext2D.scale"
 
 ///|
 pub extern "js" fn Canvas2D::beginPath(self : Canvas2D) = "importObject.CanvasRenderingContext2D.beginPath"
@@ -91,17 +73,17 @@ pub extern "js" fn Canvas2D::stroke(self : Canvas2D) = "importObject.CanvasRende
 pub extern "js" fn Canvas2D::fill(self : Canvas2D) = "importObject.CanvasRenderingContext2D.fill"
 
 ///|
-pub extern "js" fn Canvas2D::moveTo(self : Canvas2D, x : Int, y : Int) = "importObject.CanvasRenderingContext2D.moveTo"
+pub extern "js" fn Canvas2D::moveTo(self : Canvas2D, x : Double, y : Double) = "importObject.CanvasRenderingContext2D.moveTo"
 
 ///|
-pub extern "js" fn Canvas2D::lineTo(self : Canvas2D, x : Int, y : Int) = "importObject.CanvasRenderingContext2D.lineTo"
+pub extern "js" fn Canvas2D::lineTo(self : Canvas2D, x : Double, y : Double) = "importObject.CanvasRenderingContext2D.lineTo"
 
 ///|
 pub extern "js" fn Canvas2D::arc(
   self : Canvas2D,
-  x : Int,
-  y : Int,
-  radius : Int,
+  x : Double,
+  y : Double,
+  radius : Double,
   startAngle : Double,
   endAngle : Double,
   counterclockwise : Bool
@@ -110,20 +92,20 @@ pub extern "js" fn Canvas2D::arc(
 ///|
 pub extern "js" fn Canvas2D::arcTo(
   self : Canvas2D,
-  x1 : Int,
-  y1 : Int,
-  x2 : Int,
-  y2 : Int,
-  radius : Int
+  x1 : Double,
+  y1 : Double,
+  x2 : Double,
+  y2 : Double,
+  radius : Double
 ) = "importObject.CanvasRenderingContext2D.arcTo"
 
 ///|
 pub extern "js" fn Canvas2D::ellipse(
   self : Canvas2D,
-  x : Int,
-  y : Int,
-  radiusX : Int,
-  radiusY : Int,
+  x : Double,
+  y : Double,
+  radiusX : Double,
+  radiusY : Double,
   rotation : Double,
   startAngle : Double,
   endAngle : Double,
@@ -139,14 +121,14 @@ pub extern "js" fn Canvas2D::restore(self : Canvas2D) = "importObject.CanvasRend
 ///|
 pub extern "js" fn Canvas2D::roundRect(
   self : Canvas2D,
-  x : Int,
-  y : Int,
-  width : Int,
-  height : Int,
-  top_left_radius : Int,
-  top_right_radius : Int,
-  bottom_left_radius : Int,
-  bottom_right_radius : Int
+  x : Double,
+  y : Double,
+  width : Double,
+  height : Double,
+  top_left_radius : Double,
+  top_right_radius : Double,
+  bottom_left_radius : Double,
+  bottom_right_radius : Double
 ) =
   #| (self, x, y, width, height, top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius) => 
   #|    self.roundRect(x, y, width,height,[top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius])

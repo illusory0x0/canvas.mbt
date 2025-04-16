@@ -5,10 +5,10 @@ pub fn Element::spacer(size : Size) -> Element {
 }
 
 ///|
-pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
+pub fn Element::hstack(xs : Array[Element], spacing~ : Double) -> Element {
   let layout = Node::from_fun(fn() {
-    let mut w = 0
-    let mut h = 0
+    let mut w = 0.0
+    let mut h = 0.0
     let children : Array[(Vector, Element)] = Array::new(capacity=xs.length())
     for x in xs {
       guard w < window.size.get().width else { break } // doesn't layout beyond window
@@ -27,10 +27,10 @@ pub fn Element::hstack(xs : Array[Element], spacing~ : Int) -> Element {
 }
 
 ///|
-pub fn Element::vstack(xs : Array[Element], spacing~ : Int) -> Element {
+pub fn Element::vstack(xs : Array[Element], spacing~ : Double) -> Element {
   let layout = Node::from_fun(fn() {
-    let mut w = 0
-    let mut h = 0
+    let mut w = 0.0
+    let mut h = 0.0
     let children = Array::new(capacity=xs.length())
     for x in xs {
       guard h < window.size.get().height else { break } // doesn't layout beyond window
@@ -80,8 +80,8 @@ test "hstack" {
 pub fn Element::layer(xs : Array[(Vector, Element)]) -> Element {
   let layout = Node::from_fun(fn() {
     let window = window.size.get()
-    let mut w = 0
-    let mut h = 0
+    let mut w = 0.0
+    let mut h = 0.0
     for x in xs {
       let (offset, view) = x
       guard offset.x < window.width && offset.y < window.height else { break } // doesn't layout beyond window
@@ -115,9 +115,9 @@ fn Element::margin_size(self : Element, thickness : Thinkness) -> Size {
 ///|
 pub fn Element::round_border(
   self : Element,
-  thickness~ : Node[Int],
+  thickness~ : Node[Double],
   color~ : Node[Color],
-  radius~ : Node[Int]
+  radius~ : Node[Double]
 ) -> Element {
   let layout = Node::from_fun(fn() {
     let size = self.margin_size(Thinkness::same(thickness.get()))
@@ -141,9 +141,9 @@ pub fn Element::round_border(
 ///|
 pub fn Element::round_padding(
   self : Element,
-  thinkness~ : Node[Int],
+  thinkness~ : Node[Double],
   color~ : Node[Color],
-  radius~ : Node[Int]
+  radius~ : Node[Double]
 ) -> Element {
   let layout = Node::from_fun(fn() {
     let size = self.margin_size(Thinkness::same(thinkness.get()))

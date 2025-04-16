@@ -23,8 +23,8 @@ pub(all) struct Text {
 pub(all) struct RoundedBorder {
   color : Node[Color]
   size : Node[Size]
-  radius : Node[Int]
-  thickness : Node[Int]
+  radius : Node[Double]
+  thickness : Node[Double]
   rnode : &VNode
 }
 
@@ -32,7 +32,7 @@ pub(all) struct RoundedBorder {
 pub(all) struct RoundedRectangle {
   color : Node[Color]
   size : Node[Size]
-  radius : Node[Int]
+  radius : Node[Double]
   rnode : &VNode
 }
 

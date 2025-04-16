@@ -9,7 +9,7 @@ pub impl Sub for Vector with op_sub(self, other) {
 }
 
 ///|
-pub fn Vector::new(x : Int, y : Int) -> Vector {
+pub fn Vector::new(x : Double, y : Double) -> Vector {
   { x, y }
 }
 

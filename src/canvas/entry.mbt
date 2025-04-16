@@ -18,7 +18,10 @@ priv struct App {
 ///|
 fn App::on_mouse_move(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
-  let current : Vector = { x: e.clientX(), y: e.clientY() }
+  let current : Vector = {
+    x: e.clientX().to_double(),
+    y: e.clientY().to_double(),
+  }
   let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   match hover.val {
     None =>
@@ -46,7 +49,10 @@ fn App::on_mouse_move(self : App, e : @dom.Event) -> Unit {
 ///|
 fn App::on_mouse_down(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
-  let clicked : Vector = { x: e.clientX(), y: e.clientY() }
+  let clicked : Vector = {
+    x: e.clientX().to_double(),
+    y: e.clientY().to_double(),
+  }
   let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   match mouse_down.val {
     None =>
@@ -66,7 +72,10 @@ fn App::on_mouse_down(self : App, e : @dom.Event) -> Unit {
 ///|
 fn App::on_mouse_up(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
-  let clicked = Vector::{ x: e.clientX(), y: e.clientY() }
+  let clicked = Vector::{
+    x: e.clientX().to_double(),
+    y: e.clientY().to_double(),
+  }
   let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   match mouse_down.val {
     None => ()
@@ -80,7 +89,7 @@ fn App::on_mouse_up(self : App, e : @dom.Event) -> Unit {
 ///|
 fn App::on_click(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
-  let p : Vector = { x: e.clientX(), y: e.clientY() }
+  let p : Vector = { x: e.clientX().to_double(), y: e.clientY().to_double() }
   let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   for x in es {
     let (rect, handler) = x
@@ -94,7 +103,7 @@ fn App::on_click(self : App, e : @dom.Event) -> Unit {
 ///|
 fn App::on_double_click(self : App, e : @dom.Event) -> Unit {
   let e : @dom.MouseEvent = e.downcast()
-  let p : Vector = { x: e.clientX(), y: e.clientY() }
+  let p : Vector = { x: e.clientX().to_double(), y: e.clientY().to_double() }
   let es = self.layout_sequence.get().rev_iter().filter_map(Element::to_handler)
   for x in es {
     let (rect, handler) = x
@@ -109,10 +118,10 @@ fn App::on_double_click(self : App, e : @dom.Event) -> Unit {
 fn App::new() -> App {
   window.sync()
   let counter = Node::from_val(0)
-  let text = counter.map(fn { x => "abc" })
+  let text = counter.map(fn { x => "a".repeat(20) })
   let font = Node::from_fun(fn() { font })
   let color = Node::from_fun(fn() { white })
-  let i_20 = Node::from_val(20)
+  let i_20 = Node::from_val(20.0)
   let padding_color = Node::from_val(hsl(0, 0, 20))
   let button = Element::Render(
       Text::new(text=Node::from_fun(fn() { "+" }), font~, color~),
@@ -152,7 +161,12 @@ fn App::new() -> App {
   let render_action = render_sequence.map(fn(rs) {
     window.dpr.sync()
     debug("App::render")
-    ctx.clearRect(0, 0, @dom.window.innerWidth(), @dom.window.innerHeight())
+    ctx.clearRect(
+      0,
+      0,
+      @dom.window.innerWidth().to_double(),
+      @dom.window.innerHeight().to_double(),
+    )
     &Renderable::render_iter(ctx, rs)
   })
   render_action.depend_on(window.dpr)

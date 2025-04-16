@@ -17,16 +17,16 @@ pub enum Element {
 }
 impl Element {
   add_handler(Self, Handler) -> Self
-  hstack(Array[Self], spacing~ : Int) -> Self
+  hstack(Array[Self], spacing~ : Double) -> Self
   layer(Array[(@basic.Vector, Self)]) -> Self
   layer_(Array[(@cache.Node[@basic.Vector], Self)]) -> Self
-  round_border(Self, thickness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
-  round_padding(Self, thinkness~ : @cache.Node[Int], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Int]) -> Self
+  round_border(Self, thickness~ : @cache.Node[Double], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Double]) -> Self
+  round_padding(Self, thinkness~ : @cache.Node[Double], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Double]) -> Self
   size(Self) -> @basic.Size
   spacer(@basic.Size) -> Self
   to_layout_sequence(Self, @basic.Vector) -> Array[(@basic.Vector, Self)]
   to_render_sequence(Self, @basic.Vector) -> Iter[(@basic.Vector, &Renderable)]
-  vstack(Array[Self], spacing~ : Int) -> Self
+  vstack(Array[Self], spacing~ : Double) -> Self
 }
 impl DepsKind for Element
 impl Show for Element
@@ -60,12 +60,12 @@ impl Renderable for Rectangle
 pub(all) struct RoundedBorder {
   color : @cache.Node[@basic.Color]
   size : @cache.Node[@basic.Size]
-  radius : @cache.Node[Int]
-  thickness : @cache.Node[Int]
+  radius : @cache.Node[Double]
+  thickness : @cache.Node[Double]
   rnode : &@cache.VNode
 }
 impl RoundedBorder {
-  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Int], thickness~ : @cache.Node[Int]) -> Self
+  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Double], thickness~ : @cache.Node[Double]) -> Self
 }
 impl DepsKind for RoundedBorder
 impl Renderable for RoundedBorder
@@ -73,11 +73,11 @@ impl Renderable for RoundedBorder
 pub(all) struct RoundedRectangle {
   color : @cache.Node[@basic.Color]
   size : @cache.Node[@basic.Size]
-  radius : @cache.Node[Int]
+  radius : @cache.Node[Double]
   rnode : &@cache.VNode
 }
 impl RoundedRectangle {
-  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Int]) -> Self
+  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Double]) -> Self
 }
 impl DepsKind for RoundedRectangle
 impl Renderable for RoundedRectangle

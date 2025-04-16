@@ -19,11 +19,11 @@ pub(all) struct Font {
   weight : Int
 }
 impl Font {
-  bounding_box_ascent(Self, String) -> Int
-  bounding_box_descent(Self, String) -> Int
-  height(Self, String) -> Int
+  bounding_box_ascent(Self, String) -> Double
+  bounding_box_descent(Self, String) -> Double
+  height(Self, String) -> Double
   new(family~ : Array[String] = .., genericFamily~ : Array[GenericFontFamily] = .., size~ : Int = .., style~ : FontStyle = .., weight~ : Int = ..) -> Self
-  width(Self, String) -> Int
+  width(Self, String) -> Double
 }
 impl Compare for Font
 impl Default for Font
@@ -64,11 +64,11 @@ pub(all) struct Rect {
   size : Size
 }
 impl Rect {
-  bottom(Self) -> Int
-  left(Self) -> Int
+  bottom(Self) -> Double
+  left(Self) -> Double
   new(Vector, Size) -> Self
-  right(Self) -> Int
-  top(Self) -> Int
+  right(Self) -> Double
+  top(Self) -> Double
 }
 impl Compare for Rect
 impl Default for Rect
@@ -77,11 +77,11 @@ impl Hash for Rect
 impl Show for Rect
 
 pub(all) struct Size {
-  width : Int
-  height : Int
+  width : Double
+  height : Double
 }
 impl Size {
-  new(Int, Int) -> Self
+  new(Double, Double) -> Self
 }
 impl Compare for Size
 impl Default for Size
@@ -90,14 +90,14 @@ impl Hash for Size
 impl Show for Size
 
 pub(all) struct Thinkness {
-  left : Int
-  top : Int
-  right : Int
-  bottom : Int
+  left : Double
+  top : Double
+  right : Double
+  bottom : Double
 }
 impl Thinkness {
-  new(Int, Int, Int, Int) -> Self
-  same(Int) -> Self
+  new(Double, Double, Double, Double) -> Self
+  same(Double) -> Self
 }
 impl Compare for Thinkness
 impl Default for Thinkness
@@ -106,12 +106,12 @@ impl Hash for Thinkness
 impl Show for Thinkness
 
 pub(all) struct Vector {
-  x : Int
-  y : Int
+  x : Double
+  y : Double
 }
 impl Vector {
   inside(Self, Rect) -> Bool
-  new(Int, Int) -> Self
+  new(Double, Double) -> Self
 }
 impl Add for Vector
 impl Compare for Vector

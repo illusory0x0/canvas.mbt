@@ -20,31 +20,29 @@ impl CSSStyleDeclaration {
 
 pub extern type CanvasRenderingContext2D
 impl CanvasRenderingContext2D {
-  arc(Self, Int, Int, Int, Double, Double, Bool) -> Unit
-  arcTo(Self, Int, Int, Int, Int, Int) -> Unit
+  arc(Self, Double, Double, Double, Double, Double, Bool) -> Unit
+  arcTo(Self, Double, Double, Double, Double, Double) -> Unit
   beginPath(Self) -> Unit
-  clearRect(Self, Int, Int, Int, Int) -> Unit
-  clearRectF(Self, Double, Double, Double, Double) -> Unit
+  clearRect(Self, Double, Double, Double, Double) -> Unit
   closePath(Self) -> Unit
-  ellipse(Self, Int, Int, Int, Int, Double, Double, Double, Bool) -> Unit
+  ellipse(Self, Double, Double, Double, Double, Double, Double, Double, Bool) -> Unit
   fill(Self) -> Unit
-  fillRect(Self, Int, Int, Int, Int) -> Unit
-  fillRectF(Self, Double, Double, Double, Double) -> Unit
-  fillText(Self, String, Int, Int) -> Unit
-  lineTo(Self, Int, Int) -> Unit
+  fillRect(Self, Double, Double, Double, Double) -> Unit
+  fillText(Self, String, Double, Double) -> Unit
+  lineTo(Self, Double, Double) -> Unit
   measureText(Self, String) -> TextMetrics
-  moveTo(Self, Int, Int) -> Unit
+  moveTo(Self, Double, Double) -> Unit
   restore(Self) -> Unit
-  roundRect(Self, Int, Int, Int, Int, Int, Int, Int, Int) -> Unit
+  roundRect(Self, Double, Double, Double, Double, Double, Double, Double, Double) -> Unit
   save(Self) -> Unit
-  scale(Self, Int, Int) -> Unit
+  scale(Self, Double, Double) -> Unit
   set_fillStyle(Self, String) -> Unit
   set_font(Self, String) -> Unit
-  set_lineWidth(Self, Int) -> Unit
+  set_lineWidth(Self, Double) -> Unit
   set_strokeStyle(Self, String) -> Unit
   set_textBaseline(Self, String) -> Unit
   stroke(Self) -> Unit
-  strokeRect(Self, Int, Int, Int, Int) -> Unit
+  strokeRect(Self, Double, Double, Double, Double) -> Unit
 }
 
 pub extern type Console
@@ -118,12 +116,9 @@ impl DOM_EventTarget for Node
 
 pub extern type TextMetrics
 impl TextMetrics {
-  fontBoundingBoxAscent(Self) -> Int
-  fontBoundingBoxAscentF(Self) -> Double
-  fontBoundingBoxDescent(Self) -> Int
-  fontBoundingBoxDescentF(Self) -> Double
-  width(Self) -> Int
-  widthF(Self) -> Double
+  fontBoundingBoxAscent(Self) -> Double
+  fontBoundingBoxDescent(Self) -> Double
+  width(Self) -> Double
 }
 
 pub extern type Window

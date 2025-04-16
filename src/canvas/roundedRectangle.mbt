@@ -2,7 +2,7 @@
 pub fn RoundedRectangle::new(
   color~ : Node[Color],
   size~ : Node[Size],
-  radius~ : Node[Int]
+  radius~ : Node[Double]
 ) -> RoundedRectangle {
   let rnode = Node::from_fun(fn() {
     color.sync()

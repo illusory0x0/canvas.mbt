@@ -2,8 +2,8 @@
 pub fn RoundedBorder::new(
   color~ : Node[Color],
   size~ : Node[Size],
-  radius~ : Node[Int],
-  thickness~ : Node[Int]
+  radius~ : Node[Double],
+  thickness~ : Node[Double]
 ) -> RoundedBorder {
   let rnode = Node::from_fun(fn() {
     color.sync()
