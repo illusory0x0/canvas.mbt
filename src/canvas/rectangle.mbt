@@ -1,10 +1,8 @@
 ///|
-pub fn Rectangle::new(color~ : () -> Color, size~ : () -> Size) -> Rectangle {
-  let color = Node::from_fun(color)
-  let size = Node::from_fun(size)
-  let rnode = Node::from_fun(fn() {
-    color.sync()
-    size.sync()
+pub fn Rectangle::new(color~ : Thunk[Color], size~ : Thunk[Size]) -> Rectangle {
+  let rnode = thunk(fn() {
+    color.get() |> ignore
+    size.get() |> ignore
   })
   { color, size, rnode }
 }

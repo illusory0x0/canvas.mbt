@@ -6,8 +6,8 @@ pub(open) trait Renderable: DepsKind {
 
 ///|
 pub(open) trait DepsKind {
-  render_node(Self) -> &VNode
-  layout_node(Self) -> &VNode
+  render_node(Self) -> Node
+  layout_node(Self) -> Node
 }
 
 ///|

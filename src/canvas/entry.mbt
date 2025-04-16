@@ -9,10 +9,10 @@ typealias DomEventHandler = (@dom.Element) -> Unit
 
 ///|
 priv struct App {
-  counter : Node[Int]
-  target : Node[Element]
-  layout_sequence : Node[LayoutSequence]
-  render_action : Node[Unit]
+  counter : Cell[Int]
+  target : Element
+  layout_sequence : Thunk[LayoutSequence]
+  render_action : Thunk[Unit]
 }
 
 ///|
@@ -117,14 +117,14 @@ fn App::on_double_click(self : App, e : @dom.Event) -> Unit {
 ///|
 fn App::new() -> App {
   window.sync()
-  let counter = Node::from_val(0)
-  let text = counter.map(fn { x => "a".repeat(20) })
-  let font = Node::from_fun(fn() { font })
-  let color = Node::from_fun(fn() { white })
-  let i_20 = Node::from_val(20.0)
-  let padding_color = Node::from_val(hsl(0, 0, 20))
+  let counter = cell(0)
+  let text = thunk(fn() { "counter: \{counter.get()}" })
+  let font = thunk(fn() { font })
+  let color = thunk(fn() { white })
+  let i_20 = const_thunk(20.0)
+  let padding_color = const_thunk(hsl(0, 0, 20))
   let button = Element::Render(
-      Text::new(text=Node::from_fun(fn() { "+" }), font~, color~),
+      Text::new(text=thunk(fn() { "+" }), font~, color~),
     )
     .round_padding(thinkness=i_20, color=padding_color, radius=i_20)
     .add_handler(
@@ -144,22 +144,18 @@ fn App::new() -> App {
     text~,
     font~,
     foregound=color,
-    background=Node::from_val(black),
+    background=const_thunk(black),
   )
-  let target = Node::from_fun(fn() {
-    Element::hstack([label, button], spacing=20)
+  let target = Element::hstack([label, button], spacing=20)
+  let layout_sequence = thunk(fn() {
+    window.size.get() |> ignore
+    target.to_layout_sequence(origin)
   })
-  let layout_sequence = Node::from_fun(fn() {
-    window.size.sync()
-    target.get().to_layout_sequence(origin)
+  let render_sequence = thunk(fn() {
+    layout_sequence.get().filter_map(Element::to_render)
   })
-  layout_sequence.depend_on(window.size)
-  layout_sequence.depend_on(target.get().layout_node())
-  let render_sequence = layout_sequence.map(fn {
-    x => x.iter().filter_map(Element::to_render)
-  })
-  let render_action = render_sequence.map(fn(rs) {
-    window.dpr.sync()
+  let render_action = thunk(fn() {
+    window.dpr.get() |> ignore
     debug("App::render")
     ctx.clearRect(
       0,
@@ -167,9 +163,8 @@ fn App::new() -> App {
       @dom.window.innerWidth().to_double(),
       @dom.window.innerHeight().to_double(),
     )
-    &Renderable::render_iter(ctx, rs)
+    &Renderable::render_iter(ctx, render_sequence.get().iter())
   })
-  render_action.depend_on(window.dpr)
   { counter, target, layout_sequence, render_action }
 }
 
@@ -178,26 +173,26 @@ pub fn entry() -> Unit {
   let app = App::new()
   @dom.window.addEventListener("resize", fn(_) {
     window.sync()
-    app.render_action.sync()
+    app.render_action.get() |> ignore
   })
   @dom.window.addEventListener("click", fn(e) {
     app.on_click(e)
-    app.render_action.sync()
+    app.render_action.get() |> ignore
   })
   @dom.window.addEventListener("mousemove", fn(e) {
     app.on_mouse_move(e)
-    app.render_action.sync()
+    app.render_action.get() |> ignore
   })
   @dom.window.addEventListener("mousedown", fn(e) {
     app.on_mouse_down(e)
-    app.render_action.sync()
+    app.render_action.get() |> ignore
   })
   @dom.window.addEventListener("mouseup", fn(e) {
     app.on_mouse_up(e)
-    app.render_action.sync()
+    app.render_action.get() |> ignore
   })
   @dom.window.addEventListener("dblclick", fn(e) {
     app.on_double_click(e)
-    app.render_action.sync()
+    app.render_action.get() |> ignore
   })
 }

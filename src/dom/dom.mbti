@@ -45,6 +45,9 @@ impl CanvasRenderingContext2D {
   strokeRect(Self, Double, Double, Double, Double) -> Unit
 }
 
+pub extern type Cell
+impl DOM_EventTarget for Cell
+
 pub extern type Console
 impl Console {
   log[T : Js](Self, T) -> Unit
@@ -110,9 +113,6 @@ impl MouseEvent {
   clientY(Self) -> Int
 }
 impl DOM_Event for MouseEvent
-
-pub extern type Node
-impl DOM_EventTarget for Node
 
 pub extern type TextMetrics
 impl TextMetrics {

@@ -3,10 +3,10 @@ fn Element::hover(
   self : Element,
   leave~ : Color,
   enter~ : Color,
-  padding~ : (Element, Node[Color]) -> Element
+  padding~ : (Element, Thunk[Color]) -> Element
 ) -> Element {
-  let is_hoved = Node::from_val(false)
-  let color = is_hoved.map(fn { b => if b { enter } else { leave } })
+  let is_hoved = cell(false)
+  let color = thunk(fn() { if is_hoved.get() { enter } else { leave } })
   fn on_mouse_enter() {
     is_hoved.set(true)
   }
@@ -30,12 +30,12 @@ test {
 
 ///|
 fn Element::selected_text(
-  text~ : Node[String],
-  font~ : Node[Font],
-  foregound~ : Node[Color],
-  background~ : Node[Color]
+  text~ : Thunk[String],
+  font~ : Thunk[Font],
+  foregound~ : Thunk[Color],
+  background~ : Thunk[Color]
 ) -> Element {
-  let text_end = Node::from_fun(fn() {
+  let text_end = thunk(fn() {
     let res = []
     let mut e = 0.0
     for ch in text.get() {
@@ -44,15 +44,14 @@ fn Element::selected_text(
     }
     res
   })
-  text_end.add_dependents([text, font])
-  let selected = Node::from_val("")
-  let prev_index = Node::from_val(None)
+  let selected = cell("")
+  let prev_index = cell(None)
   fn on_mouse_down(v : Vector) {
     let index = text_end.get().search_by(fn(end) { end > v.x })
     prev_index.set(index)
   }
 
-  let offset = Node::from_val(Vector::default())
+  let offset = cell(Vector::default())
   fn on_mouse_up(v : Vector) {
     on_mouse_move(v)
   }
@@ -84,23 +83,25 @@ fn Element::selected_text(
   let handler = Handler::new(on_mouse_down~, on_mouse_up~, on_mouse_move~)
   Element::layer_([
     (
-      Node::from_val(Vector::default()),
+      thunk(fn() { Vector::default() }),
       Element::Render(Text::new(text~, color=foregound, font~)),
     ),
     (
-      offset,
-      Element::Render(Text::new(text=selected, color=background, font~)).round_padding(
-        thinkness=Node::from_val(0),
+      thunk(fn() { offset.get() }),
+      Element::Render(
+        Text::new(text=cell_to_thunk(selected), color=background, font~),
+      ).round_padding(
+        thinkness=const_thunk(0),
         color=foregound,
-        radius=Node::from_val(0),
+        radius=const_thunk(0),
       ),
     ),
   ]).add_handler(handler)
 }
 
 ///|
-pub fn Element::layer_(xs : Array[(Node[Vector], Element)]) -> Element {
-  let layout = Node::from_fun(fn() {
+pub fn Element::layer_(xs : Array[(Thunk[Vector], Element)]) -> Element {
+  let layout = thunk(fn() {
     let window = window.size.get()
     let mut w = 0.0
     let mut h = 0.0
@@ -115,8 +116,5 @@ pub fn Element::layer_(xs : Array[(Node[Vector], Element)]) -> Element {
     let size = Size::new(w, h)
     (size, xs.map(fn { (vec, ele) => (vec.get(), ele) }))
   })
-  for x in xs {
-    layout.depend_on(x.1.layout_node())
-  }
   Layout(layout)
 }

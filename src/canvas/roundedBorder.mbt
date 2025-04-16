@@ -1,14 +1,14 @@
 ///|
 pub fn RoundedBorder::new(
-  color~ : Node[Color],
-  size~ : Node[Size],
-  radius~ : Node[Double],
-  thickness~ : Node[Double]
+  color~ : Thunk[Color],
+  size~ : Thunk[Size],
+  radius~ : Thunk[Double],
+  thickness~ : Thunk[Double]
 ) -> RoundedBorder {
-  let rnode = Node::from_fun(fn() {
-    color.sync()
-    size.sync()
-    radius.sync()
+  let rnode = thunk(fn() {
+    color.get() |> ignore
+    size.get() |> ignore
+    radius.get() |> ignore
   })
   { color, size, radius, thickness, rnode }
 }

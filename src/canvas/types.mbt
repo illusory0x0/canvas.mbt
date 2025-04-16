@@ -2,45 +2,48 @@
 typealias @basic.(Color, Size, Font, Thinkness, Vector, Rect)
 
 ///|
-typealias @cache.Node[T]
+typealias @adapton.(Cell[T], Thunk[T])
 
 ///|
-traitalias @cache.VNode
+typealias Node = &@adapton.Source
+
+///|
+fnalias @adapton.(cell, thunk)
 
 ///|
 fnalias @basic.hsl
 
 ///|
 pub(all) struct Text {
-  color : Node[Color]
-  size : Node[Size]
-  text : Node[String]
-  font : Node[Font]
-  rnode : &VNode
+  color : Thunk[Color]
+  size : Thunk[Size]
+  text : Thunk[String]
+  font : Thunk[Font]
+  rnode : Node
 }
 
 ///|
 pub(all) struct RoundedBorder {
-  color : Node[Color]
-  size : Node[Size]
-  radius : Node[Double]
-  thickness : Node[Double]
-  rnode : &VNode
+  color : Thunk[Color]
+  size : Thunk[Size]
+  radius : Thunk[Double]
+  thickness : Thunk[Double]
+  rnode : Node
 }
 
 ///|
 pub(all) struct RoundedRectangle {
-  color : Node[Color]
-  size : Node[Size]
-  radius : Node[Double]
-  rnode : &VNode
+  color : Thunk[Color]
+  size : Thunk[Size]
+  radius : Thunk[Double]
+  rnode : Node
 }
 
 ///|
 pub(all) struct Rectangle {
-  color : Node[Color]
-  size : Node[Size]
-  rnode : &VNode
+  color : Thunk[Color]
+  size : Thunk[Size]
+  rnode : Node
 }
 
 ///|
@@ -62,14 +65,14 @@ pub typealias OnMouseUp = (Vector) -> Unit
 pub typealias OnMouseMove = (Vector) -> Unit
 
 ///|
-typealias Layout = Node[(Size, Array[(Vector, Element)])]
+typealias Layout = Thunk[(Size, Array[(Vector, Element)])]
 
 ///|
 pub enum Element {
   Layout(Layout)
   Render(&Renderable)
   Handle(Element, Handler)
-} derive(Show)
+}
 
 ///|
 pub struct Handler {
@@ -85,6 +88,26 @@ pub struct Handler {
 
 ///|
 pub struct Window {
-  size : Node[Size]
-  dpr : Node[Int]
-} derive(Show)
+  size : Cell[Size]
+  dpr : Cell[Int]
+}
+
+///|
+pub impl Show for Window with output(self, logger) {
+
+}
+
+///|
+pub impl Show for Element with output(self, logger) {
+
+}
+
+///|
+pub impl Eq for Element with op_equal(self, other) {
+  false
+}
+
+///|
+pub impl Eq for &Renderable with op_equal(self, other) {
+  false
+}

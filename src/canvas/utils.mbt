@@ -27,3 +27,23 @@ let font : Font = { ..Font::default(), weight: 320 }
 
 ///|
 let origin : Vector = { x: 20, y: 20 }
+
+///|
+fn action(f : () -> Unit) -> Thunk[Int] {
+  let mut state = 0
+  thunk(fn() {
+    f()
+    state += 1
+    state
+  })
+}
+
+///|
+fn const_thunk[A : Eq](value : A) -> Thunk[A] {
+  thunk(fn() { value })
+}
+
+///|
+fn cell_to_thunk[A : Eq](cell : Cell[A]) -> Thunk[A] {
+  thunk(fn() { cell.get() })
+}

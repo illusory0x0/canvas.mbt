@@ -1,8 +1,8 @@
 package "illusory0x0/canvas/canvas"
 
 import(
+  "illusory0x0/adapton"
   "illusory0x0/canvas/basic"
-  "illusory0x0/canvas/cache"
   "illusory0x0/canvas/dom"
 )
 
@@ -11,7 +11,7 @@ fn entry() -> Unit
 
 // Types and methods
 pub enum Element {
-  Layout(@cache.Node[(@basic.Size, Array[(@basic.Vector, Element)])])
+  Layout(@adapton.Thunk[(@basic.Size, Array[(@basic.Vector, Element)])])
   Render(&Renderable)
   Handle(Element, Handler)
 }
@@ -19,9 +19,9 @@ impl Element {
   add_handler(Self, Handler) -> Self
   hstack(Array[Self], spacing~ : Double) -> Self
   layer(Array[(@basic.Vector, Self)]) -> Self
-  layer_(Array[(@cache.Node[@basic.Vector], Self)]) -> Self
-  round_border(Self, thickness~ : @cache.Node[Double], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Double]) -> Self
-  round_padding(Self, thinkness~ : @cache.Node[Double], color~ : @cache.Node[@basic.Color], radius~ : @cache.Node[Double]) -> Self
+  layer_(Array[(@adapton.Thunk[@basic.Vector], Self)]) -> Self
+  round_border(Self, thickness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@basic.Color], radius~ : @adapton.Thunk[Double]) -> Self
+  round_padding(Self, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@basic.Color], radius~ : @adapton.Thunk[Double]) -> Self
   size(Self) -> @basic.Size
   spacer(@basic.Size) -> Self
   to_layout_sequence(Self, @basic.Vector) -> Array[(@basic.Vector, Self)]
@@ -29,6 +29,7 @@ impl Element {
   vstack(Array[Self], spacing~ : Double) -> Self
 }
 impl DepsKind for Element
+impl Eq for Element
 impl Show for Element
 
 pub struct Handler {
@@ -47,57 +48,57 @@ impl Handler {
 impl Show for Handler
 
 pub(all) struct Rectangle {
-  color : @cache.Node[@basic.Color]
-  size : @cache.Node[@basic.Size]
-  rnode : &@cache.VNode
+  color : @adapton.Thunk[@basic.Color]
+  size : @adapton.Thunk[@basic.Size]
+  rnode : &@adapton.Source
 }
 impl Rectangle {
-  new(color~ : () -> @basic.Color, size~ : () -> @basic.Size) -> Self
+  new(color~ : @adapton.Thunk[@basic.Color], size~ : @adapton.Thunk[@basic.Size]) -> Self
 }
 impl DepsKind for Rectangle
 impl Renderable for Rectangle
 
 pub(all) struct RoundedBorder {
-  color : @cache.Node[@basic.Color]
-  size : @cache.Node[@basic.Size]
-  radius : @cache.Node[Double]
-  thickness : @cache.Node[Double]
-  rnode : &@cache.VNode
+  color : @adapton.Thunk[@basic.Color]
+  size : @adapton.Thunk[@basic.Size]
+  radius : @adapton.Thunk[Double]
+  thickness : @adapton.Thunk[Double]
+  rnode : &@adapton.Source
 }
 impl RoundedBorder {
-  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Double], thickness~ : @cache.Node[Double]) -> Self
+  new(color~ : @adapton.Thunk[@basic.Color], size~ : @adapton.Thunk[@basic.Size], radius~ : @adapton.Thunk[Double], thickness~ : @adapton.Thunk[Double]) -> Self
 }
 impl DepsKind for RoundedBorder
 impl Renderable for RoundedBorder
 
 pub(all) struct RoundedRectangle {
-  color : @cache.Node[@basic.Color]
-  size : @cache.Node[@basic.Size]
-  radius : @cache.Node[Double]
-  rnode : &@cache.VNode
+  color : @adapton.Thunk[@basic.Color]
+  size : @adapton.Thunk[@basic.Size]
+  radius : @adapton.Thunk[Double]
+  rnode : &@adapton.Source
 }
 impl RoundedRectangle {
-  new(color~ : @cache.Node[@basic.Color], size~ : @cache.Node[@basic.Size], radius~ : @cache.Node[Double]) -> Self
+  new(color~ : @adapton.Thunk[@basic.Color], size~ : @adapton.Thunk[@basic.Size], radius~ : @adapton.Thunk[Double]) -> Self
 }
 impl DepsKind for RoundedRectangle
 impl Renderable for RoundedRectangle
 
 pub(all) struct Text {
-  color : @cache.Node[@basic.Color]
-  size : @cache.Node[@basic.Size]
-  text : @cache.Node[String]
-  font : @cache.Node[@basic.Font]
-  rnode : &@cache.VNode
+  color : @adapton.Thunk[@basic.Color]
+  size : @adapton.Thunk[@basic.Size]
+  text : @adapton.Thunk[String]
+  font : @adapton.Thunk[@basic.Font]
+  rnode : &@adapton.Source
 }
 impl Text {
-  new(text~ : @cache.Node[String], font~ : @cache.Node[@basic.Font], color~ : @cache.Node[@basic.Color]) -> Self
+  new(text~ : @adapton.Thunk[String], font~ : @adapton.Thunk[@basic.Font], color~ : @adapton.Thunk[@basic.Color]) -> Self
 }
 impl DepsKind for Text
 impl Renderable for Text
 
 pub struct Window {
-  size : @cache.Node[@basic.Size]
-  dpr : @cache.Node[Int]
+  size : @adapton.Cell[@basic.Size]
+  dpr : @adapton.Cell[Int]
 }
 impl Window {
   sync(Self) -> Unit
@@ -108,6 +109,7 @@ impl Show for Window
 impl Renderable {
   render_iter(@dom.CanvasRenderingContext2D, Iter[(@basic.Vector, &Self)]) -> Unit
 }
+impl Eq for &Renderable
 impl Show for &Renderable
 
 // Type aliases
@@ -125,8 +127,8 @@ pub typealias OnMouseUp = (@basic.Vector) -> Unit
 
 // Traits
 pub(open) trait DepsKind {
-  render_node(Self) -> &@cache.VNode
-  layout_node(Self) -> &@cache.VNode
+  render_node(Self) -> &@adapton.Source
+  layout_node(Self) -> &@adapton.Source
 }
 
 pub(open) trait Renderable : DepsKind {

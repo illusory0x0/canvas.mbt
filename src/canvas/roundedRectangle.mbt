@@ -1,13 +1,13 @@
 ///|
 pub fn RoundedRectangle::new(
-  color~ : Node[Color],
-  size~ : Node[Size],
-  radius~ : Node[Double]
+  color~ : Thunk[Color],
+  size~ : Thunk[Size],
+  radius~ : Thunk[Double]
 ) -> RoundedRectangle {
-  let rnode = Node::from_fun(fn() {
-    color.sync()
-    size.sync()
-    radius.sync()
+  let rnode = thunk(fn() {
+    color.get() |> ignore
+    size.get() |> ignore
+    radius.get() |> ignore
   })
   { color, size, radius, rnode }
 }

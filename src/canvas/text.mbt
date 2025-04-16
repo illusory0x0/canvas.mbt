@@ -1,21 +1,20 @@
 ///|
 pub fn Text::new(
-  text~ : Node[String],
-  font~ : Node[Font],
-  color~ : Node[Color]
+  text~ : Thunk[String],
+  font~ : Thunk[Font],
+  color~ : Thunk[Color]
 ) -> Text {
-  let size = Node::from_fun(fn() {
+  let size = thunk(fn() {
     let font = font.get()
     let text = text.get()
     debug("Text::measure font size")
     Size::new(font.width(text), font.height(text))
   })
-  size.depend_on(font)
-  size.depend_on(text)
-  let rnode = Node::from_fun(fn() {
-    size.sync()
-    font.sync()
-    color.sync()
+  let rnode = thunk(fn() {  })
+  let rnode = action(fn() {
+    size.get() |> ignore
+    font.get() |> ignore
+    color.get() |> ignore
   })
   { text, font, color, size, rnode }
 }

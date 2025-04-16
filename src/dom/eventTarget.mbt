@@ -20,7 +20,7 @@ pub impl DOM_EventTarget for Document with to_eventTarget(self) = "%identity"
 pub impl DOM_EventTarget for EventTarget with to_eventTarget(self) = "%identity"
 
 ///|
-pub impl DOM_EventTarget for Node with to_eventTarget(self) = "%identity"
+pub impl DOM_EventTarget for Cell with to_eventTarget(self) = "%identity"
 
 ///|
 pub impl DOM_EventTarget for Element with to_eventTarget(self) = "%identity"
