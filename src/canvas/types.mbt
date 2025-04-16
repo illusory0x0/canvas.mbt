@@ -53,6 +53,15 @@ pub typealias OnMouseEnter = () -> Unit
 pub typealias OnMouseLeave = () -> Unit
 
 ///|
+pub typealias OnMouseDown = (Vector) -> Unit
+
+///|
+pub typealias OnMouseUp = (Vector) -> Unit
+
+///|
+pub typealias OnMouseMove = (Vector) -> Unit
+
+///|
 typealias Layout = Node[(Size, Array[(Vector, Element)])]
 
 ///|
@@ -69,6 +78,9 @@ pub struct Handler {
   on_double_click : OnClick?
   on_mouse_enter : OnMouseEnter?
   on_mouse_leave : OnMouseLeave?
+  on_mouse_move : OnMouseMove?
+  on_mouse_down : OnMouseDown?
+  on_mouse_up : OnMouseUp?
 }
 
 ///|
