@@ -12,7 +12,7 @@ priv struct App {
   counter : Cell[Int]
   target : Element
   layout_sequence : Thunk[LayoutSequence]
-  render_action : Thunk[Unit]
+  render_action : Action
 }
 
 ///|
@@ -154,7 +154,7 @@ fn App::new() -> App {
   let render_sequence = thunk(fn() {
     layout_sequence.get().filter_map(Element::to_render)
   })
-  let render_action = thunk(fn() {
+  let render_action = action(fn() {
     window.dpr.get() |> ignore
     debug("App::render")
     ctx.clearRect(
@@ -171,29 +171,29 @@ fn App::new() -> App {
 ///|
 pub fn entry() -> Unit {
   let app = App::new()
-  app.render_action.get()
+  app.render_action.run()
   @dom.window.addEventListener("resize", fn(_) {
     window.sync()
-    app.render_action.get()
+    app.render_action.run()
   })
   @dom.window.addEventListener("click", fn(e) {
     app.on_click(e)
-    app.render_action.get()
+    app.render_action.run()
   })
   @dom.window.addEventListener("mousemove", fn(e) {
     app.on_mouse_move(e)
-    app.render_action.get()
+    app.render_action.run()
   })
   @dom.window.addEventListener("mousedown", fn(e) {
     app.on_mouse_down(e)
-    app.render_action.get()
+    app.render_action.run()
   })
   @dom.window.addEventListener("mouseup", fn(e) {
     app.on_mouse_up(e)
-    app.render_action.get()
+    app.render_action.run()
   })
   @dom.window.addEventListener("dblclick", fn(e) {
     app.on_double_click(e)
-    app.render_action.get()
+    app.render_action.run()
   })
 }

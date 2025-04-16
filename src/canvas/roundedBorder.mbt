@@ -5,11 +5,11 @@ pub fn RoundedBorder::new(
   radius~ : Thunk[Double],
   thickness~ : Thunk[Double]
 ) -> RoundedBorder {
-  let rnode = thunk(fn() {
-    color.get() |> ignore
-    size.get() |> ignore
-    radius.get() |> ignore
-  })
+  let rnode = action(fn() {
+      color.get() |> ignore
+      size.get() |> ignore
+      radius.get() |> ignore
+    })._
   { color, size, radius, thickness, rnode }
 }
 

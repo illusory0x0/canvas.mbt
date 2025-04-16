@@ -1,9 +1,9 @@
 ///|
 pub fn Rectangle::new(color~ : Thunk[Color], size~ : Thunk[Size]) -> Rectangle {
-  let rnode = thunk(fn() {
-    color.get() |> ignore
-    size.get() |> ignore
-  })
+  let rnode = action(fn() {
+      color.get() |> ignore
+      size.get() |> ignore
+    })._
   { color, size, rnode }
 }
 

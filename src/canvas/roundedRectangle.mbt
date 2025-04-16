@@ -4,11 +4,11 @@ pub fn RoundedRectangle::new(
   size~ : Thunk[Size],
   radius~ : Thunk[Double]
 ) -> RoundedRectangle {
-  let rnode = thunk(fn() {
-    color.get() |> ignore
-    size.get() |> ignore
-    radius.get() |> ignore
-  })
+  let rnode = action(fn() {
+      color.get() |> ignore
+      size.get() |> ignore
+      radius.get() |> ignore
+    })._
   { color, size, radius, rnode }
 }
 

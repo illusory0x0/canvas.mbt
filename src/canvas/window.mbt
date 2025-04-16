@@ -26,7 +26,6 @@ pub fn Window::sync_from_dom(self : Window, w : @dom.Window) -> Unit {
 pub fn Window::sync(self : Window) -> Unit {
   self.sync_from_dom(@dom.window)
 }
-// let window : Window = cell(Size::new(0, 0))
 
 ///|
 let window : Window = { size: cell(Size::new(1280, 720)), dpr: cell(1) }

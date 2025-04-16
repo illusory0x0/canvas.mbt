@@ -10,12 +10,11 @@ pub fn Text::new(
     debug("Text::measure font size")
     Size::new(font.width(text), font.height(text))
   })
-  let rnode = thunk(fn() {  })
   let rnode = action(fn() {
-    size.get() |> ignore
-    font.get() |> ignore
-    color.get() |> ignore
-  })
+      size.get() |> ignore
+      font.get() |> ignore
+      color.get() |> ignore
+    })._
   { text, font, color, size, rnode }
 }
 

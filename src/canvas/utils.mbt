@@ -29,13 +29,31 @@ let font : Font = { ..Font::default(), weight: 320 }
 let origin : Vector = { x: 20, y: 20 }
 
 ///|
-fn action(f : () -> Unit) -> Thunk[Int] {
+priv type Action Thunk[Int]
+
+///|
+fn Action::run(self : Action) -> Unit {
+  self._.get() |> ignore
+}
+
+///|
+fn Action::new(f : () -> Unit) -> Action {
   let mut state = 0
   thunk(fn() {
     f()
     state += 1
     state
   })
+}
+
+///|
+fn Action::to_node(self : Action) -> Node {
+  self._
+}
+
+///|
+fn action(f : () -> Unit) -> Action {
+  Action::new(f)
 }
 
 ///|
