@@ -98,6 +98,11 @@ pub fn Node::depend_on[A](self : Node[A], other : &VNode) -> Unit {
   other.incomings().push(self)
 }
 
+pub fn Node::add_dependents[A](self : Node[A], dependents : Array[&VNode]) -> Unit {
+  for dependent in dependents {
+    self.depend_on(dependent)
+  }
+}
 ///|
 pub fn Node::map[A, B](self : Node[A], f : (A) -> B) -> Node[B] {
   let res = Node::from_fun(fn() { f(self.get()) })
