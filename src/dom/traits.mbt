@@ -1,6 +1,6 @@
 ///|
 pub(open) trait Js {
-  to_any(Self) -> Any
+  to_any(Self) -> Any = _
 }
 
 ///|
@@ -12,19 +12,19 @@ pub fn coerce[A, B](x : A) -> B = "%identity"
 ///|
 pub(open) trait DOM_EventTarget {
   to_eventTarget(Self) -> EventTarget
-  addEventListener(Self, String, (Event) -> Unit) -> Unit
+  addEventListener(Self, String, (Event) -> Unit) -> Unit = _
 }
 
 ///|
 pub(open) trait DOM_Element {
   to_element(Self) -> Element
-  querySelector(Self, String) -> Element?
+  querySelector(Self, String) -> Element? = _
 }
 
 ///|
 pub(open) trait DOM_HTMLElement {
   to_htmlElement(Self) -> HTMLElement
-  style(Self) -> CSSStyleDeclaration
+  style(Self) -> CSSStyleDeclaration = _
 }
 
 ///|
