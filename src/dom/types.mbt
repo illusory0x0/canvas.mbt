@@ -26,7 +26,7 @@ pub extern type Window
 pub extern type EventTarget
 
 ///|
-pub extern type Cell
+pub extern type Node
 
 ///|
 pub extern type Element
