@@ -43,20 +43,21 @@ pub fn Element::vstack(xs : Array[Element], spacing~ : Double) -> Element {
 }
 
 ///|
-pub fn Element::layer(xs : Array[(Vector, Element)]) -> Element {
+pub fn Element::layer(xs : Array[(Thunk[Vector], Element)]) -> Element {
   let layout = thunk(fn() {
     let window = window.size.get()
     let mut w = 0.0
     let mut h = 0.0
     for x in xs {
       let (offset, view) = x
+      let offset = offset.get()
       guard offset.x < window.width && offset.y < window.height else { break } // doesn't layout beyond window
       let sz = view.size()
       w = @math.maximum(w, offset.x + sz.width)
       h = @math.maximum(h, offset.y + sz.height)
     }
     let size = Size::new(w, h)
-    (size, xs)
+    (size, xs.map(fn { (vec, ele) => (vec.get(), ele) }))
   })
   Layout(layout)
 }

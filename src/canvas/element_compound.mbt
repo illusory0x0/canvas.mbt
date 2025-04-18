@@ -81,7 +81,7 @@ fn Element::selected_text(
   }
 
   let handler = Handler::new(on_mouse_down~, on_mouse_up~, on_mouse_move~)
-  Element::layer_([
+  Element::layer([
     (
       thunk(fn() { Vector::default() }),
       Element::Render(Text::new(text~, color=foregound, font~)),
@@ -97,24 +97,4 @@ fn Element::selected_text(
       ),
     ),
   ]).add_handler(handler)
-}
-
-///|
-pub fn Element::layer_(xs : Array[(Thunk[Vector], Element)]) -> Element {
-  let layout = thunk(fn() {
-    let window = window.size.get()
-    let mut w = 0.0
-    let mut h = 0.0
-    for x in xs {
-      let (offset, view) = x
-      let offset = offset.get()
-      guard offset.x < window.width && offset.y < window.height else { break } // doesn't layout beyond window
-      let sz = view.size()
-      w = @math.maximum(w, offset.x + sz.width)
-      h = @math.maximum(h, offset.y + sz.height)
-    }
-    let size = Size::new(w, h)
-    (size, xs.map(fn { (vec, ele) => (vec.get(), ele) }))
-  })
-  Layout(layout)
 }
