@@ -48,7 +48,7 @@ pub extern "js" fn Canvas2D::clearRect(
   height : Double
 ) = "importObject.CanvasRenderingContext2D.clearRect"
 
-///|
+///| This method is very slow, user might need memoization.
 pub extern "js" fn Canvas2D::measureText(
   self : Canvas2D,
   text : String

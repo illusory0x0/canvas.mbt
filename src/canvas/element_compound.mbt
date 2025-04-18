@@ -216,7 +216,6 @@ fn Element::selected_text(
       (clicked.get(), pointer)
     }
     sel.set(Some(TextSelection::{ start, end }))
-    println(sel.get())
   }
 
   let handler = Handler::new(on_mouse_down~, on_mouse_move~)

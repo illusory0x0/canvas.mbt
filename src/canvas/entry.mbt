@@ -135,7 +135,10 @@ fn App::new() -> App {
       }),
     )
   let label = Element::selected_text(
-    text=thunk(fn() { ["123", "456", "789"] }),
+    text=thunk(fn() { 
+      // [ "a".repeat(40) ] 
+      Array::makei(40, fn { i => i.to_string().repeat(100) })
+    }),
     font~,
     foregound=color,
     background=const_thunk(black),
@@ -148,8 +151,11 @@ fn App::new() -> App {
   let render_sequence = thunk(fn() {
     layout_sequence.get().filter_map(Element::to_render)
   })
+  let mut rcnt = 0
   let render_action = action(fn() {
     window.dpr.get() |> ignore
+    rcnt += 1
+    println(rcnt)
     debug("App::render")
     ctx.clearRect(
       0,

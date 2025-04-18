@@ -54,4 +54,4 @@ pub(all) struct Font {
   size : Int
   style : FontStyle
   weight : Int
-} derive(Compare, Eq)
+} derive(Compare, Eq, Hash)
