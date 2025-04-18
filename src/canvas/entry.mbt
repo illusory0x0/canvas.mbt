@@ -135,7 +135,7 @@ fn App::new() -> App {
       }),
     )
   let label = Element::selected_text(
-    text=thunk(fn() { 
+    text=thunk(fn() {
       // [ "a".repeat(40) ] 
       Array::makei(40, fn { i => i.to_string().repeat(100) })
     }),

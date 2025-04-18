@@ -28,6 +28,7 @@ impl Font {
 impl Compare for Font
 impl Default for Font
 impl Eq for Font
+impl Hash for Font
 impl Show for Font
 
 pub(all) enum FontStyle {

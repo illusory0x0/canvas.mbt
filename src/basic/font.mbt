@@ -117,14 +117,16 @@ let context : @dom.Canvas2D = {
   canvas.getContext("2d")
 }
 
-let memo : Map[(Font,String),@dom.TextMetrics] = {}
+///|
+let memo : Map[(Font, String), @dom.TextMetrics] = {}
+
 ///|
 fn Font::measure_text(self : Font, text : String) -> @dom.TextMetrics {
-  match memo[(self,text)] {
+  match memo[(self, text)] {
     None => {
       context.set_font(self.to_string())
       let x = context.measureText(text)
-      memo[(self,text)] = x 
+      memo[(self, text)] = x
       x
     }
     Some(x) => x
