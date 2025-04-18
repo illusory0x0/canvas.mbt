@@ -131,22 +131,16 @@ fn App::new() -> App {
       Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }, on_double_click=fn(
 
       ) {
-        counter.modify(fn { x => x + 100 })
+        counter.modify(fn { x => x + 4 })
       }),
     )
-  // let label = Element::Render(Text::new(text~, font~, color~)).hover(
-  //   leave=hsl(0, 0, 50),
-  //   enter=hsl(0, 0, 20),
-  //   padding=fn { e, c => e.round_padding(thickness=i_20, color=c, radius=i_20) },
-  // )
-
   let label = Element::selected_text(
-    text~,
+    text=thunk(fn() { ["123", "456", "789"] }),
     font~,
     foregound=color,
     background=const_thunk(black),
   )
-  let target = Element::hstack([label, button], spacing=20)
+  let target = Element::hstack(const_thunk([label, button]), spacing=20)
   let layout_sequence = thunk(fn() {
     window.size.get() |> ignore
     target.to_layout_sequence(origin)

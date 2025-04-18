@@ -20,81 +20,249 @@ fn Element::hover(
 }
 
 ///|
+fn text_render_end(text : String, font : Font) -> Array[Double] {
+  let res = []
+  let mut e = 0.0
+  for ch in text {
+    e += font.width(ch.to_string())
+    res.push(e)
+  }
+  res
+}
+
+///| inclusive cursor
+priv struct TextCursor {
+  row : Int
+  col : Int
+} derive(Eq, Show, Compare)
+
+///| inclusive selection
+priv struct TextSelection {
+  start : TextCursor
+  end : TextCursor
+} derive(Eq, Show, Compare)
+
+///|
+fn array_view_to_array[T](xs : ArrayView[T]) -> Array[T] {
+  match xs {
+    [] => []
+    [x, ..] => {
+      let res = Array::make(xs.length(), x)
+      for i in 1..<xs.length() {
+        res[i] = xs[i]
+      }
+      res
+    }
+  }
+}
+
+///|
+typealias UnSelected = String
+
+///|
+typealias Selected = String
+
+///|
+priv enum MixedSelectText {
+  OneLine(prefix~ : UnSelected, middle~ : Selected, suffix~ : UnSelected)
+  MultiLine(
+    first_prefix~ : UnSelected,
+    first_suffix~ : Selected,
+    middle~ : Array[UnSelected],
+    last_prefix~ : Selected,
+    last_suffix~ : UnSelected
+  )
+} derive(Show)
+
+///|
+fn split(
+  xs : Array[String],
+  sel : TextSelection
+) -> (Array[String], MixedSelectText, Array[String]) {
+  let { start, end } = sel
+  guard start.row <= end.row
+  let top = xs[0:start.row] |> array_view_to_array
+  let bot = xs[end.row + 1:] |> array_view_to_array
+  let mid = if start.row == end.row {
+    guard start.col <= end.col
+    let prefix = xs[start.row].view(end_offset=start.col).to_string()
+    let suffix = xs[start.row].view(start_offset=end.col + 1).to_string()
+    let selected = xs[start.row]
+      .view(start_offset=start.col, end_offset=end.col + 1)
+      .to_string()
+    MixedSelectText::OneLine(prefix~, middle=selected, suffix~)
+  } else {
+    let first_prefix = xs[start.row].view(end_offset=start.col).to_string()
+    let first_suffix = xs[start.row].view(start_offset=start.col).to_string()
+    let last_prefix = xs[end.row].view(end_offset=end.col + 1).to_string()
+    let last_sufix = xs[end.row].view(start_offset=end.col + 1).to_string()
+    let middle = if end.row - start.row + 1 > 2 {
+      xs[start.row + 1:end.row] |> array_view_to_array
+    } else {
+      []
+    }
+    MixedSelectText::MultiLine(
+      first_prefix~,
+      first_suffix~,
+      middle~,
+      last_prefix~,
+      last_suffix=last_sufix,
+    )
+  }
+  (top, mid, bot)
+}
+
+///|
 test {
-  let xs = [2, 4, 6]
-  let s = xs.search_by(fn(end) { end > 1 })
-  let e = xs.search_by(fn(end) { end > 5 })
-  println((s, e))
-  println("abc".view(start_offset=0, end_offset=2))
+  let xs = ["123", "456", "789"]
+  inspect!(
+    split(xs, TextSelection::{
+      start: { row: 1, col: 1 },
+      end: { row: 1, col: 1 },
+    }),
+    content=
+      #|(["123"], OneLine(prefix="4", middle="5", suffix="6"), ["789"])
+    ,
+  )
+  inspect!(
+    split(xs, TextSelection::{
+      start: { row: 1, col: 1 },
+      end: { row: 2, col: 2 },
+    }),
+    content=
+      #|(["123"], MultiLine(first_prefix="4", first_suffix="56", middle=[], last_prefix="789", last_suffix=""), [])
+    ,
+  )
+  inspect!(
+    split(xs, TextSelection::{
+      start: { row: 0, col: 0 },
+      end: { row: 2, col: 2 },
+    }),
+    content=
+      #|([], MultiLine(first_prefix="", first_suffix="123", middle=["456"], last_prefix="789", last_suffix=""), [])
+    ,
+  )
+  inspect!(
+    split(xs, TextSelection::{
+      start: { row: 0, col: 1 },
+      end: { row: 2, col: 0 },
+    }),
+    content=
+      #|([], MultiLine(first_prefix="1", first_suffix="23", middle=["456"], last_prefix="7", last_suffix="89"), [])
+    ,
+  )
 }
 
 ///|
 fn Element::selected_text(
-  text~ : Thunk[String],
+  text~ : Thunk[Array[String]],
   font~ : Thunk[Font],
   foregound~ : Thunk[Color],
   background~ : Thunk[Color]
 ) -> Element {
+  let sel : Cell[TextSelection?] = cell(None)
   let text_end = thunk(fn() {
-    let res = []
-    let mut e = 0.0
-    for ch in text.get() {
-      e += font.get().width(ch.to_string())
-      res.push(e)
-    }
-    res
+    text.get().map(fn { x => text_render_end(x, font.get()) })
   })
-  let selected = cell("")
-  let prev_index = cell(None)
-  fn on_mouse_down(v : Vector) {
-    let index = text_end.get().search_by(fn(end) { end > v.x })
-    prev_index.set(index)
+  fn unselected(text) {
+    Element::Render(
+      Text::new(text=thunk(fn() { text }), color=foregound, font~),
+    )
   }
 
-  let offset = cell(Vector::default())
-  fn on_mouse_up(v : Vector) {
-    on_mouse_move(v)
+  fn selected(text) {
+    Element::Render(
+      Text::new(text=thunk(fn() { text }), color=background, font~),
+    ).round_padding(
+      thinkness=const_thunk(0),
+      color=foregound,
+      radius=const_thunk(0),
+    )
+  }
+
+  let height = thunk(fn() { font.get().height(" ") })
+  let clicked : Cell[TextCursor] = cell({ row: 0, col: 0 })
+  fn on_mouse_down(v : Vector) {
+    let text_end = text_end.get()
+    let row = (v.y / height.get()).to_int()
+    if row < text_end.length() {
+      let col = text_end[row].search_by(fn(end) { end > v.x })
+      match col {
+        None => ()
+        Some(col) => clicked.set({ row, col })
+      }
+    }
   }
 
   fn on_mouse_move(v : Vector) {
-    let current_index = text_end
-      .get()
-      .search_by(fn(end) { end > v.x })
-      .or(text.get().char_length() - 1)
-    match prev_index.get() {
-      Some(prev) => {
-        let (start_offset, end_offset) = if prev < current_index {
-          (prev, current_index + 1)
-        } else {
-          (current_index, prev + 1)
-        }
-        let x = if start_offset == 0 {
-          0.0
-        } else {
-          text_end.get()[start_offset - 1]
-        }
-        offset.modify(fn { { y, .. } => Vector::new(x, y) })
-        selected.set(text.get().view(start_offset~, end_offset~).to_string())
+    let text_end = text_end.get()
+    let row = {
+      let row = (v.y / height.get()).to_int()
+      if row < 0 {
+        0
+      } else if row < text_end.length() {
+        row
+      } else {
+        text_end.length() - 1
       }
-      None => ()
     }
+    let col = text_end[row]
+      .search_by(fn(end) { end > v.x })
+      .or(text_end[row].length() - 1)
+    let pointer = TextCursor::{ col, row }
+    let (start, end) = if pointer < clicked.get() {
+      (pointer, clicked.get())
+    } else {
+      (clicked.get(), pointer)
+    }
+    sel.set(Some(TextSelection::{ start, end }))
+    println(sel.get())
   }
 
-  let handler = Handler::new(on_mouse_down~, on_mouse_up~, on_mouse_move~)
-  Element::layer([
-    (
-      thunk(fn() { Vector::default() }),
-      Element::Render(Text::new(text~, color=foregound, font~)),
-    ),
-    (
-      thunk(fn() { offset.get() }),
-      Element::Render(
-        Text::new(text=cell_to_thunk(selected), color=background, font~),
-      ).round_padding(
-        thinkness=const_thunk(0),
-        color=foregound,
-        radius=const_thunk(0),
-      ),
-    ),
-  ]).add_handler(handler)
+  let handler = Handler::new(on_mouse_down~, on_mouse_move~)
+  Element::vstack(
+    thunk(fn() {
+      match sel.get() {
+        None => text.get().map(unselected)
+        Some(sel) => {
+          let (top, mid, bot) = split(text.get(), sel)
+          let mid = match mid {
+            OneLine(prefix~, middle~, suffix~) =>
+              [
+                Element::hstack(
+                  thunk(fn() {
+                    [unselected(prefix), selected(middle), unselected(suffix)]
+                  }),
+                  spacing=0,
+                ),
+              ]
+            MultiLine(
+              first_prefix~,
+              first_suffix~,
+              middle~,
+              last_prefix~,
+              last_suffix~
+            ) =>
+              [
+                Element::hstack(
+                  thunk(fn() {
+                    [unselected(first_prefix), selected(first_suffix)]
+                  }),
+                  spacing=0,
+                ),
+                ..middle.map(selected),
+                Element::hstack(
+                  thunk(fn() {
+                    [selected(last_prefix), unselected(last_suffix)]
+                  }),
+                  spacing=0,
+                ),
+              ]
+          }
+          [..top.map(unselected), ..mid, ..bot.map(unselected)]
+        }
+      }
+    }),
+    spacing=0,
+  ).add_handler(handler)
 }

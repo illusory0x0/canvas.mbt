@@ -5,8 +5,12 @@ pub fn Element::spacer(size : Size) -> Element {
 }
 
 ///|
-pub fn Element::hstack(xs : Array[Element], spacing~ : Double) -> Element {
+pub fn Element::hstack(
+  xs : Thunk[Array[Element]],
+  spacing~ : Double
+) -> Element {
   let layout = thunk(fn() {
+    let xs = xs.get()
     let mut w = 0.0
     let mut h = 0.0
     let children : Array[(Vector, Element)] = Array::new(capacity=xs.length())
@@ -24,8 +28,12 @@ pub fn Element::hstack(xs : Array[Element], spacing~ : Double) -> Element {
 }
 
 ///|
-pub fn Element::vstack(xs : Array[Element], spacing~ : Double) -> Element {
+pub fn Element::vstack(
+  xs : Thunk[Array[Element]],
+  spacing~ : Double
+) -> Element {
   let layout = thunk(fn() {
+    let xs = xs.get()
     let mut w = 0.0
     let mut h = 0.0
     let children = Array::new(capacity=xs.length())
