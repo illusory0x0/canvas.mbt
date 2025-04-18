@@ -17,16 +17,15 @@ pub enum Element {
 }
 impl Element {
   add_handler(Self, Handler) -> Self
-  hstack(Array[Self], spacing~ : Double) -> Self
-  layer(Array[(@basic.Vector, Self)]) -> Self
-  layer_(Array[(@adapton.Thunk[@basic.Vector], Self)]) -> Self
+  hstack(@adapton.Thunk[Array[Self]], spacing~ : Double) -> Self
+  layer(Array[(@adapton.Thunk[@basic.Vector], Self)]) -> Self
   round_border(Self, thickness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@basic.Color], radius~ : @adapton.Thunk[Double]) -> Self
   round_padding(Self, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@basic.Color], radius~ : @adapton.Thunk[Double]) -> Self
   size(Self) -> @basic.Size
   spacer(@basic.Size) -> Self
   to_layout_sequence(Self, @basic.Vector) -> Array[(@basic.Vector, Self)]
   to_render_sequence(Self, @basic.Vector) -> Iter[(@basic.Vector, &Renderable)]
-  vstack(Array[Self], spacing~ : Double) -> Self
+  vstack(@adapton.Thunk[Array[Self]], spacing~ : Double) -> Self
 }
 impl DepsKind for Element
 impl Eq for Element
