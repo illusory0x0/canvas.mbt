@@ -40,6 +40,7 @@ pub impl Renderable for Text with render(self, offset, ctx) {
   let text = self.text.get()
   ctx.set_fillStyle(color |> color_to_css)
   ctx.set_font(font.to_string())
-  ctx.set_textBaseline("top")
-  ctx.fillText(text, offset.x, offset.y)
+  ctx.set_textBaseline("bottom")
+  let height = font.height(text)
+  ctx.fillText(text, offset.x, offset.y + height)
 }
