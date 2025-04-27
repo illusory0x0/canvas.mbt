@@ -135,14 +135,15 @@ fn App::new() -> App {
       }),
     )
   let label = Element::selected_text(
-    text=thunk(fn() {
-      // [ "a".repeat(40) ] 
-      Array::makei(40, fn { i => i.to_string().repeat(100) })
-    }),
+    text=thunk(fn() { [
+      "hello",
+      "world",
+      "water"
+    ] }),
     font~,
     foregound=color,
     background=const_thunk(black),
-  )
+  ).round_padding(thinkness=i_20, color=padding_color, radius=i_20)
   let target = Element::hstack(const_thunk([label, button]), spacing=20)
   let layout_sequence = thunk(fn() {
     window.size.get() |> ignore
