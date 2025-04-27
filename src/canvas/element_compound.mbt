@@ -164,6 +164,7 @@ fn Element::selected_text(
   let text_end = thunk(fn() {
     text.get().map(fn { x => text_render_end(x, font.get()) })
   })
+  println(text_end.get())
   fn unselected(text) {
     Element::Render(
       Text::new(text=thunk(fn() { text }), color=foregound, font~),

@@ -1,18 +1,53 @@
 {
+  "is-main": true,
   "link": {
-    "js": {
-      "exports": [
-        "entry",
-        "add_1000"
-      ],
-      "format": "esm"
+    "native": {
+      "cc": "gcc",
+      "cc-flags": "-fwrapv -fsanitize=address -fsanitize=undefined",
+      "cc-link-flags": "-Lbuild -lqpainter_mbt -lQt6Core -lQt6Gui -lQt6Widgets -lstdc++"
     }
   },
   "import": [
     "illusory0x0/color",
     "illusory0x0/canvas/basic",
     "illusory0x0/canvas/dom",
-    "illusory0x0/adapton"
+    "illusory0x0/adapton",
+    "illusory0x0/qpainter/qpainter"
   ],
-  "warn-list": "-1-2-3-5-6-7-8-10-29-33"
+  "warn-list": "-1-2-3-5-6-7-8-10-29-33",
+  "pre-build": [
+    {
+      "input": "../../.mooncakes/illusory0x0/qpainter/stub/stub.cxx",
+      "output": "../../build/libruntime_mbt.a",
+      "command": "cmake -B build/ -S ./.mooncakes/illusory0x0/qpainter/stub/; cmake --build build"
+    }
+  ],
+  "targets": {
+    "debug.mbt": ["native", "js"],
+    "element_compound.mbt": ["native", "js"],
+    "element_layout.mbt": ["native", "js"],
+    "element.mbt": ["native", "js"],
+    "entry_qt.mbt": ["native"],
+    "entry_dom.mbt": ["js"],
+    "handler.mbt": ["native", "js"],
+    "moon.pkg.json": ["native", "js"],
+    "rectangle_qt.mbt": ["native"],
+    "rectangle_dom.mbt": ["js"],
+    "renderable_qt.mbt": ["native"],
+    "renderable_dom.mbt": ["js"],
+    "roundedBorder_qt.mbt": ["native"],
+    "roundedBorder_dom.mbt": ["js"],
+    "roundedRectangle_dom.mbt": ["js"],
+    "roundedRectangle_qt.mbt": ["native"],
+    "text_qt.mbt": ["native"],
+    "text_dom.mbt": ["js"],
+    "traits_qt.mbt": ["native"],
+    "traits_dom.mbt": ["js"],
+    "types.mbt": ["native", "js"],
+    "utils_qt.mbt": ["native"],
+    "utils_dom.mbt": ["js"],
+    "window_dom.mbt": ["js"],
+    "window_qt.mbt": ["native"]
+  },
+  "supported-targets": ["native", "js"]
 }

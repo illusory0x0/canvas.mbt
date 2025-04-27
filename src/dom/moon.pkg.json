@@ -1,8 +1,28 @@
 {
+  "is-main": true,
   "link": {
     "js": {
       "format": "esm"
     }
   },
-  "warn-list": "-1-2-3-5-6-7-8-10-29"
+  "warn-list": "-1-2-3-5-6-7-8-10-29",
+  "supported-targets": ["js"],
+  "targets": {
+    "canvasRenderingContext2D.mbt": ["js"],
+    "console.mbt": ["js"],
+    "cssStyleDeclaration.mbt": ["js"],
+    "document.mbt": ["js"],
+    "dom.mbti": ["js"],
+    "element.mbt": ["js"],
+    "event.mbt": ["js"],
+    "eventTarget.mbt": ["js"],
+    "htmlCanvasElement.mbt": ["js"],
+    "htmlElement.mbt": ["js"],
+    "moon.pkg.json": ["js"],
+    "mouseEvent.mbt": ["js"],
+    "textMetrics.mbt": ["js"],
+    "traits.mbt": ["js"],
+    "types.mbt": ["js"],
+    "window.mbt": ["js"]
+  }
 }

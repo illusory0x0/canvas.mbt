@@ -122,7 +122,7 @@ fn App::new() -> App {
   let font = thunk(fn() { font })
   let color = thunk(fn() { white })
   let i_20 = const_thunk(20.0)
-  let padding_color = const_thunk(hsl(0, 0, 20))
+  let padding_color = const_thunk(Color::hsl(0, 0, 20))
   let button = Element::Render(
       Text::new(text=thunk(fn() { "+" }), font~, color~),
     )
@@ -135,11 +135,7 @@ fn App::new() -> App {
       }),
     )
   let label = Element::selected_text(
-    text=thunk(fn() { [
-      "hello",
-      "world",
-      "water"
-    ] }),
+    text=thunk(fn() { [text.get()] }),
     font~,
     foregound=color,
     background=const_thunk(black),
@@ -170,7 +166,8 @@ fn App::new() -> App {
 }
 
 ///|
-pub fn entry() -> Unit {
+fn main {
+  // println("hello")
   let app = App::new()
   app.render_action.run()
   @dom.window.addEventListener("resize", fn(_) {

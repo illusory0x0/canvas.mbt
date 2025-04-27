@@ -29,23 +29,14 @@ pub impl DepsKind for RoundedBorder with layout_node(self) {
 }
 
 ///|
-pub impl Renderable for RoundedBorder with render(self, offset, ctx) {
+pub impl Renderable for RoundedBorder with render(self, offset, p) {
   let size = self.size.get()
   let radius = self.radius.get()
   let thickness = self.thickness.get()
   let color = self.color.get()
-  ctx.set_strokeStyle(color.to_string())
-  ctx.set_lineWidth(thickness)
-  ctx.beginPath()
-  ctx.roundRect(
-    offset.x,
-    offset.y,
-    size.width,
-    size.height,
-    radius,
-    radius,
-    radius,
-    radius,
-  )
-  ctx.stroke()
+  let qbrush = color |> color_to_qbrush
+  let qpen = @qpainter.QPen::new(qbrush, thickness)
+
+  p.setPen(qpen)
+  p.drawRoundedRect(offset.x,offset.y,size.width,size.height,radius,radius)
 }

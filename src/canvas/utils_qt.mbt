@@ -1,26 +1,20 @@
 ///|
-let canvas : @dom.HTMLCanvasElement = @dom.document.querySelector("#canvas")
+let white : Color = Color::hsl(0, 0, 100)
 
 ///|
-let ctx : @dom.Canvas2D = canvas.getContext("2d")
+let black : Color = Color::hsl(0, 0, 0)
 
 ///|
-let white : Color = hsl(0, 0, 100)
+let yellow : Color = Color::hsl(60, 100, 50)
 
 ///|
-let black : Color = hsl(0, 0, 0)
+let red : Color = Color::hsl(0, 100, 50)
 
 ///|
-let yellow : Color = hsl(60, 100, 50)
+let green : Color = Color::hsl(120, 100, 50)
 
 ///|
-let red : Color = hsl(0, 100, 50)
-
-///|
-let green : Color = hsl(120, 100, 50)
-
-///|
-let blue : Color = hsl(240, 100, 50)
+let blue : Color = Color::hsl(240, 100, 50)
 
 ///|
 let font : Font = { ..Font::default(), weight: 320 }
@@ -64,4 +58,16 @@ fn const_thunk[A : Eq](value : A) -> Thunk[A] {
 ///|
 fn cell_to_thunk[A : Eq](cell : Cell[A]) -> Thunk[A] {
   thunk(fn() { cell.get() })
+}
+
+///|
+fn color_to_qbrush(color : Color) -> @qpainter.QBrush {
+  let qcolor = @qpainter.QColor::new(
+    color.red().to_int(),
+    color.green().to_int(),
+    color.blue().to_int(),
+    color.alpha().to_int(),
+  )
+  let qbrush = @qpainter.QBrush::new(qcolor)
+  qbrush
 }

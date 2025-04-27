@@ -11,9 +11,6 @@ typealias Node = &@adapton.Source
 fnalias @adapton.(cell, thunk)
 
 ///|
-fnalias @basic.hsl
-
-///|
 pub(all) struct Text {
   color : Thunk[Color]
   size : Thunk[Size]

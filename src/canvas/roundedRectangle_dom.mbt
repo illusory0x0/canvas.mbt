@@ -32,7 +32,7 @@ pub impl Renderable for RoundedRectangle with render(self, offset, ctx) {
   let size = self.size.get()
   let radius = self.radius.get()
   let color = self.color.get()
-  ctx.set_fillStyle(color.to_string())
+  ctx.set_fillStyle(color |> color_to_css)
   ctx.beginPath()
   ctx.roundRect(
     offset.x,

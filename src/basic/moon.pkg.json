@@ -1,7 +1,21 @@
 {
   "import": [
     "illusory0x0/color",
-    "illusory0x0/canvas/dom"
+    "illusory0x0/canvas/dom",
+    "illusory0x0/qpainter/qpainter"
   ],
-  "warn-list": "-1-2-3-5-6-7-8-10-29-33"
+  "warn-list": "-1-2-3-5-6-7-8-10-29-33",
+  "supported-targets": ["native", "js"],
+  "targets": {
+    "font_dom.mbt": ["js"],
+    "font_qt.mbt": ["native"],
+    "color.mbt": ["native", "js"],
+    "font.mbt": ["native", "js"],
+    "moon.pkg.json": ["native", "js"],
+    "rect.mbt": ["native", "js"],
+    "size.mbt": ["native", "js"],
+    "thickness.mbt": ["native", "js"],
+    "types.mbt": ["native", "js"],
+    "vector.mbt": ["native", "js"]
+  }
 }

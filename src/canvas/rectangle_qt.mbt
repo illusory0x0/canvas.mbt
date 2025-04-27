@@ -23,9 +23,9 @@ pub impl DepsKind for Rectangle with layout_node(self) {
 }
 
 ///|
-pub impl Renderable for Rectangle with render(self, offset, ctx) {
+pub impl Renderable for Rectangle with render(self, offset, p) {
   let color = self.color.get()
   let { width, height } = self.size.get()
-  ctx.set_fillStyle(color.to_string())
-  ctx.fillRect(offset.x, offset.y, width, height)
+  p.setBrush(color |> color_to_qbrush)
+  p.drawRect(offset.x,offset.y,width,height)
 }
