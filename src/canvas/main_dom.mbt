@@ -67,29 +67,18 @@ fn App::new() -> App {
 ///|
 fn main {
   let app = App::new()
-  app.render_action.run()
+  fn render() {
+    app.render_action.run()
+    @dom.requestAnimationFrame(render)
+  }
+
+  @dom.requestAnimationFrame(render)
   @dom.window.addEventListener("resize", fn(_) {
     window.sync_from_device(@dom.window)
-    app.render_action.run()
   })
-  @dom.window.addEventListener("click", fn(e) {
-    app.on_click(e)
-    app.render_action.run()
-  })
-  @dom.window.addEventListener("mousemove", fn(e) {
-    app.on_mouse_move(e)
-    app.render_action.run()
-  })
-  @dom.window.addEventListener("mousedown", fn(e) {
-    app.on_mouse_down(e)
-    app.render_action.run()
-  })
-  @dom.window.addEventListener("mouseup", fn(e) {
-    app.on_mouse_up(e)
-    app.render_action.run()
-  })
-  @dom.window.addEventListener("dblclick", fn(e) {
-    app.on_double_click(e)
-    app.render_action.run()
-  })
+  @dom.window.addEventListener("click", fn(e) { app.on_click(e) })
+  @dom.window.addEventListener("mousemove", fn(e) { app.on_mouse_move(e) })
+  @dom.window.addEventListener("mousedown", fn(e) { app.on_mouse_down(e) })
+  @dom.window.addEventListener("mouseup", fn(e) { app.on_mouse_up(e) })
+  @dom.window.addEventListener("dblclick", fn(e) { app.on_double_click(e) })
 }

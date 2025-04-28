@@ -13,3 +13,6 @@ pub extern "js" fn Window::innerHeight(self : Window) -> Int = "importObject.Win
 
 ///|
 pub extern "js" fn Window::innerWidth(self : Window) -> Int = "importObject.Window.get_innerWidth"
+
+///|
+pub extern "js" fn requestAnimationFrame(callback : () -> Unit) = "requestAnimationFrame"
