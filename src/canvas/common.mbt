@@ -220,3 +220,138 @@ pub impl DepsKind for Text with render_node(self) {
 pub impl DepsKind for Text with layout_node(self) {
   self.size
 }
+
+///|
+fn global_handle_mouse_move(
+  layout_sequence : Thunk[LayoutSequence],
+  x : Double,
+  y : Double
+) -> Unit {
+  let current : Vector = { x, y }
+  let es = layout_sequence.get().rev_iter().filter_map(Element::to_handler)
+  match hover.val {
+    None =>
+      for x in es {
+        let (rect, handler) = x
+        if current.inside(rect) {
+          handler.on_mouse_enter.map(fn(f) { f() }) |> ignore
+          hover.val = Some(x)
+          break
+        }
+      }
+    Some((rect, handler)) =>
+      if not(current.inside(rect)) {
+        handler.on_mouse_leave.map(fn(f) { f() }) |> ignore
+        hover.val = None
+      }
+  }
+  match mouse_down.val {
+    None => ()
+    Some((rect, handler)) =>
+      handler.on_mouse_move.map(fn(f) { f(current - rect.offset) }) |> ignore
+  }
+}
+
+///|
+fn global_handle_mouse_release(
+  layout_sequence : Thunk[LayoutSequence],
+  x : Double,
+  y : Double
+) -> Unit {
+  let clicked = Vector::{ x, y }
+  let es = layout_sequence.get().rev_iter().filter_map(Element::to_handler)
+  match mouse_down.val {
+    None => ()
+    Some((rect, handler)) => {
+      handler.on_mouse_up.map(fn(f) { f(clicked - rect.offset) }) |> ignore
+      mouse_down.val = None
+    }
+  }
+  let p : Vector = { x, y }
+  let es = layout_sequence.get().rev_iter().filter_map(Element::to_handler)
+  for x in es {
+    let (rect, handler) = x
+    if p.inside(rect) {
+      handler.on_click.map(fn(f) { f() }) |> ignore
+      break
+    }
+  }
+}
+
+///|
+fn global_handle_mouse_press(
+  layout_sequence : Thunk[LayoutSequence],
+  x : Double,
+  y : Double
+) -> Unit {
+  let clicked : Vector = { x, y }
+  let es = layout_sequence.get().rev_iter().filter_map(Element::to_handler)
+  match mouse_down.val {
+    None =>
+      for x in es {
+        let (rect, handler) = x
+        if clicked.inside(rect) {
+          handler.on_mouse_down.map(fn(f) { f(clicked - rect.offset) })
+          |> ignore
+          mouse_down.val = Some(x)
+          break
+        }
+      }
+    Some(_) => ()
+  }
+}
+
+///|
+fn global_handle_double_click(
+  layout_sequence : Thunk[LayoutSequence],
+  x : Double,
+  y : Double
+) -> Unit {
+  let p : Vector = { x, y }
+  let es = layout_sequence.get().rev_iter().filter_map(Element::to_handler)
+  for x in es {
+    let (rect, handler) = x
+    if p.inside(rect) {
+      handler.on_double_click.map(fn(f) { f() }) |> ignore
+      break
+    }
+  }
+}
+
+fn layout_sequence() -> Thunk[LayoutSequence]  {
+  let counter = cell(0)
+  let text = thunk(fn() { "counter: \{counter.get()}" })
+  let font = thunk(fn() { font })
+  let color = thunk(fn() { white })
+  let i_20 = const_thunk(20.0)
+  let padding_color = const_thunk(Color::hsl(0, 0, 20))
+  let button = Element::Render(
+      Text::new(text=thunk(fn() { "+" }), font~, color~),
+    )
+    .round_padding(thinkness=i_20, color=padding_color, radius=i_20)
+    .add_handler(
+      Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }, on_double_click=fn(
+
+      ) {
+        counter.modify(fn { x => x + 4 })
+      }),
+    )
+  let label = Element::selected_text(
+    text=thunk(fn() { [text.get()] }),
+    font~,
+    foregound=color,
+    background=const_thunk(black),
+  ).round_padding(thinkness=i_20, color=padding_color, radius=i_20)
+  let target = Element::hstack(const_thunk([label, button]), spacing=20)
+
+  let res = thunk(fn() {
+    window.size.get() |> ignore
+    target.to_layout_sequence(origin)
+  })
+  res
+}
+///|
+let hover : Ref[(Rect, Handler)?] = Ref::new(None)
+
+///|
+let mouse_down : Ref[(Rect, Handler)?] = Ref::new(None)
