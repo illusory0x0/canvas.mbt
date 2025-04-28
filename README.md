@@ -1,5 +1,8 @@
 # illusory0x0/canvas
 
+A Widgets library draw by CanvasRenderingContext2D and QPainter.
+
+
 # Overview
 
 * basic  Basic UI utils
