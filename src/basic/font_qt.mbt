@@ -5,14 +5,14 @@ typealias @qpainter.(QFont, QFontMetricsF, QString, QStringList)
 let memo : Map[(Font, String), QFontMetricsF] = {}
 
 ///|
-pub fn Font::to_qfont(self : Font) -> QFont {
+fn font_to_qfont(font : Font) -> QFont {
   QFont::new(
     QStringList::new(
-      FixedArray::from_array(self.family).map(QString::from_builtin),
+      FixedArray::from_array(font.family).map(QString::from_builtin),
     ),
-    self.size,
-    self.weight,
-    match self.style {
+    font.size,
+    font.weight,
+    match font.style {
       Normal => false
       Italic => true
     },
@@ -23,7 +23,7 @@ pub fn Font::to_qfont(self : Font) -> QFont {
 fn Font::measure_text(self : Font, text : String) -> QFontMetricsF {
   match memo[(self, text)] {
     None => {
-      let qfont = self.to_qfont()
+      let qfont = self |> font_to_qfont
       let x = QFontMetricsF::new(qfont)
       memo[(self, text)] = x
       x

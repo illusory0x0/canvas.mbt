@@ -116,7 +116,7 @@ fn App::on_double_click(self : App, e : @dom.Event) -> Unit {
 
 ///|
 fn App::new() -> App {
-  window.sync()
+  window.sync_from_device(@dom.window)
   let counter = cell(0)
   let text = thunk(fn() { "counter: \{counter.get()}" })
   let font = thunk(fn() { font })
@@ -154,13 +154,13 @@ fn App::new() -> App {
     rcnt += 1
     println(rcnt)
     debug("App::render")
-    ctx.clearRect(
+    canvas_context.clearRect(
       0,
       0,
       @dom.window.innerWidth().to_double(),
       @dom.window.innerHeight().to_double(),
     )
-    &Renderable::render_iter(ctx, render_sequence.get().iter())
+    &Renderable::render_iter(canvas_context, render_sequence.get().iter())
   })
   { counter, target, layout_sequence, render_action }
 }
@@ -171,7 +171,7 @@ fn main {
   let app = App::new()
   app.render_action.run()
   @dom.window.addEventListener("resize", fn(_) {
-    window.sync()
+    window.sync_from_device(@dom.window)
     app.render_action.run()
   })
   @dom.window.addEventListener("click", fn(e) {

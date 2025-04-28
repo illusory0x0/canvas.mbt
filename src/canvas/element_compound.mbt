@@ -193,10 +193,7 @@ fn Element::selected_text(
         Some(col) => clicked.set({ row, col })
       }
     }
-    sel.set(Some(TextSelection::{
-      start: clicked.get(),
-      end: clicked.get()
-    }))
+    sel.set(Some(TextSelection::{ start: clicked.get(), end: clicked.get() }))
   }
 
   fn on_mouse_move(v : Vector) {

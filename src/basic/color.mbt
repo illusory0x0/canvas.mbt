@@ -1,2 +1,2 @@
-
-pub typealias @color.Color 
+///|
+pub typealias @color.Color

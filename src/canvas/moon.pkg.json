@@ -23,31 +23,19 @@
     }
   ],
   "targets": {
+    "common.mbt": ["native","js"],
     "debug.mbt": ["native", "js"],
+    "dom.mbt": ["js"],
     "element_compound.mbt": ["native", "js"],
     "element_layout.mbt": ["native", "js"],
     "element.mbt": ["native", "js"],
-    "entry_qt.mbt": ["native"],
     "entry_dom.mbt": ["js"],
+    "entry_qt.mbt": ["native"],
     "handler.mbt": ["native", "js"],
-    "moon.pkg.json": ["native", "js"],
-    "rectangle_qt.mbt": ["native"],
-    "rectangle_dom.mbt": ["js"],
-    "renderable_qt.mbt": ["native"],
-    "renderable_dom.mbt": ["js"],
-    "roundedBorder_qt.mbt": ["native"],
-    "roundedBorder_dom.mbt": ["js"],
-    "roundedRectangle_dom.mbt": ["js"],
-    "roundedRectangle_qt.mbt": ["native"],
-    "text_qt.mbt": ["native"],
-    "text_dom.mbt": ["js"],
-    "traits_qt.mbt": ["native"],
-    "traits_dom.mbt": ["js"],
+    "qt.mbt" : [ "native"],
     "types.mbt": ["native", "js"],
-    "utils_qt.mbt": ["native"],
-    "utils_dom.mbt": ["js"],
-    "window_dom.mbt": ["js"],
-    "window_qt.mbt": ["native"]
+    "utils.mbt": ["native","js"],
+    "window.mbt": ["native","js"]
   },
   "supported-targets": ["native", "js"]
 }

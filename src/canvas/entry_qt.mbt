@@ -180,7 +180,7 @@ fn main {
     mouse_press~,
     mouse_move~,
   )
-  window.sync_from_native(w)
+  window.sync_from_device(w)
   println(window.size.get())
   w.show()
   let exit_code = @qpainter.QApplication::exec()

@@ -110,8 +110,6 @@ test {
   inspect!(font, content="normal 400 12px \"Arial\",monospace")
 }
 
-
-
 ///|
 pub impl Default for Font with default() {
   Font::new()
