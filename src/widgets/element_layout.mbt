@@ -94,7 +94,7 @@ pub fn Element::round_border(
   let layout = thunk(fn() {
     let size = self.margin_size(Thinkness::same(thickness.get()))
     let offset = Element::margin_offset(Thinkness::same(thickness.get()))
-    let render = RoundedBorder::new(
+    let render = RoundedBorder(
       color~,
       size=thunk(fn() { self.margin_size(Thinkness::same(thickness.get())) }),
       radius~,
@@ -116,7 +116,7 @@ pub fn Element::round_padding(
   let layout = thunk(fn() {
     let size = self.margin_size(Thinkness::same(thinkness.get()))
     let offset = Element::margin_offset(Thinkness::same(thinkness.get()))
-    let render = RoundedRectangle::new(
+    let render = RoundedRectangle(
       color~,
       size=thunk(fn() { self.margin_size(Thinkness::same(thinkness.get())) }),
       radius~,

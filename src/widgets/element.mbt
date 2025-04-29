@@ -8,28 +8,10 @@ pub fn Element::size(self : Element) -> Size {
 }
 
 ///|
-pub impl DepsKind for Element with render_node(self) {
-  match self {
-    Render(x) => x.render_node()
-    Layout(l) => l
-    Handle(e, _) => e.render_node()
-  }
-}
-
-///|
-pub impl DepsKind for Element with layout_node(self) {
-  match self {
-    Render(x) => x.layout_node()
-    Layout(l) => l
-    Handle(e, _) => e.layout_node()
-  }
-}
-
-///|
 pub fn Element::to_render_sequence(
   self : Element,
   origin : Vector
-) -> Iter[(Vector, &Renderable)] {
+) -> Iter[(Vector, Renderable_)] {
   self
   .to_layout_sequence(origin)
   .iter()
@@ -89,7 +71,7 @@ fn Element::to_handler(x : (Vector, Element)) -> (Rect, Handler)? {
 }
 
 ///|
-fn Element::to_render(x : (Vector, Element)) -> (Vector, &Renderable)? {
+fn Element::to_render(x : (Vector, Element)) -> (Vector, Renderable_)? {
   let (offset, x) = x
   match x {
     Render(rander) => Some((offset, rander))

@@ -26,7 +26,7 @@
     }
   ],
   "targets": {
-    "common.mbt": ["native","js"],
+    "common.mbt": ["native", "js"],
     "debug.mbt": ["native", "js"],
     "dom.mbt": ["js"],
     "element_compound.mbt": ["native", "js"],
@@ -35,10 +35,10 @@
     "main_dom.mbt": ["js"],
     "main_qt.mbt": ["native"],
     "handler.mbt": ["native", "js"],
-    "qt.mbt" : [ "native"],
+    "qt.mbt": ["native"],
     "types.mbt": ["native", "js"],
-    "utils.mbt": ["native","js"],
-    "window.mbt": ["native","js"]
+    "utils.mbt": ["native", "js"],
+    "window.mbt": ["native", "js"]
   },
   "supported-targets": ["native", "js"]
 }

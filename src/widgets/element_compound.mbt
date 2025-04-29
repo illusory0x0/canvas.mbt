@@ -165,15 +165,11 @@ fn Element::selected_text(
     text.get().map(fn { x => text_render_end(x, font.get()) })
   })
   fn unselected(text) {
-    Element::Render(
-      Text::new(text=thunk(fn() { text }), color=foregound, font~),
-    )
+    Element::Render(mk_text(text=thunk(fn() { text }), color=foregound, font~))
   }
 
   fn selected(text) {
-    Element::Render(
-      Text::new(text=thunk(fn() { text }), color=background, font~),
-    ).round_padding(
+    Element::Render(mk_text(text=thunk(fn() { text }), color=background, font~)).round_padding(
       thinkness=const_thunk(0),
       color=foregound,
       radius=const_thunk(0),
