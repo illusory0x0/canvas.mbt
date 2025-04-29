@@ -52,7 +52,7 @@ fn main {
   }
 
   fn paint(w : @qt.Window, painter : @qt.QPainter) -> Unit {
-    &Renderable::render_iter(painter, render_sequence.get().iter())
+    Renderable_::render_iter(painter, render_sequence.get().iter())
   }
 
   fn key_press(w : @qt.Window, key : Int, modifier : @qt.KeyModifier) -> Unit {

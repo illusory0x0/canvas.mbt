@@ -59,7 +59,7 @@ fn App::new() -> App {
       @dom.window.innerWidth().to_double(),
       @dom.window.innerHeight().to_double(),
     )
-    &Renderable::render_iter(canvas_context, render_sequence.get().iter())
+    Renderable_::render_iter(canvas_context, render_sequence.get().iter())
   })
   { layout_sequence, render_action }
 }

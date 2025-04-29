@@ -79,44 +79,9 @@ fn cell_to_thunk[A : Eq](cell : Cell[A]) -> Thunk[A] {
 }
 
 ///|
-pub(open) trait DepsKind {
-  render_node(Self) -> Node
-  layout_node(Self) -> Node
-}
-
-///|
-pub impl Show for &Renderable with output(self, logger) {
-
-}
-
-///|
-pub fn Rectangle::new(color~ : Thunk[Color], size~ : Thunk[Size]) -> Rectangle {
-  let rnode = action(fn() {
-      color.get() |> ignore
-      size.get() |> ignore
-    })._
-  { color, size, rnode }
-}
-
-///|
-pub impl Renderable for Rectangle with size(self) {
-  self.size.get()
-}
-
-///|
-pub impl DepsKind for Rectangle with render_node(self) {
-  self.rnode
-}
-
-///|
-pub impl DepsKind for Rectangle with layout_node(self) {
-  self.size
-}
-
-///|
-pub fn &Renderable::render_iter(
+pub fn Renderable_::render_iter(
   painter : Painter,
-  xs : Iter[(Vector, &Renderable)]
+  xs : Iter[(Vector, Renderable_)]
 ) -> Unit {
   for x in xs {
     let (offset, renderable) = x
@@ -127,98 +92,19 @@ pub fn &Renderable::render_iter(
   }
 }
 
+// ///|
 ///|
-pub fn RoundedRectangle::new(
-  color~ : Thunk[Color],
-  size~ : Thunk[Size],
-  radius~ : Thunk[Double]
-) -> RoundedRectangle {
-  let rnode = action(fn() {
-      color.get() |> ignore
-      size.get() |> ignore
-      radius.get() |> ignore
-    })._
-  { color, size, radius, rnode }
-}
-
-///|
-pub impl Renderable for RoundedRectangle with size(self) {
-  self.size.get()
-}
-
-///|
-pub impl DepsKind for RoundedRectangle with render_node(self) {
-  self.rnode
-}
-
-///|
-pub impl DepsKind for RoundedRectangle with layout_node(self) {
-  self.size
-}
-
-///|
-pub fn RoundedBorder::new(
-  color~ : Thunk[Color],
-  size~ : Thunk[Size],
-  radius~ : Thunk[Double],
-  thickness~ : Thunk[Double]
-) -> RoundedBorder {
-  let rnode = action(fn() {
-      color.get() |> ignore
-      size.get() |> ignore
-      radius.get() |> ignore
-    })._
-  { color, size, radius, thickness, rnode }
-}
-
-///|
-pub impl Renderable for RoundedBorder with size(self) {
-  self.size.get()
-}
-
-///|
-pub impl DepsKind for RoundedBorder with render_node(self) {
-  self.rnode
-}
-
-///|
-pub impl DepsKind for RoundedBorder with layout_node(self) {
-  self.size
-}
-
-///|
-pub fn Text::new(
+pub fn mk_text(
   text~ : Thunk[String],
   font~ : Thunk[Font],
   color~ : Thunk[Color]
-) -> Text {
+) -> Renderable_ {
   let size = thunk(fn() {
     let font = font.get()
     let text = text.get()
-    debug("Text::measure font size")
     Size::new(font.width(text), font.height(text))
   })
-  let rnode = action(fn() {
-      size.get() |> ignore
-      font.get() |> ignore
-      color.get() |> ignore
-    })._
-  { text, font, color, size, rnode }
-}
-
-///|
-pub impl Renderable for Text with size(self) {
-  self.size.get()
-}
-
-///|
-pub impl DepsKind for Text with render_node(self) {
-  self.rnode
-}
-
-///|
-pub impl DepsKind for Text with layout_node(self) {
-  self.size
+  Text(text~, font~, color~, size~)
 }
 
 ///|
@@ -346,14 +232,12 @@ let xs : Array[String] = {
 ///|
 fn layout_sequence() -> Thunk[LayoutSequence] {
   let counter = cell(0)
-  let text = thunk(fn() { "counter: \{counter.get()}" })
+  let t = thunk(fn() { "counter: \{counter.get()}" })
   let font = thunk(fn() { font })
   let color = thunk(fn() { white })
   let i_20 = const_thunk(20.0)
   let padding_color = const_thunk(Color::hsl(0, 0, 20))
-  let button = Element::Render(
-      Text::new(text=thunk(fn() { "+" }), font~, color~),
-    )
+  let button = Element::Render(mk_text(text=thunk(fn() { "+" }), font~, color~))
     .round_padding(thinkness=i_20, color=padding_color, radius=i_20)
     .add_handler(
       Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }, on_double_click=fn(
