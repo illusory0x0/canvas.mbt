@@ -23,8 +23,8 @@ pub fn Window::sync_from_device(self : Window, device : Device) -> Unit {
 
   canvas.style().setProperty("width", to_px(width))
   canvas.style().setProperty("height", to_px(height))
-  let ctx = canvas.getContext("2d")
-  ctx.scale(dpr.to_double(), dpr.to_double())
+  // let ctx = canvas_context
+  // ctx.scale(dpr.to_double(), dpr.to_double())
   self.size.set(Size::new(width.to_double(), height.to_double()))
   self.dpr.set(dpr)
 }
@@ -50,60 +50,116 @@ fn Renderable_::render(
   painter : Painter
 ) -> Unit {
   let ctx = painter._
+  let dpr = window.dpr.get()
+  let ddpr = dpr.to_double()
   match self {
-    RoundedRectangle(size~, color~, radius~) => {
-      let size = size.get()
-      let radius = radius.get()
-      let color = color.get()
-      ctx.set_fillStyle(color |> color_to_css)
-      ctx.beginPath()
-      ctx.roundRect(
-        offset.x,
-        offset.y,
-        size.width,
-        size.height,
-        radius,
-        radius,
-        radius,
-        radius,
+    RoundedRectangle(size~, color~, radius~) =>
+      ctx.draw_offscreen_canvas(
+        round_off_csv((color.get(), dpr, size.get(), radius.get())),
+        offset.x * ddpr,
+        offset.y * ddpr,
       )
-      ctx.fill()
-    }
-    RoundedBorder(size~, color~, radius~, thickness~) => {
-      let size = size.get()
-      let radius = radius.get()
-      let thickness = thickness.get()
-      let color = color.get()
-      ctx.set_strokeStyle(color |> color_to_css)
-      ctx.set_lineWidth(thickness)
-      ctx.beginPath()
-      ctx.roundRect(
-        offset.x,
-        offset.y,
-        size.width,
-        size.height,
-        radius,
-        radius,
-        radius,
-        radius,
+    RoundedBorder(size~, color~, radius~, thickness~) =>
+      ctx.draw_offscreen_canvas(
+        stroke_round_off_csv(
+          (color.get(), dpr, size.get(), radius.get(), thickness.get()),
+        ),
+        offset.x * ddpr,
+        offset.y * ddpr,
       )
-      ctx.stroke()
-    }
     Text(color~, size~, text~, font~) => {
-      let color = color.get()
-      let font = font.get()
-      let text = text.get()
-      ctx.set_fillStyle(color |> color_to_css)
-      ctx.set_font(font.to_string())
-      ctx.set_textBaseline("bottom")
-      let height = font.height(text)
-      ctx.fillText(text, offset.x, offset.y + height)
+      let size = size.get()
+      if size.width != 0 && size.height != 0 {
+        let dpr = window.dpr.get()
+        let ocvs = text_off_csv(
+          (font.get(), color.get(), dpr, text.get(), size),
+        )
+        let ddpr = dpr.to_double()
+        ctx.draw_offscreen_canvas(ocvs, offset.x * ddpr, offset.y * ddpr)
+      }
     }
-    Rectangle(color~, size~) => {
+    Rectangle(color~, size~) => { // fillrect not need memo
+      let dpr = window.dpr.get().to_double()
       let color = color.get()
-      let { width, height } = size.get()
+      let size = size.get()
       ctx.set_fillStyle(color |> color_to_css)
-      ctx.fillRect(offset.x, offset.y, width, height)
+      ctx.fillRect(
+        offset.x * dpr,
+        offset.y * dpr,
+        size.width * dpr,
+        size.height * dpr,
+      )
     }
   }
+}
+
+///|
+/// TODO when dpr changed, clear memo tables.
+let text_off_csv : ((Font, Color, Int, String, Size)) -> @dom.OffscreenCanvas = memo(fn(
+    x : (Font, Color, Int, String, Size)
+  ) {
+    let (font, color, dpr, text, size) = x
+    let ddpr = dpr.to_double()
+    let ocvs = @dom.OffscreenCanvas::new(size.width * ddpr, size.height * ddpr)
+    let ctx = ocvs.getContext("2d")
+    ctx.scale(dpr.to_double(), dpr.to_double())
+    ctx.set_fillStyle(color |> color_to_css)
+    ctx.set_font(font.to_string())
+    ctx.set_textBaseline("top") // TODO
+    ctx.fillText(text, 0, 0)
+    ocvs
+  },
+)
+
+///|
+/// TODO when dpr changed, clear memo tables.
+let round_off_csv : ((Color, Int, Size, Double)) -> @dom.OffscreenCanvas = memo(fn(
+    x : (Color, Int, Size, Double)
+  ) {
+    let (color, dpr, size, radius) = x
+    let ddpr = dpr.to_double()
+    let ocvs = @dom.OffscreenCanvas::new(size.width * ddpr, size.height * ddpr)
+    let ctx = ocvs.getContext("2d")
+    ctx.scale(dpr.to_double(), dpr.to_double())
+    ctx.set_fillStyle(color |> color_to_css)
+    ctx.beginPath()
+    ctx.roundRect(0, 0, size.width, size.height, radius, radius, radius, radius)
+    ctx.fill()
+    ocvs
+  },
+)
+
+///| TODO when dpr changed, clear memo tables.
+let stroke_round_off_csv : ((Color, Int, Size, Double, Double)) -> @dom.OffscreenCanvas = memo(fn(
+    x : (Color, Int, Size, Double, Double)
+  ) {
+    let (color, dpr, size, radius, thickness) = x
+    let ddpr = dpr.to_double()
+    let ocvs = @dom.OffscreenCanvas::new(size.width * ddpr, size.height * ddpr)
+    let ctx = ocvs.getContext("2d")
+    ctx.scale(dpr.to_double(), dpr.to_double())
+    ctx.set_strokeStyle(color |> color_to_css)
+    ctx.set_lineWidth(thickness)
+    ctx.beginPath()
+    ctx.roundRect(0, 0, size.width, size.height, radius, radius, radius, radius)
+    ctx.stroke()
+    ocvs
+  },
+)
+
+///|
+fn memo[A : Eq + Hash, B](f : (A) -> B) -> (A) -> B {
+  let cache : Map[A, B] = {}
+  fn g(a : A) -> B {
+    match cache[a] {
+      None => {
+        let b = f(a)
+        cache[a] = b
+        b
+      }
+      Some(b) => b
+    }
+  }
+
+  g
 }

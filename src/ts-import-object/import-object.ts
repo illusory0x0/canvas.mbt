@@ -119,4 +119,6 @@ export let importObject = {
   HTMLElement: prototype_to_ffi(HTMLElement),
   CSSStyleDeclaration: prototype_to_ffi(CSSStyleDeclaration),
   HTMLImageElement: prototype_to_ffi(HTMLImageElement),
+  OffscreenCanvas: prototype_to_ffi(OffscreenCanvas),
+  OffscreenCanvasRenderingContext2D: prototype_to_ffi(OffscreenCanvasRenderingContext2D),
 }

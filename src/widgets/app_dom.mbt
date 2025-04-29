@@ -8,12 +8,6 @@ fn App::new() -> Unit {
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   fn render() {
     window.dpr.get() |> ignore
-    // canvas_context.clearRect(
-    //   0,
-    //   0,
-    //   @dom.window.innerWidth().to_double(),
-    //   @dom.window.innerHeight().to_double(),
-    // )
     Renderable_::render_iter(canvas_context, rs.get().iter())
     @dom.requestAnimationFrame(render)
   }
@@ -46,4 +40,3 @@ fn App::new() -> Unit {
     App::on_mouse_release(ls, x, y)
   })
 }
-

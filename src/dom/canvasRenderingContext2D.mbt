@@ -132,3 +132,13 @@ pub extern "js" fn Canvas2D::roundRect(
 ) =
   #| (self, x, y, width, height, top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius) => 
   #|    self.roundRect(x, y, width,height,[top_left_radius, top_right_radius, bottom_left_radius, bottom_right_radius])
+  #|
+  #|
+
+///|
+pub extern "js" fn Canvas2D::draw_offscreen_canvas(
+  self : Canvas2D,
+  offscreen_canvas : OffscreenCanvas,
+  dx : Double,
+  dy : Double
+) = "importObject.CanvasRenderingContext2D.drawImage"
