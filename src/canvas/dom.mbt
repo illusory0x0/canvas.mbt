@@ -1,7 +1,8 @@
 ///|
 type Painter @dom.Canvas2D
-type Device @dom.Window
 
+///|
+type Device @dom.Window
 
 ///|
 fn scale_size() -> Double {

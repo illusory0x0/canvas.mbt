@@ -326,13 +326,14 @@ const Lorem =
   #| Aliquam ac laoreet neque. Sed mauris urna, venenatis vitae purus in, cursus aliquet nunc. Maecenas sit amet lacinia ante, nec placerat eros. Cras consectetur, risus tincidunt sollicitudin malesuada, leo purus lacinia risus, sit amet rhoncus dui tellus id tortor. Proin et nulla diam. Suspendisse dignissim at leo at ultricies. Mauris tellus enim, cursus ut vestibulum a, laoreet vel libero. Cras elementum hendrerit neque egestas gravida.
   #| Nam a mi at nisl tincidunt ultrices sit amet non tellus. Quisque elit dui, blandit id justo non, cursus cursus justo. Curabitur vel orci velit. Donec accumsan ante libero, id blandit arcu vehicula et. Maecenas nibh magna, laoreet eget posuere scelerisque, fermentum ut risus. Ut tincidunt lacinia nisl a convallis. Sed a euismod neque. In magna ante, posuere non orci in, cursus placerat lorem. Maecenas consequat condimentum neque, vel tempor nisi finibus non. Donec facilisis, nunc nec porttitor feugiat, odio lorem posuere est, id mollis nibh quam et eros. Mauris non arcu sit amet turpis semper auctor. Curabitur aliquam urna turpis, eget sagittis quam iaculis ultricies.
 
+///|
 let xs : Array[String] = {
-  let buf = StringBuilder::new(size_hint=Lorem.length()*2)
+  let buf = StringBuilder::new(size_hint=Lorem.length() * 2)
   let res = []
   let mut i = 0
   for x in Lorem {
     buf.write_char(x)
-    if (i > 80) {
+    if i > 80 {
       res.push(buf.to_string())
       buf.reset()
       i = 0

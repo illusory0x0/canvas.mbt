@@ -1,6 +1,8 @@
 ///|
-type Painter @qpainter.QPainter
-type Device @qpainter.Window 
+type Painter @qt.QPainter
+
+///|
+type Device @qt.Window
 
 ///|
 pub fn Window::sync_from_device(self : Window, device : Device) -> Unit {
@@ -11,14 +13,14 @@ pub fn Window::sync_from_device(self : Window, device : Device) -> Unit {
 }
 
 ///|
-fn color_to_qbrush(color : Color) -> @qpainter.QBrush {
-  let qcolor = @qpainter.QColor::new(
+fn color_to_qbrush(color : Color) -> @qt.QBrush {
+  let qcolor = @qt.QColor::new(
     color.red().to_int(),
     color.green().to_int(),
     color.blue().to_int(),
     color.alpha().to_int(),
   )
-  let qbrush = @qpainter.QBrush::new(qcolor)
+  let qbrush = @qt.QBrush::new(qcolor)
   qbrush
 }
 
@@ -45,9 +47,16 @@ pub impl Renderable for RoundedBorder with render(self, offset, painter) {
   let thickness = self.thickness.get()
   let color = self.color.get()
   let qbrush = color |> color_to_qbrush
-  let qpen = @qpainter.QPen::new(qbrush, thickness)
+  let qpen = @qt.QPen::new(qbrush, thickness)
   painter.setPen(qpen)
-  painter.drawRoundedRect(offset.x, offset.y, size.width, size.height, radius, radius)
+  painter.drawRoundedRect(
+    offset.x,
+    offset.y,
+    size.width,
+    size.height,
+    radius,
+    radius,
+  )
 }
 
 ///|
@@ -57,7 +66,14 @@ pub impl Renderable for RoundedRectangle with render(self, offset, painter) {
   let radius = self.radius.get()
   let color = self.color.get()
   painter.setBrush(color |> color_to_qbrush)
-  painter.drawRoundedRect(offset.x, offset.y, size.width, size.height, radius, radius)
+  painter.drawRoundedRect(
+    offset.x,
+    offset.y,
+    size.width,
+    size.height,
+    radius,
+    radius,
+  )
 }
 
 ///|
@@ -66,28 +82,24 @@ pub impl Renderable for Text with render(self, offset, painter) {
   let color = self.color.get()
   let font = self.font.get()
   let text = self.text.get()
-  let qcolor = @qpainter.QColor::new(
+  let qcolor = @qt.QColor::new(
     color.red().to_int(),
     color.green().to_int(),
     color.blue().to_int(),
     color.alpha().to_int(),
   )
-  let qbrush = @qpainter.QBrush::new(qcolor)
-  let qpen = @qpainter.QPen::new(qbrush, 1)
+  let qbrush = @qt.QBrush::new(qcolor)
+  let qpen = @qt.QPen::new(qbrush, 1)
   painter.setBrush(qbrush)
   painter.setPen(qpen)
   let qfont = font |> font_to_qfont
   let height = Font::height(font, " ")
   painter.setFont(qfont)
-  painter.drawText(
-    offset.x,
-    offset.y + height,
-    @qpainter.QString::from_builtin(text),
-  )
+  painter.drawText(offset.x, offset.y + height, @qt.QString::from_builtin(text))
 }
 
 ///|
-typealias @qpainter.(QFont, QStringList, QString)
+typealias @qt.(QFont, QStringList, QString)
 
 ///|
 fn font_to_qfont(font : Font) -> QFont {

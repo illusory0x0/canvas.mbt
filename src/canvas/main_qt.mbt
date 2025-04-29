@@ -2,81 +2,77 @@
 fn main {
   let argc : Ref[Int] = Ref::new(1)
   let argv : FixedArray[Bytes] = [b"painter\x00"]
-  let app = @qpainter.QApplication::new(argc, argv)
+  let app = @qt.QApplication::new(argc, argv)
   let layout_sequence = layout_sequence()
   let render_sequence = thunk(fn() {
     layout_sequence.get().filter_map(Element::to_render)
   })
   fn mouse_move(
-    w : @qpainter.Window,
+    w : @qt.Window,
     x : Double,
     y : Double,
-    m : @qpainter.KeyModifier,
-    b : @qpainter.MouseButton
+    m : @qt.KeyModifier,
+    b : @qt.MouseButton
   ) -> Unit {
     global_handle_mouse_move(layout_sequence, x, y)
     w.update()
   }
 
   fn mouse_release(
-    w : @qpainter.Window,
+    w : @qt.Window,
     x : Double,
     y : Double,
-    m : @qpainter.KeyModifier,
-    b : @qpainter.MouseButton
+    m : @qt.KeyModifier,
+    b : @qt.MouseButton
   ) -> Unit {
     global_handle_mouse_release(layout_sequence, x, y)
     w.update()
   }
 
   fn mouse_press(
-    w : @qpainter.Window,
+    w : @qt.Window,
     x : Double,
     y : Double,
-    m : @qpainter.KeyModifier,
-    b : @qpainter.MouseButton
+    m : @qt.KeyModifier,
+    b : @qt.MouseButton
   ) -> Unit {
     global_handle_mouse_press(layout_sequence, x, y)
     w.update()
   }
 
   fn mouse_double_click(
-    w : @qpainter.Window,
+    w : @qt.Window,
     x : Double,
     y : Double,
-    m : @qpainter.KeyModifier,
-    b : @qpainter.MouseButton
+    m : @qt.KeyModifier,
+    b : @qt.MouseButton
   ) -> Unit {
     global_handle_double_click(layout_sequence, x, y)
     w.update()
   }
 
-  fn paint(w : @qpainter.Window, painter : @qpainter.QPainter) -> Unit {
+  fn paint(w : @qt.Window, painter : @qt.QPainter) -> Unit {
     &Renderable::render_iter(painter, render_sequence.get().iter())
   }
 
-  fn key_press(
-    w : @qpainter.Window,
-    key : Int,
-    modifier : @qpainter.KeyModifier
-  ) -> Unit {
+  fn key_press(w : @qt.Window, key : Int, modifier : @qt.KeyModifier) -> Unit {
 
   }
 
   fn key_release(
-    w : @qpainter.Window,
+    w : @qt.Window,
     key : Int,
-    modifier : @qpainter.KeyModifier
+    modifier : @qt.KeyModifier
   ) -> Unit {
 
   }
 
-  fn resize(w : @qpainter.Window, width : Int, height : Int) -> Unit {
+  fn resize(w : @qt.Window, width : Int, height : Int) -> Unit {
     window.sync_from_device(w)
     w.update()
   }
 
-  let w = @qpainter.Window::new(
+  let w = @qt.Window::new(
     paint~,
     key_press~,
     key_release~,
@@ -89,6 +85,6 @@ fn main {
   window.sync_from_device(w)
   println(window.size.get())
   w.show()
-  let exit_code = @qpainter.QApplication::exec()
-  @qpainter.drop([w, app, exit_code])
+  let exit_code = @qt.QApplication::exec()
+  @qt.drop([w, app, exit_code])
 }

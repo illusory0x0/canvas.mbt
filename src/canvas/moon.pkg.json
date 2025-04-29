@@ -12,7 +12,10 @@
     "illusory0x0/canvas/basic",
     "illusory0x0/canvas/dom",
     "illusory0x0/adapton",
-    "illusory0x0/qpainter/qpainter"
+    {
+      "path": "illusory0x0/qpainter/qpainter",
+      "alias": "qt"
+    }
   ],
   "warn-list": "-1-2-3-5-6-7-8-10-29-33",
   "pre-build": [
