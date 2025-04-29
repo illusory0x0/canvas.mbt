@@ -100,9 +100,14 @@ pub impl Renderable for Text with render(self, offset, painter) {
   painter.setBrush(brush)
   painter.setPen(pen)
   let qfont = font_to_qfont(font)
-  let height = Font::height(font, " ")
   painter.setFont(qfont)
-  painter.drawText(offset.x, offset.y + height, @qt.QString::from_builtin(text))
+  let m = @qt.QFontMetricsF::new(qfont)
+  let br = m.boundingRect(QString::from_builtin(text))
+  painter.drawText(
+    offset.x,
+    offset.y - br.top(),
+    @qt.QString::from_builtin(text),
+  )
 }
 
 ///|
