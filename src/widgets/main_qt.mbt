@@ -83,7 +83,6 @@ fn main {
     resize~,
   )
   window.sync_from_device(w)
-  println(window.size.get())
   w.show()
   let exit_code = @qt.QApplication::exec()
   @qt.drop([w, app, exit_code])
