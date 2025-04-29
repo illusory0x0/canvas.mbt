@@ -169,10 +169,9 @@ fn Element::selected_text(
   }
 
   fn selected(text) {
-    Element::Render(mk_text(text=thunk(fn() { text }), color=background, font~)).round_padding(
+    Element::Render(mk_text(text=thunk(fn() { text }), color=background, font~)).padding(
       thinkness=const_thunk(0),
       color=foregound,
-      radius=const_thunk(0),
     )
   }
 

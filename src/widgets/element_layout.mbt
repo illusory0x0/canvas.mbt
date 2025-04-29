@@ -126,3 +126,21 @@ pub fn Element::round_padding(
   })
   Layout(layout)
 }
+
+pub fn Element::padding(
+  self : Element,
+  thinkness~ : Thunk[Double],
+  color~ : Thunk[Color],
+) -> Element {
+  let layout = thunk(fn() {
+    let size = self.margin_size(Thinkness::same(thinkness.get()))
+    let offset = Element::margin_offset(Thinkness::same(thinkness.get()))
+    let render = Rectangle(
+      color~,
+      size=thunk(fn() { self.margin_size(Thinkness::same(thinkness.get())) }),
+    )
+    let children = [(Vector::default(), Render(render)), (offset, self)]
+    (size, children)
+  })
+  Layout(layout)
+}
