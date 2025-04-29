@@ -71,6 +71,11 @@ fn main {
 
   }
 
+  fn resize(w : @qpainter.Window, width : Int, height : Int) -> Unit {
+    window.sync_from_device(w)
+    w.update()
+  }
+
   let w = @qpainter.Window::new(
     paint~,
     key_press~,
@@ -79,6 +84,7 @@ fn main {
     mouse_release~,
     mouse_press~,
     mouse_move~,
+    resize~,
   )
   window.sync_from_device(w)
   println(window.size.get())
