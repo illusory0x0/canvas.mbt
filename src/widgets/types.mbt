@@ -2,7 +2,7 @@
 typealias @basic.(Color, Size, Font, Thinkness, Vector, Rect)
 
 ///|
-typealias @adapton.(Cell[T], Thunk[T])
+typealias @adapton.(Cell, Thunk)
 
 ///|
 typealias Node = &@adapton.Source

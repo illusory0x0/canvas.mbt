@@ -35,7 +35,10 @@ pub impl Renderable for Rectangle with render(self, offset, painter) {
   let painter = painter._
   let color = self.color.get()
   let { width, height } = self.size.get()
-  painter.setBrush(color |> color_to_qbrush)
+  let brush = color |> color_to_qbrush
+  let pen = brush |> @qt.QPen::new(0) // QPen width == 0, always draw 1 pixel
+  painter.setBrush(brush)
+  painter.setPen(pen)
   painter.drawRect(offset.x, offset.y, width, height)
 }
 
@@ -46,9 +49,10 @@ pub impl Renderable for RoundedBorder with render(self, offset, painter) {
   let radius = self.radius.get()
   let thickness = self.thickness.get()
   let color = self.color.get()
-  let qbrush = color |> color_to_qbrush
-  let qpen = @qt.QPen::new(qbrush, thickness)
-  painter.setPen(qpen)
+  let brush = color |> color_to_qbrush
+  let pen = @qt.QPen::new(brush, thickness)
+  painter.setBrush(brush)
+  painter.setPen(pen)
   painter.drawRoundedRect(
     offset.x,
     offset.y,
@@ -65,7 +69,10 @@ pub impl Renderable for RoundedRectangle with render(self, offset, painter) {
   let size = self.size.get()
   let radius = self.radius.get()
   let color = self.color.get()
-  painter.setBrush(color |> color_to_qbrush)
+  let brush = color_to_qbrush(color)
+  let pen = @qt.QPen::new(brush, 0)
+  painter.setBrush(brush)
+  painter.setPen(pen)
   painter.drawRoundedRect(
     offset.x,
     offset.y,
@@ -88,11 +95,11 @@ pub impl Renderable for Text with render(self, offset, painter) {
     color.blue().to_int(),
     color.alpha().to_int(),
   )
-  let qbrush = @qt.QBrush::new(qcolor)
-  let qpen = @qt.QPen::new(qbrush, 1)
-  painter.setBrush(qbrush)
-  painter.setPen(qpen)
-  let qfont = font |> font_to_qfont
+  let brush = @qt.QBrush::new(qcolor)
+  let pen = @qt.QPen::new(brush, 1)
+  painter.setBrush(brush)
+  painter.setPen(pen)
+  let qfont = font_to_qfont(font)
   let height = Font::height(font, " ")
   painter.setFont(qfont)
   painter.drawText(offset.x, offset.y + height, @qt.QString::from_builtin(text))
