@@ -36,6 +36,6 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
   })
   @dom.window.addEventListener("dblclick", fn(e) {
     let (x, y) = get_xy(e)
-    App::on_mouse_release(ls, x, y)
+    App::on_double_click(ls, x, y)
   })
 }

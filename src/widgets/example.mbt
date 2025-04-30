@@ -34,7 +34,7 @@ fn Example::counter() -> Thunk[LayoutSequence] {
       Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }, on_double_click=fn(
 
       ) {
-        counter.modify(fn { x => x + 4 })
+        counter.modify(fn { x => x + 10 })
       }),
     )
   let label = Element::Render(mk_text(text=t, font~, color~)).round_padding(

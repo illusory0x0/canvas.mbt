@@ -11,9 +11,18 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
     paint=fn(w, p) { Renderable_::render_iter(p, rs.get().iter()) },
     key_press=fn(w, k, m) {  },
     key_release=fn(w, k, m) {  },
-    mouse_double_click=fn(w, x, y, k, b) { App::on_double_click(ls, x, y) },
-    mouse_release=fn(w, x, y, k, b) { App::on_mouse_release(ls, x, y) },
-    mouse_press=fn(w, x, y, k, b) { App::on_mouse_press(ls, x, y) },
+    mouse_double_click=fn(w, x, y, k, b) {
+      App::on_double_click(ls, x, y)
+      w.update()
+    },
+    mouse_release=fn(w, x, y, k, b) {
+      App::on_mouse_release(ls, x, y)
+      w.update()
+    },
+    mouse_press=fn(w, x, y, k, b) {
+      App::on_mouse_press(ls, x, y)
+      w.update()
+    },
     mouse_move=fn(w, x, y, m, b) {
       App::on_mouse_move(ls, x, y)
       w.update()
