@@ -23,6 +23,8 @@
     "textMetrics.mbt": ["js"],
     "traits.mbt": ["js"],
     "types.mbt": ["js"],
-    "window.mbt": ["js"]
+    "window.mbt": ["js"],
+    "offscreenCanvas.mbt": ["js"],
+    "offscreenCanvasRenderingContext2D.mbt": ["js"]
   }
 }
