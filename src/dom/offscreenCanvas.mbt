@@ -16,7 +16,7 @@ pub extern "js" fn OffscreenCanvas::set_height(
   value : Int
 ) = "importObject.OffscreenCanvas.set_height"
 
-
+///|
 pub extern "js" fn OffscreenCanvas::new(
   w : Double,
   h : Double

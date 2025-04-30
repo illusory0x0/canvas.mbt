@@ -127,10 +127,11 @@ pub fn Element::round_padding(
   Layout(layout)
 }
 
+///|
 pub fn Element::padding(
   self : Element,
   thinkness~ : Thunk[Double],
-  color~ : Thunk[Color],
+  color~ : Thunk[Color]
 ) -> Element {
   let layout = thunk(fn() {
     let size = self.margin_size(Thinkness::same(thinkness.get()))

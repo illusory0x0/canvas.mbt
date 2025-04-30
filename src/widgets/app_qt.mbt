@@ -2,11 +2,10 @@
 type App
 
 ///|
-fn App::new() -> Unit {
+fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
   let argc : Ref[Int] = Ref::new(1)
   let argv : FixedArray[Bytes] = [b"painter\x00"]
   let app = @qt.QApplication::new(argc, argv)
-  let ls = layout_sequence()
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   let w = @qt.Window::new(
     paint=fn(w, p) { Renderable_::render_iter(p, rs.get().iter()) },

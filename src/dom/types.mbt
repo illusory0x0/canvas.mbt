@@ -52,6 +52,8 @@ pub extern type CSSStyleDeclaration
 ///|
 pub extern type TextMetrics
 
-pub extern type OffscreenCanvas 
+///|
+pub extern type OffscreenCanvas
 
+///|
 pub extern type OffscreenCanvasRenderingContext2D

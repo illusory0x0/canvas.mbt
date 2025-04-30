@@ -2,9 +2,8 @@
 type App
 
 ///|
-fn App::new() -> Unit {
+fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
   window.sync_from_device(@dom.window)
-  let ls = layout_sequence()
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   fn render() {
     window.dpr.get() |> ignore
