@@ -1,4 +1,130 @@
 ///|
+pub(all) struct Size {
+  width : Double
+  height : Double
+} derive(Default, Show, Compare, Eq, Hash)
+
+///|
+pub(all) struct Rect {
+  offset : Vector
+  size : Size
+} derive(Default, Show, Compare, Eq, Hash)
+
+///|
+pub(all) struct Vector {
+  x : Double
+  y : Double
+} derive(Default, Show, Compare, Eq, Hash)
+
+///|
+pub(all) struct Thinkness {
+  left : Double
+  top : Double
+  right : Double
+  bottom : Double
+} derive(Default, Show, Compare, Eq, Hash)
+
+///|
+pub(all) enum FontStyle {
+  Normal
+  Italic
+} derive(Compare, Eq, Hash)
+
+///|
+pub(all) enum GenericFontFamily {
+  Serif
+  SansSerif
+  Monospace
+  Cursive
+  Fantasy
+  SystemUI
+  UISerif
+  UISansSerif
+  UIMonospace
+  UIRounded
+  Math
+  Emoji
+  FangSong
+} derive(Compare, Eq, Hash)
+
+///|
+pub(all) struct Font {
+  family : Array[String]
+  genericFamily : Array[GenericFontFamily]
+  size : Int
+  style : FontStyle
+  weight : Int
+} derive(Compare, Eq, Hash)
+
+///|
+pub impl Add for Vector with op_add(self, other) {
+  { x: self.x + other.x, y: self.y + other.y }
+}
+
+///|
+pub impl Sub for Vector with op_sub(self, other) {
+  { x: self.x - other.x, y: self.y - other.y }
+}
+
+///|
+pub fn Vector::new(x : Double, y : Double) -> Vector {
+  { x, y }
+}
+
+///|
+pub fn Vector::inside(self : Vector, rect : Rect) -> Bool {
+  rect.left() < self.x &&
+  self.x < rect.right() &&
+  rect.top() < self.y &&
+  self.y < rect.bottom()
+}
+
+///|
+pub fn Thinkness::new(
+  left : Double,
+  top : Double,
+  right : Double,
+  bottom : Double
+) -> Thinkness {
+  { left, top, right, bottom }
+}
+
+///|
+pub fn Thinkness::same(x : Double) -> Thinkness {
+  Thinkness::new(x, x, x, x)
+}
+
+///|
+pub fn Size::new(width : Double, height : Double) -> Size {
+  { width, height }
+}
+
+///|
+pub fn Rect::new(offset : Vector, size : Size) -> Rect {
+  { offset, size }
+}
+
+///|
+pub fn Rect::left(self : Rect) -> Double {
+  self.offset.x
+}
+
+///|
+pub fn Rect::right(self : Rect) -> Double {
+  self.offset.x + self.size.width
+}
+
+///|
+pub fn Rect::top(self : Rect) -> Double {
+  self.offset.y
+}
+
+///|
+pub fn Rect::bottom(self : Rect) -> Double {
+  self.offset.y + self.size.height
+}
+
+///|
 pub impl Show for FontStyle with to_string(self) {
   match self {
     Normal => "normal"

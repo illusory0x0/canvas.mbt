@@ -9,7 +9,6 @@
   },
   "import": [
     "illusory0x0/color",
-    "illusory0x0/canvas/basic",
     "illusory0x0/canvas/dom",
     "illusory0x0/adapton",
     {
@@ -27,6 +26,7 @@
   ],
   "targets": {
     "common.mbt": ["native", "js"],
+    "basic.mbt": ["native", "js"],
     "debug.mbt": ["native", "js"],
     "dom.mbt": ["js"],
     "element_compound.mbt": ["native", "js"],

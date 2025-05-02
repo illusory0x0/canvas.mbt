@@ -1,5 +1,4 @@
-///|
-typealias @basic.(Color, Size, Font, Thinkness, Vector, Rect)
+typealias @color.Color
 
 ///|
 typealias @adapton.(Cell, Thunk)

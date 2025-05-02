@@ -5,6 +5,9 @@ type Painter @qt.QPainter
 type Device @qt.Window
 
 ///|
+typealias @qt.(QFontMetricsF, QFont, QStringList, QString)
+
+///|
 pub fn Window::sync_from_device(self : Window, device : Device) -> Unit {
   let device = device._
   let width = device.width().to_double()
@@ -25,7 +28,6 @@ fn color_to_qbrush(color : Color) -> @qt.QBrush {
 }
 
 ///|
-typealias @qt.(QFont, QStringList, QString)
 
 ///|
 fn font_to_qfont(font : Font) -> QFont {
@@ -43,8 +45,8 @@ fn font_to_qfont(font : Font) -> QFont {
 }
 
 ///|
-fn Renderable_::render(
-  self : Renderable_,
+fn Renderable::render(
+  self : Renderable,
   offset : Vector,
   painter : Painter
 ) -> Unit {
@@ -131,7 +133,7 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
   let app = @qt.QApplication::new(argc, argv)
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   let w = @qt.Window::new(
-    paint=fn(w, p) { Renderable_::render_iter(p, rs.get().iter()) },
+    paint=fn(w, p) { Renderable::render_iter(p, rs.get().iter()) },
     key_press=fn(w, k, m) {  },
     key_release=fn(w, k, m) {  },
     mouse_double_click=fn(w, x, y, k, b) {
@@ -159,4 +161,31 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
   w.show()
   let exit_code = @qt.QApplication::exec()
   @qt.drop([w, app, exit_code])
+}
+
+///|
+let memo : Map[(Font, String), QFontMetricsF] = {}
+
+///|
+fn Font::measure_text(self : Font, text : String) -> QFontMetricsF {
+  match memo[(self, text)] {
+    None => {
+      let qfont = self |> font_to_qfont
+      let x = QFontMetricsF::new(qfont)
+      memo[(self, text)] = x
+      x
+    }
+    Some(x) => x
+  }
+}
+
+///|
+pub fn Font::width(self : Font, text : String) -> Double {
+  self.measure_text(text).horizontalAdvance(QString::from_builtin(text))
+}
+
+///|
+pub fn Font::height(self : Font, text : String) -> Double {
+  let metrics = self.measure_text(text)
+  return metrics.height()
 }
