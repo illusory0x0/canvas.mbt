@@ -63,7 +63,7 @@ typealias Layout = Thunk[(Size, Array[(Vector, Element)])]
 ///|
 pub enum Element {
   Layout(Layout)
-  Render(Renderable_)
+  Render(Renderable)
   Handle(Element, Handler)
 }
 
@@ -121,7 +121,7 @@ typealias TFont = Thunk[Font]
 typealias TDouble = Thunk[Double]
 
 ///|
-enum Renderable_ {
+enum Renderable {
   Text(color~ : TColor, size~ : TSize, text~ : TString, font~ : TFont)
   RoundedBorder(
     color~ : TColor,
@@ -134,7 +134,7 @@ enum Renderable_ {
 }
 
 ///|
-fn Renderable_::size(self : Renderable_) -> Size {
+fn Renderable::size(self : Renderable) -> Size {
   match self {
     RoundedRectangle(size~, ..) => size.get()
     RoundedBorder(size~, ..) => size.get()
@@ -144,7 +144,7 @@ fn Renderable_::size(self : Renderable_) -> Size {
 }
 
 ///|
-pub impl Eq for Renderable_ with op_equal(self, other) {
+pub impl Eq for Renderable with op_equal(self, other) {
   match (self, other) {
     (Rectangle(color=c1, size=s1), Rectangle(color=c2, size=s2)) =>
       c1.get() == c2.get() && s1.get() == s2.get()

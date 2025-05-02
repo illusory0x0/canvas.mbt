@@ -11,7 +11,7 @@ pub fn Element::size(self : Element) -> Size {
 pub fn Element::to_render_sequence(
   self : Element,
   origin : Vector
-) -> Iter[(Vector, Renderable_)] {
+) -> Iter[(Vector, Renderable)] {
   self
   .to_layout_sequence(origin)
   .iter()
@@ -71,7 +71,7 @@ fn Element::to_handler(x : (Vector, Element)) -> (Rect, Handler)? {
 }
 
 ///|
-fn Element::to_render(x : (Vector, Element)) -> (Vector, Renderable_)? {
+fn Element::to_render(x : (Vector, Element)) -> (Vector, Renderable)? {
   let (offset, x) = x
   match x {
     Render(rander) => Some((offset, rander))

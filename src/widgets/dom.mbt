@@ -44,8 +44,8 @@ fn color_to_css(color : Color) -> String {
 }
 
 ///|
-fn Renderable_::render(
-  self : Renderable_,
+fn Renderable::render(
+  self : Renderable,
   offset : Vector,
   painter : Painter
 ) -> Unit {
@@ -173,7 +173,7 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   fn render() {
     window.dpr.get() |> ignore
-    Renderable_::render_iter(canvas_context, rs.get().iter())
+    Renderable::render_iter(canvas_context, rs.get().iter())
     @dom.requestAnimationFrame(render)
   }
 

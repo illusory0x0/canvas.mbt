@@ -33,9 +33,9 @@ fn cell_to_thunk[A : Eq](cell : Cell[A]) -> Thunk[A] {
 }
 
 ///|
-pub fn Renderable_::render_iter(
+pub fn Renderable::render_iter(
   painter : Painter,
-  xs : Iter[(Vector, Renderable_)]
+  xs : Iter[(Vector, Renderable)]
 ) -> Unit {
   for x in xs {
     let (offset, renderable) = x
@@ -52,7 +52,7 @@ pub fn mk_text(
   text~ : Thunk[String],
   font~ : Thunk[Font],
   color~ : Thunk[Color]
-) -> Renderable_ {
+) -> Renderable {
   let size = thunk(fn() {
     let font = font.get()
     let text = text.get()
