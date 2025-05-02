@@ -173,6 +173,8 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   fn render() {
     window.dpr.get() |> ignore
+    let { width, height } = window.size.get()
+    canvas_context.clearRect(0, 0, width, height)
     Renderable::render_iter(canvas_context, rs.get().iter())
     @dom.requestAnimationFrame(render)
   }
