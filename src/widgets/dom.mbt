@@ -172,11 +172,14 @@ fn App::run(e : Element) -> Unit {
   let ls = thunk(fn() { e.to_layout_sequence(Vector::default()) })
   window.sync_from_device(@dom.window)
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
-  fn render() {
+  let ra = action(fn() {
     window.dpr.get() |> ignore
     let { width, height } = window.size.get()
     canvas_context.clearRect(0, 0, width, height)
     Renderable::render_iter(canvas_context, rs.get().iter())
+  })
+  fn render() {
+    ra.run()
     @dom.requestAnimationFrame(render)
   }
 

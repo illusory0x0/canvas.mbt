@@ -31,3 +31,21 @@ fn const_thunk[A : Eq](value : A) -> Thunk[A] {
 fn cell_to_thunk[A : Eq](cell : Cell[A]) -> Thunk[A] {
   thunk(fn() { cell.get() })
 }
+
+///|
+type Action Thunk[Int]
+
+///|
+fn action(f : () -> Unit) -> Action {
+  let mut i = 0
+  thunk(fn() {
+    f()
+    i += 1
+    i
+  })
+}
+
+///|
+fn Action::run(self : Action) -> Unit {
+  self._.get() |> ignore
+}
