@@ -3,8 +3,8 @@ type Example
 
 ///|
 fn Example::text_selected() -> Element {
-  let font = thunk(fn() { font })
-  let color = thunk(fn() { white })
+  let font = const_thunk(font)
+  let color = const_thunk(white)
   let num_20 = const_thunk(20.0)
   let padding_color = const_thunk(Color::hsl(0, 0, 20))
   Element::selected_text(
@@ -19,8 +19,8 @@ fn Example::text_selected() -> Element {
 fn Example::counter() -> Element {
   let counter = cell(0)
   let t = thunk(fn() { "counter: \{counter.get()}" })
-  let font = thunk(fn() { font })
-  let color = thunk(fn() { white })
+  let font = const_thunk(font)
+  let color = const_thunk(white)
   let num_20 = const_thunk(20.0)
   let padding_color = const_thunk(Color::hsl(0, 0, 20))
   let button = Element::Render(mk_text(text=thunk(fn() { "+" }), font~, color~))
