@@ -127,6 +127,9 @@ fn Renderable::render(
 type App
 
 ///|
+/// 
+/// native backend would memory leak.
+/// https://github.com/moonbit-community/adapton.mbt/issues/4
 fn App::run(e : Element) -> Unit {
   let ls = thunk(fn() { e.to_layout_sequence(Vector::default()) })
   let argc : Ref[Int] = Ref::new(1)
