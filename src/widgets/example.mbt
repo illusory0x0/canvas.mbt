@@ -12,6 +12,7 @@ fn Example::text_selected() -> Element {
     font~,
     foregound=color,
     background=const_thunk(black),
+    on_selected_changed=fn(str) { println(str) },
   ).round_padding(thinkness=num_20, color=padding_color, radius=num_20)
 }
 

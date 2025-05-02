@@ -158,7 +158,8 @@ fn Element::selected_text(
   text~ : Thunk[Array[String]],
   font~ : Thunk[Font],
   foregound~ : Thunk[Color],
-  background~ : Thunk[Color]
+  background~ : Thunk[Color],
+  on_selected_changed~ : (String) -> Unit = fn(_) {  }
 ) -> Element {
   let sel : Cell[TextSelection?] = cell(None)
   let text_end = thunk(fn() {
@@ -222,7 +223,8 @@ fn Element::selected_text(
         Some(sel) => {
           let (top, mid, bot) = split(text.get(), sel)
           let mid = match mid {
-            OneLine(prefix~, middle~, suffix~) =>
+            OneLine(prefix~, middle~, suffix~) => {
+              on_selected_changed(middle)
               [
                 Element::hstack(
                   thunk(fn() {
@@ -231,13 +233,16 @@ fn Element::selected_text(
                   spacing=0,
                 ),
               ]
+            }
             MultiLine(
               first_prefix~,
               first_suffix~,
               middle~,
               last_prefix~,
               last_suffix~
-            ) =>
+            ) => {
+              let st = [first_suffix, ..middle, last_prefix].join("\n")
+              on_selected_changed(st)
               [
                 Element::hstack(
                   thunk(fn() {
@@ -253,6 +258,7 @@ fn Element::selected_text(
                   spacing=0,
                 ),
               ]
+            }
           }
           [..top.map(unselected), ..mid, ..bot.map(unselected)]
         }
