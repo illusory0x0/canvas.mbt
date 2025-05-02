@@ -94,7 +94,7 @@ fn Renderable_::render(
 }
 
 ///|
-/// TODO when dpr changed, clear memo tables.
+/// For the smoothness of the app, we always cache for different dpr
 let text_off_csv : ((Font, Color, Int, String, Size)) -> @dom.OffscreenCanvas = memo(fn(
     x : (Font, Color, Int, String, Size)
   ) {
@@ -112,7 +112,7 @@ let text_off_csv : ((Font, Color, Int, String, Size)) -> @dom.OffscreenCanvas = 
 )
 
 ///|
-/// TODO when dpr changed, clear memo tables.
+/// For the smoothness of the app, we always cache for different dpr
 let round_off_csv : ((Color, Int, Size, Double)) -> @dom.OffscreenCanvas = memo(fn(
     x : (Color, Int, Size, Double)
   ) {
@@ -129,7 +129,7 @@ let round_off_csv : ((Color, Int, Size, Double)) -> @dom.OffscreenCanvas = memo(
   },
 )
 
-///| TODO when dpr changed, clear memo tables.
+///| For the smoothness of the app, we always cache for different dpr
 let stroke_round_off_csv : ((Color, Int, Size, Double, Double)) -> @dom.OffscreenCanvas = memo(fn(
     x : (Color, Int, Size, Double, Double)
   ) {
