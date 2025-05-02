@@ -2,26 +2,21 @@
 type Example
 
 ///|
-fn Example::text_selected() -> Thunk[LayoutSequence] {
+fn Example::text_selected() -> Element {
   let font = thunk(fn() { font })
   let color = thunk(fn() { white })
   let num_20 = const_thunk(20.0)
   let padding_color = const_thunk(Color::hsl(0, 0, 20))
-  let target = Element::selected_text(
+  Element::selected_text(
     text=thunk(fn() { xs }),
     font~,
     foregound=color,
     background=const_thunk(black),
   ).round_padding(thinkness=num_20, color=padding_color, radius=num_20)
-  let res = thunk(fn() {
-    window.size.get() |> ignore
-    target.to_layout_sequence(origin)
-  })
-  res
 }
 
 ///|
-fn Example::counter() -> Thunk[LayoutSequence] {
+fn Example::counter() -> Element {
   let counter = cell(0)
   let t = thunk(fn() { "counter: \{counter.get()}" })
   let font = thunk(fn() { font })
@@ -42,10 +37,5 @@ fn Example::counter() -> Thunk[LayoutSequence] {
     color=padding_color,
     radius=num_20,
   )
-  let target = Element::hstack(const_thunk([label, button]), spacing=20)
-  let res = thunk(fn() {
-    window.size.get() |> ignore
-    target.to_layout_sequence(origin)
-  })
-  res
+  Element::hstack(const_thunk([label, button]), spacing=20)
 }

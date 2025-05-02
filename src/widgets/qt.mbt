@@ -127,7 +127,8 @@ fn Renderable::render(
 type App
 
 ///|
-fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
+fn App::run(e : Element) -> Unit {
+  let ls = thunk(fn() { e.to_layout_sequence(Vector::default()) })
   let argc : Ref[Int] = Ref::new(1)
   let argv : FixedArray[Bytes] = [b"painter\x00"]
   let app = @qt.QApplication::new(argc, argv)
@@ -137,19 +138,19 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
     key_press=fn(w, k, m) {  },
     key_release=fn(w, k, m) {  },
     mouse_double_click=fn(w, x, y, k, b) {
-      App::on_double_click(ls, x, y)
+      App::on_double_click(ls.get(), x, y)
       w.update()
     },
     mouse_release=fn(w, x, y, k, b) {
-      App::on_mouse_release(ls, x, y)
+      App::on_mouse_release(ls.get(), x, y)
       w.update()
     },
     mouse_press=fn(w, x, y, k, b) {
-      App::on_mouse_press(ls, x, y)
+      App::on_mouse_press(ls.get(), x, y)
       w.update()
     },
     mouse_move=fn(w, x, y, m, b) {
-      App::on_mouse_move(ls, x, y)
+      App::on_mouse_move(ls.get(), x, y)
       w.update()
     },
     resize=fn(win, w, h) {

@@ -168,7 +168,8 @@ fn memo[A : Eq + Hash, B](f : (A) -> B) -> (A) -> B {
 type App
 
 ///|
-fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
+fn App::run(e : Element) -> Unit {
+  let ls = thunk(fn() { e.to_layout_sequence(Vector::default()) })
   window.sync_from_device(@dom.window)
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   fn render() {
@@ -192,19 +193,19 @@ fn App::run(ls : Thunk[LayoutSequence]) -> Unit {
 
   @dom.window.addEventListener("mousemove", fn(e) {
     let (x, y) = get_xy(e)
-    App::on_mouse_move(ls, x, y)
+    App::on_mouse_move(ls.get(), x, y)
   })
   @dom.window.addEventListener("mousedown", fn(e) {
     let (x, y) = get_xy(e)
-    App::on_mouse_press(ls, x, y)
+    App::on_mouse_press(ls.get(), x, y)
   })
   @dom.window.addEventListener("mouseup", fn(e) {
     let (x, y) = get_xy(e)
-    App::on_mouse_release(ls, x, y)
+    App::on_mouse_release(ls.get(), x, y)
   })
   @dom.window.addEventListener("dblclick", fn(e) {
     let (x, y) = get_xy(e)
-    App::on_double_click(ls, x, y)
+    App::on_double_click(ls.get(), x, y)
   })
 }
 

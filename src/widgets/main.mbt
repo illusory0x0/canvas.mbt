@@ -1,4 +1,4 @@
 ///|
 fn main {
-  App::run(Example::counter())
+  App::run(Example::text_selected())
 }

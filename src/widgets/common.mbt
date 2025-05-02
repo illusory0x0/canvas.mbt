@@ -68,13 +68,9 @@ let hover : Ref[(Rect, Handler)?] = Ref::new(None)
 let mouse_down : Ref[(Rect, Handler)?] = Ref::new(None)
 
 ///|
-fn App::on_mouse_move(
-  ls : Thunk[LayoutSequence],
-  x : Double,
-  y : Double
-) -> Unit {
+fn App::on_mouse_move(ls : LayoutSequence, x : Double, y : Double) -> Unit {
   let current : Vector = { x, y }
-  let es = ls.get().rev_iter().filter_map(Element::to_handler)
+  let es = ls.rev_iter().filter_map(Element::to_handler)
   match hover.val {
     None =>
       for x in es {
@@ -99,13 +95,9 @@ fn App::on_mouse_move(
 }
 
 ///|
-fn App::on_mouse_press(
-  ls : Thunk[LayoutSequence],
-  x : Double,
-  y : Double
-) -> Unit {
+fn App::on_mouse_press(ls : LayoutSequence, x : Double, y : Double) -> Unit {
   let clicked : Vector = { x, y }
-  let es = ls.get().rev_iter().filter_map(Element::to_handler)
+  let es = ls.rev_iter().filter_map(Element::to_handler)
   match mouse_down.val {
     None =>
       for x in es {
@@ -122,13 +114,9 @@ fn App::on_mouse_press(
 }
 
 ///|
-fn App::on_mouse_release(
-  ls : Thunk[LayoutSequence],
-  x : Double,
-  y : Double
-) -> Unit {
+fn App::on_mouse_release(ls : LayoutSequence, x : Double, y : Double) -> Unit {
   let clicked = Vector::{ x, y }
-  let es = ls.get().rev_iter().filter_map(Element::to_handler)
+  let es = ls.rev_iter().filter_map(Element::to_handler)
   match mouse_down.val {
     None => ()
     Some((rect, handler)) => {
@@ -137,7 +125,7 @@ fn App::on_mouse_release(
     }
   }
   let p : Vector = { x, y }
-  let es = ls.get().rev_iter().filter_map(Element::to_handler)
+  let es = ls.rev_iter().filter_map(Element::to_handler)
   for x in es {
     let (rect, handler) = x
     if p.inside(rect) {
@@ -148,13 +136,9 @@ fn App::on_mouse_release(
 }
 
 ///|
-fn App::on_double_click(
-  ls : Thunk[LayoutSequence],
-  x : Double,
-  y : Double
-) -> Unit {
+fn App::on_double_click(ls : LayoutSequence, x : Double, y : Double) -> Unit {
   let p : Vector = { x, y }
-  let es = ls.get().rev_iter().filter_map(Element::to_handler)
+  let es = ls.rev_iter().filter_map(Element::to_handler)
   for x in es {
     let (rect, handler) = x
     if p.inside(rect) {
