@@ -1,21 +1,18 @@
 ///|
-pub fn Element::spacer(size : Size) -> Element {
+pub fn spacer(size : Size) -> Element {
   let layout = thunk(fn() { (size, []) })
   Layout(layout)
 }
 
 ///|
-pub fn Element::hstack(
-  xs : Thunk[Array[Element]],
-  spacing~ : Double
-) -> Element {
+pub fn hstack(xs : Thunk[Array[Element]], spacing~ : Double) -> Element {
   let layout = thunk(fn() {
     let xs = xs.get()
     let mut w = 0.0
     let mut h = 0.0
     let children : Array[(Vector, Element)] = Array::new(capacity=xs.length())
     for x in xs {
-      guard w < window.size.get().width else { break } // doesn't layout beyond window
+      guard w < window_property.size.get().width else { break } // doesn't layout beyond window
       children.push(({ x: w, y: 0 }, x))
       let { width, height } = x.size()
       w += width + spacing
@@ -28,17 +25,14 @@ pub fn Element::hstack(
 }
 
 ///|
-pub fn Element::vstack(
-  xs : Thunk[Array[Element]],
-  spacing~ : Double
-) -> Element {
+pub fn vstack(xs : Thunk[Array[Element]], spacing~ : Double) -> Element {
   let layout = thunk(fn() {
     let xs = xs.get()
     let mut w = 0.0
     let mut h = 0.0
     let children = Array::new(capacity=xs.length())
     for x in xs {
-      guard h < window.size.get().height else { break } // doesn't layout beyond window
+      guard h < window_property.size.get().height else { break } // doesn't layout beyond window
       children.push((({ x: 0, y: h } : Vector), x))
       let { width, height } = x.size()
       w = @math.maximum(w, width)
@@ -51,9 +45,9 @@ pub fn Element::vstack(
 }
 
 ///|
-pub fn Element::layer(xs : Array[(Thunk[Vector], Element)]) -> Element {
+pub fn layer(xs : Array[(Thunk[Vector], Element)]) -> Element {
   let layout = thunk(fn() {
-    let window = window.size.get()
+    let window = window_property.size.get()
     let mut w = 0.0
     let mut h = 0.0
     for x in xs {
@@ -85,7 +79,7 @@ fn Element::margin_size(self : Element, thickness : Thinkness) -> Size {
 }
 
 ///|
-pub fn Element::round_border(
+pub fn round_border(
   self : Element,
   thickness~ : Thunk[Double],
   color~ : Thunk[Color],
@@ -107,7 +101,7 @@ pub fn Element::round_border(
 }
 
 ///|
-pub fn Element::round_padding(
+pub fn round_padding(
   self : Element,
   thinkness~ : Thunk[Double],
   color~ : Thunk[Color],
@@ -116,19 +110,19 @@ pub fn Element::round_padding(
   let layout = thunk(fn() {
     let size = self.margin_size(Thinkness::same(thinkness.get()))
     let offset = Element::margin_offset(Thinkness::same(thinkness.get()))
-    let render = RoundedRectangle(
+    let render = rounded_rectangle(
       color~,
       size=thunk(fn() { self.margin_size(Thinkness::same(thinkness.get())) }),
       radius~,
     )
-    let children = [(Vector::default(), Render(render)), (offset, self)]
+    let children = [(Vector::default(), render), (offset, self)]
     (size, children)
   })
   Layout(layout)
 }
 
 ///|
-pub fn Element::padding(
+pub fn padding(
   self : Element,
   thinkness~ : Thunk[Double],
   color~ : Thunk[Color]
@@ -136,11 +130,11 @@ pub fn Element::padding(
   let layout = thunk(fn() {
     let size = self.margin_size(Thinkness::same(thinkness.get()))
     let offset = Element::margin_offset(Thinkness::same(thinkness.get()))
-    let render = Rectangle(
+    let render = rectangle(
       color~,
       size=thunk(fn() { self.margin_size(Thinkness::same(thinkness.get())) }),
     )
-    let children = [(Vector::default(), Render(render)), (offset, self)]
+    let children = [(Vector::default(), render), (offset, self)]
     (size, children)
   })
   Layout(layout)

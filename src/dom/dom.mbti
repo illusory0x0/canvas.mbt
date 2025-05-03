@@ -7,6 +7,8 @@ let console : Console
 
 let document : Document
 
+fn requestAnimationFrame(() -> Unit) -> Unit
+
 let window : Window
 
 // Types and methods
@@ -25,6 +27,7 @@ impl CanvasRenderingContext2D {
   beginPath(Self) -> Unit
   clearRect(Self, Double, Double, Double, Double) -> Unit
   closePath(Self) -> Unit
+  draw_offscreen_canvas(Self, OffscreenCanvas, Double, Double) -> Unit
   ellipse(Self, Double, Double, Double, Double, Double, Double, Double, Bool) -> Unit
   fill(Self) -> Unit
   fillRect(Self, Double, Double, Double, Double) -> Unit
@@ -114,6 +117,41 @@ impl DOM_Event for MouseEvent
 pub extern type Node
 impl DOM_EventTarget for Node
 
+pub extern type OffscreenCanvas
+impl OffscreenCanvas {
+  getContext(Self, String) -> OffscreenCanvasRenderingContext2D
+  new(Double, Double) -> Self
+  set_height(Self, Int) -> Unit
+  set_width(Self, Int) -> Unit
+}
+
+pub extern type OffscreenCanvasRenderingContext2D
+impl OffscreenCanvasRenderingContext2D {
+  arc(Self, Double, Double, Double, Double, Double, Bool) -> Unit
+  arcTo(Self, Double, Double, Double, Double, Double) -> Unit
+  beginPath(Self) -> Unit
+  clearRect(Self, Double, Double, Double, Double) -> Unit
+  closePath(Self) -> Unit
+  ellipse(Self, Double, Double, Double, Double, Double, Double, Double, Bool) -> Unit
+  fill(Self) -> Unit
+  fillRect(Self, Double, Double, Double, Double) -> Unit
+  fillText(Self, String, Double, Double) -> Unit
+  lineTo(Self, Double, Double) -> Unit
+  measureText(Self, String) -> TextMetrics
+  moveTo(Self, Double, Double) -> Unit
+  restore(Self) -> Unit
+  roundRect(Self, Double, Double, Double, Double, Double, Double, Double, Double) -> Unit
+  save(Self) -> Unit
+  scale(Self, Double, Double) -> Unit
+  set_fillStyle(Self, String) -> Unit
+  set_font(Self, String) -> Unit
+  set_lineWidth(Self, Double) -> Unit
+  set_strokeStyle(Self, String) -> Unit
+  set_textBaseline(Self, String) -> Unit
+  stroke(Self) -> Unit
+  strokeRect(Self, Double, Double, Double, Double) -> Unit
+}
+
 pub extern type TextMetrics
 impl TextMetrics {
   fontBoundingBoxAscent(Self) -> Double
@@ -131,6 +169,8 @@ impl DOM_EventTarget for Window
 
 // Type aliases
 pub typealias Canvas2D = CanvasRenderingContext2D
+
+pub typealias OffCanvas2D = OffscreenCanvasRenderingContext2D
 
 // Traits
 pub(open) trait DOM_Element {

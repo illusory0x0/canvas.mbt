@@ -10,7 +10,7 @@ fn scale_size() -> Double {
 }
 
 ///|
-pub fn Window::sync_from_device(self : Window, device : Device) -> Unit {
+pub fn WindowProperty::sync_from_device(self : WindowProperty, device : Device) -> Unit {
   let w = device._
   let dpr = scale_size().to_int()
   let width = @dom.window.innerWidth()
@@ -50,7 +50,7 @@ fn Renderable::render(
   painter : Painter
 ) -> Unit {
   let ctx = painter._
-  let dpr = window.dpr.get()
+  let dpr = window_property.dpr.get()
   let ddpr = dpr.to_double()
   match self {
     RoundedRectangle(size~, color~, radius~) =>
@@ -70,7 +70,7 @@ fn Renderable::render(
     Text(color~, size~, text~, font~) => {
       let size = size.get()
       if size.width != 0 && size.height != 0 {
-        let dpr = window.dpr.get()
+        let dpr = window_property.dpr.get()
         let ocvs = text_off_csv(
           (font.get(), color.get(), dpr, text.get(), size),
         )
@@ -79,7 +79,7 @@ fn Renderable::render(
       }
     }
     Rectangle(color~, size~) => { // fillrect not need memo
-      let dpr = window.dpr.get().to_double()
+      let dpr = window_property.dpr.get().to_double()
       let color = color.get()
       let size = size.get()
       ctx.set_fillStyle(color |> color_to_css)
@@ -170,11 +170,11 @@ type App
 ///|
 fn App::run(e : Element) -> Unit {
   let ls = thunk(fn() { e.to_layout_sequence(Vector::default()) })
-  window.sync_from_device(@dom.window)
+  window_property.sync_from_device(@dom.window)
   let rs = thunk(fn() { ls.get().filter_map(Element::to_render) })
   let ra = action(fn() {
-    window.dpr.get() |> ignore
-    let { width, height } = window.size.get()
+    window_property.dpr.get() |> ignore
+    let { width, height } = window_property.size.get()
     canvas_context.clearRect(0, 0, width, height)
     Renderable::render_iter(canvas_context, rs.get().iter())
   })
@@ -185,7 +185,7 @@ fn App::run(e : Element) -> Unit {
 
   @dom.requestAnimationFrame(render)
   @dom.window.addEventListener("resize", fn(_) {
-    window.sync_from_device(@dom.window)
+    window_property.sync_from_device(@dom.window)
   })
   fn get_xy(e : @dom.Event) {
     let e : @dom.MouseEvent = e.downcast()

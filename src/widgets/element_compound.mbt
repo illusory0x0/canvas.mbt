@@ -154,8 +154,8 @@ test {
 }
 
 ///|
-fn Element::selected_text(
-  text~ : Thunk[Array[String]],
+fn selected_text(
+  content~ : Thunk[Array[String]],
   font~ : Thunk[Font],
   foregound~ : Thunk[Color],
   background~ : Thunk[Color],
@@ -163,14 +163,14 @@ fn Element::selected_text(
 ) -> Element {
   let sel : Cell[TextSelection?] = cell(None)
   let text_end = thunk(fn() {
-    text.get().map(fn { x => text_render_end(x, font.get()) })
+    content.get().map(fn { x => text_render_end(x, font.get()) })
   })
-  fn unselected(text) {
-    Element::Render(mk_text(text=thunk(fn() { text }), color=foregound, font~))
+  fn unselected(t) {
+    text(content=const_thunk(t), color=foregound, font~)
   }
 
-  fn selected(text) {
-    Element::Render(mk_text(text=thunk(fn() { text }), color=background, font~)).padding(
+  fn selected(t) {
+    text(content=thunk(fn() { t }), color=background, font~).padding(
       thinkness=const_thunk(0),
       color=foregound,
     )
@@ -216,17 +216,17 @@ fn Element::selected_text(
   }
 
   let handler = Handler::new(on_mouse_down~, on_mouse_move~)
-  Element::vstack(
+  vstack(
     thunk(fn() {
       match sel.get() {
-        None => text.get().map(unselected)
+        None => content.get().map(unselected)
         Some(sel) => {
-          let (top, mid, bot) = split(text.get(), sel)
+          let (top, mid, bot) = split(content.get(), sel)
           let mid = match mid {
             OneLine(prefix~, middle~, suffix~) => {
               on_selected_changed(middle)
               [
-                Element::hstack(
+                hstack(
                   thunk(fn() {
                     [unselected(prefix), selected(middle), unselected(suffix)]
                   }),
@@ -244,14 +244,14 @@ fn Element::selected_text(
               let st = [first_suffix, ..middle, last_prefix].join("\n")
               on_selected_changed(st)
               [
-                Element::hstack(
+                hstack(
                   thunk(fn() {
                     [unselected(first_prefix), selected(first_suffix)]
                   }),
                   spacing=0,
                 ),
                 ..middle.map(selected),
-                Element::hstack(
+                hstack(
                   thunk(fn() {
                     [selected(last_prefix), unselected(last_suffix)]
                   }),

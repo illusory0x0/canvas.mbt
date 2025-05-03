@@ -1,3 +1,4 @@
+///|
 typealias @color.Color
 
 ///|
@@ -79,13 +80,13 @@ pub struct Handler {
 }
 
 ///|
-pub struct Window {
+pub struct WindowProperty {
   size : Cell[Size]
   dpr : Cell[Int]
 }
 
 ///|
-pub impl Show for Window with output(self, logger) {
+pub impl Show for WindowProperty with output(self, logger) {
 
 }
 

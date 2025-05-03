@@ -35,7 +35,7 @@ pub fn Element::to_layout_sequence(
   guard origin.x >= 0 && origin.y >= 0
   let buf = []
   fn dfs(root : Element, origin : Vector) {
-    if window.contains(origin) {
+    if window_property.contains(origin) {
       match root {
         Layout(layout) =>
           for x in layout.get().1 {
@@ -77,4 +77,38 @@ fn Element::to_render(x : (Vector, Element)) -> (Vector, Renderable)? {
     Render(rander) => Some((offset, rander))
     _ => None
   }
+}
+
+///|
+pub fn text(content~ : TString, font~ : TFont, color~ : TColor) -> Element {
+  let size = thunk(fn() {
+    let font = font.get()
+    let text = content.get()
+    Size::new(font.width(text), font.height(text))
+  })
+  Render(Text(text=content, font~, color~, size~))
+}
+
+///|
+pub fn rounded_border(
+  color~ : TColor,
+  size~ : TSize,
+  radius~ : TDouble,
+  thickness~ : TDouble
+) -> Element {
+  Render(RoundedBorder(color~, size~, radius~, thickness~))
+}
+
+///|
+pub fn rounded_rectangle(
+  color~ : TColor,
+  size~ : TSize,
+  radius~ : TDouble
+) -> Element {
+  Render(RoundedRectangle(color~, size~, radius~))
+}
+
+///|
+pub fn rectangle(color~ : TColor, size~ : TSize) -> Element {
+  Render(Rectangle(color~, size~))
 }

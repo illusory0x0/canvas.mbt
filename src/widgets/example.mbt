@@ -7,8 +7,8 @@ fn Example::text_selected() -> Element {
   let color = const_thunk(white)
   let num_20 = const_thunk(20.0)
   let padding_color = const_thunk(Color::hsl(0, 0, 20))
-  Element::selected_text(
-    text=thunk(fn() { xs }),
+  selected_text(
+    content=thunk(fn() { xs }),
     font~,
     foregound=color,
     background=const_thunk(black),
@@ -24,7 +24,7 @@ fn Example::counter() -> Element {
   let color = const_thunk(white)
   let num_20 = const_thunk(20.0)
   let padding_color = const_thunk(Color::hsl(0, 0, 20))
-  let button = Element::Render(mk_text(text=thunk(fn() { "+" }), font~, color~))
+  let button = text(content=thunk(fn() { "+" }), font~, color~)
     .round_padding(thinkness=num_20, color=padding_color, radius=num_20)
     .add_handler(
       Handler::new(on_click=fn() { counter.modify(fn { x => x + 1 }) }, on_double_click=fn(
@@ -33,10 +33,10 @@ fn Example::counter() -> Element {
         counter.modify(fn { x => x + 10 })
       }),
     )
-  let label = Element::Render(mk_text(text=t, font~, color~)).round_padding(
+  let label = text(content=t, font~, color~).round_padding(
     thinkness=num_20,
     color=padding_color,
     radius=num_20,
   )
-  Element::hstack(const_thunk([label, button]), spacing=20)
+  hstack(const_thunk([label, button]), spacing=20)
 }

@@ -6,7 +6,27 @@ import(
 )
 
 // Values
-fn mk_text(text~ : @adapton.Thunk[String], font~ : @adapton.Thunk[Font], color~ : @adapton.Thunk[@color.Color]) -> Renderable
+fn hstack(@adapton.Thunk[Array[Element]], spacing~ : Double) -> Element
+
+fn layer(Array[(@adapton.Thunk[Vector], Element)]) -> Element
+
+fn padding(Element, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color]) -> Element
+
+fn rectangle(color~ : @adapton.Thunk[@color.Color], size~ : @adapton.Thunk[Size]) -> Element
+
+fn round_border(Element, thickness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color], radius~ : @adapton.Thunk[Double]) -> Element
+
+fn round_padding(Element, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color], radius~ : @adapton.Thunk[Double]) -> Element
+
+fn rounded_border(color~ : @adapton.Thunk[@color.Color], size~ : @adapton.Thunk[Size], radius~ : @adapton.Thunk[Double], thickness~ : @adapton.Thunk[Double]) -> Element
+
+fn rounded_rectangle(color~ : @adapton.Thunk[@color.Color], size~ : @adapton.Thunk[Size], radius~ : @adapton.Thunk[Double]) -> Element
+
+fn spacer(Size) -> Element
+
+fn text(content~ : @adapton.Thunk[String], font~ : @adapton.Thunk[Font], color~ : @adapton.Thunk[@color.Color]) -> Element
+
+fn vstack(@adapton.Thunk[Array[Element]], spacing~ : Double) -> Element
 
 // Types and methods
 type Action
@@ -22,16 +42,12 @@ pub enum Element {
 }
 impl Element {
   add_handler(Self, Handler) -> Self
-  hstack(@adapton.Thunk[Array[Self]], spacing~ : Double) -> Self
-  layer(Array[(@adapton.Thunk[Vector], Self)]) -> Self
   padding(Self, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color]) -> Self
   round_border(Self, thickness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color], radius~ : @adapton.Thunk[Double]) -> Self
   round_padding(Self, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color], radius~ : @adapton.Thunk[Double]) -> Self
   size(Self) -> Size
-  spacer(Size) -> Self
   to_layout_sequence(Self, Vector) -> Array[(Vector, Self)]
   to_render_sequence(Self, Vector) -> Iter[(Vector, Renderable)]
-  vstack(@adapton.Thunk[Array[Self]], spacing~ : Double) -> Self
 }
 impl Eq for Element
 impl Show for Element
@@ -195,14 +211,14 @@ impl Hash for Vector
 impl Show for Vector
 impl Sub for Vector
 
-pub struct Window {
+pub struct WindowProperty {
   size : @adapton.Cell[Size]
   dpr : @adapton.Cell[Int]
 }
-impl Window {
+impl WindowProperty {
   sync_from_device(Self, Device) -> Unit
 }
-impl Show for Window
+impl Show for WindowProperty
 
 // Type aliases
 pub typealias OnClick = () -> Unit

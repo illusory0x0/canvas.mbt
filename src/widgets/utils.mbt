@@ -1,18 +1,21 @@
 ///|
-let window : Window = { size: cell(Size::new(1280, 720)), dpr: cell(1) }
+let window_property : WindowProperty = {
+  size: cell(Size::new(1280, 720)),
+  dpr: cell(1),
+}
 
 ///|
-fn Window::width(self : Window) -> Double {
+fn WindowProperty::width(self : WindowProperty) -> Double {
   self.size.get().width
 }
 
 ///|
-fn Window::height(self : Window) -> Double {
+fn WindowProperty::height(self : WindowProperty) -> Double {
   self.size.get().height
 }
 
 ///|
-fn Window::contains(self : Window, v : Vector) -> Bool {
+fn WindowProperty::contains(self : WindowProperty, v : Vector) -> Bool {
   v.x < self.width() && v.y < self.height()
 }
 
