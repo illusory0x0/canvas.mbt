@@ -1,0 +1,221 @@
+package "illusory0x0/canvas/widgets"
+
+import(
+  "illusory0x0/adapton"
+  "illusory0x0/color"
+)
+
+// Values
+fn mk_text(text~ : @adapton.Thunk[String], font~ : @adapton.Thunk[Font], color~ : @adapton.Thunk[@color.Color]) -> Renderable
+
+// Types and methods
+type Action
+
+type App
+
+type Device
+
+pub enum Element {
+  Layout(@adapton.Thunk[(Size, Array[(Vector, Element)])])
+  Render(Renderable)
+  Handle(Element, Handler)
+}
+impl Element {
+  add_handler(Self, Handler) -> Self
+  hstack(@adapton.Thunk[Array[Self]], spacing~ : Double) -> Self
+  layer(Array[(@adapton.Thunk[Vector], Self)]) -> Self
+  padding(Self, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color]) -> Self
+  round_border(Self, thickness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color], radius~ : @adapton.Thunk[Double]) -> Self
+  round_padding(Self, thinkness~ : @adapton.Thunk[Double], color~ : @adapton.Thunk[@color.Color], radius~ : @adapton.Thunk[Double]) -> Self
+  size(Self) -> Size
+  spacer(Size) -> Self
+  to_layout_sequence(Self, Vector) -> Array[(Vector, Self)]
+  to_render_sequence(Self, Vector) -> Iter[(Vector, Renderable)]
+  vstack(@adapton.Thunk[Array[Self]], spacing~ : Double) -> Self
+}
+impl Eq for Element
+impl Show for Element
+
+type Example
+
+pub(all) struct Font {
+  family : Array[String]
+  genericFamily : Array[GenericFontFamily]
+  size : Int
+  style : FontStyle
+  weight : Int
+}
+impl Font {
+  height(Self, String) -> Double
+  new(family~ : Array[String] = .., genericFamily~ : Array[GenericFontFamily] = .., size~ : Int = .., style~ : FontStyle = .., weight~ : Int = ..) -> Self
+  width(Self, String) -> Double
+}
+impl Compare for Font
+impl Default for Font
+impl Eq for Font
+impl Hash for Font
+impl Show for Font
+
+pub(all) enum FontStyle {
+  Normal
+  Italic
+}
+impl Compare for FontStyle
+impl Eq for FontStyle
+impl Hash for FontStyle
+impl Show for FontStyle
+
+pub(all) enum GenericFontFamily {
+  Serif
+  SansSerif
+  Monospace
+  Cursive
+  Fantasy
+  SystemUI
+  UISerif
+  UISansSerif
+  UIMonospace
+  UIRounded
+  Math
+  Emoji
+  FangSong
+}
+impl Compare for GenericFontFamily
+impl Eq for GenericFontFamily
+impl Hash for GenericFontFamily
+impl Show for GenericFontFamily
+
+pub struct Handler {
+  id : Int
+  on_click : (() -> Unit)?
+  on_double_click : (() -> Unit)?
+  on_mouse_enter : (() -> Unit)?
+  on_mouse_leave : (() -> Unit)?
+  on_mouse_move : ((Vector) -> Unit)?
+  on_mouse_down : ((Vector) -> Unit)?
+  on_mouse_up : ((Vector) -> Unit)?
+}
+impl Handler {
+  new(on_click? : () -> Unit, on_double_click? : () -> Unit, on_mouse_enter? : () -> Unit, on_mouse_leave? : () -> Unit, on_mouse_move? : (Vector) -> Unit, on_mouse_down? : (Vector) -> Unit, on_mouse_up? : (Vector) -> Unit) -> Self
+}
+impl Show for Handler
+
+type Painter
+
+pub(all) struct Rect {
+  offset : Vector
+  size : Size
+}
+impl Rect {
+  bottom(Self) -> Double
+  left(Self) -> Double
+  new(Vector, Size) -> Self
+  right(Self) -> Double
+  top(Self) -> Double
+}
+impl Compare for Rect
+impl Default for Rect
+impl Eq for Rect
+impl Hash for Rect
+impl Show for Rect
+
+pub(all) struct Rectangle {
+  color : @adapton.Thunk[@color.Color]
+  size : @adapton.Thunk[Size]
+}
+
+type Renderable
+impl Renderable {
+  render_iter(Painter, Iter[(Vector, Self)]) -> Unit
+}
+impl Eq for Renderable
+
+pub(all) struct RoundedBorder {
+  color : @adapton.Thunk[@color.Color]
+  size : @adapton.Thunk[Size]
+  radius : @adapton.Thunk[Double]
+  thickness : @adapton.Thunk[Double]
+}
+
+pub(all) struct RoundedRectangle {
+  color : @adapton.Thunk[@color.Color]
+  size : @adapton.Thunk[Size]
+  radius : @adapton.Thunk[Double]
+}
+
+pub(all) struct Size {
+  width : Double
+  height : Double
+}
+impl Size {
+  new(Double, Double) -> Self
+}
+impl Compare for Size
+impl Default for Size
+impl Eq for Size
+impl Hash for Size
+impl Show for Size
+
+pub(all) struct Text {
+  color : @adapton.Thunk[@color.Color]
+  size : @adapton.Thunk[Size]
+  text : @adapton.Thunk[String]
+  font : @adapton.Thunk[Font]
+}
+
+pub(all) struct Thinkness {
+  left : Double
+  top : Double
+  right : Double
+  bottom : Double
+}
+impl Thinkness {
+  new(Double, Double, Double, Double) -> Self
+  same(Double) -> Self
+}
+impl Compare for Thinkness
+impl Default for Thinkness
+impl Eq for Thinkness
+impl Hash for Thinkness
+impl Show for Thinkness
+
+pub(all) struct Vector {
+  x : Double
+  y : Double
+}
+impl Vector {
+  inside(Self, Rect) -> Bool
+  new(Double, Double) -> Self
+}
+impl Add for Vector
+impl Compare for Vector
+impl Default for Vector
+impl Eq for Vector
+impl Hash for Vector
+impl Show for Vector
+impl Sub for Vector
+
+pub struct Window {
+  size : @adapton.Cell[Size]
+  dpr : @adapton.Cell[Int]
+}
+impl Window {
+  sync_from_device(Self, Device) -> Unit
+}
+impl Show for Window
+
+// Type aliases
+pub typealias OnClick = () -> Unit
+
+pub typealias OnMouseDown = (Vector) -> Unit
+
+pub typealias OnMouseEnter = () -> Unit
+
+pub typealias OnMouseLeave = () -> Unit
+
+pub typealias OnMouseMove = (Vector) -> Unit
+
+pub typealias OnMouseUp = (Vector) -> Unit
+
+// Traits
+
